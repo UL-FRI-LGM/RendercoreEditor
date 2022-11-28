@@ -7,12 +7,24 @@ export class XHRLoader {
 	#manager;
 	#responseType;
 
+	#onLoadStart;
+	#onLoadEnd;
+	#onProgress;
+	#onError;
+	#onAbort;
+
 	#progress = 0.0;
 
 
-	constructor (manager, responseType) {
+	constructor (manager, args = {}) {
 		this.manager = (manager !== undefined) ? manager : new LoadingManager();
-		this.responseType = (responseType !== undefined) ? responseType : "";
+		this.responseType = (args.responseType !== undefined) ? args.responseType : "";
+
+		this.onLoadStart = (args.onLoadStart !== undefined) ? args.onLoadStart : () => {};
+		this.onProgress = (args.onProgress !== undefined) ? args.onProgress : () => {};
+		this.onLoadEnd = (args.onLoadEnd !== undefined) ? args.onLoadEnd : () => {};
+		this.onError = (args.onError !== undefined) ? args.onError : () => {};
+		this.onAbort = (args.onAbort !== undefined) ? args.onAbort : () => {};
 	}
 
 
@@ -20,6 +32,17 @@ export class XHRLoader {
 	set manager(manager) { this.#manager = manager; }
 	get responseType() { return this.#responseType; }
 	set responseType(responseType) { this.#responseType = responseType; }
+
+	get onLoadStart() { return this.#onLoadStart; }
+	set onLoadStart(onLoadStart) { this.#onLoadStart = onLoadStart; }
+	get onProgress() {return this.#onProgress; }
+	set onProgress(onProgress) { this.#onProgress = onProgress; }
+	get onLoadEnd() { return this.#onLoadEnd; }
+	set onLoadEnd(onLoadEnd) { this.#onLoadEnd = onLoadEnd; }
+	get onError() { return this.#onError; }
+	set onError(onError) { this.#onError = onError; }
+	get onAbort() { return this.#onAbort; }
+	set onAbort(onAbort) { this.#onAbort = onAbort; }
 
 	get progress() { return this.#progress; }
 	set progress(progress) { this.#progress = progress; }
@@ -32,11 +55,18 @@ export class XHRLoader {
 		request.responseType = this.responseType;
 		request.open("GET", url, true);
 
-		request.addEventListener("loadstart", this.onLoadStart(request, args));
-		request.addEventListener("progress", this.onProgress(request, args));
-		request.addEventListener("load", this.onLoadEnd(request, args));
-		request.addEventListener("error", this.onError(request, args));
-		request.addEventListener("abort", this.onAbort(request, args));
+
+		const onLoadStart = (args.onLoadStart !== undefined) ? args.onLoadStart : this.onLoadStart;
+		const onProgress = (args.onProgress !== undefined) ? args.onProgress : this.onProgress;
+		const onLoadEnd = (args.onLoadEnd !== undefined) ? args.onLoadEnd : this.onLoadEnd;
+		const onError = (args.onError !== undefined) ? args.onError : this.onError;
+		const onAbort = (args.onAbort !== undefined) ? args.onAbort : this.onAbort;
+
+		request.addEventListener("loadstart", this.onLoadStartInternal(request, onLoadStart));
+		request.addEventListener("progress", this.onProgressInternal(request, onProgress));
+		request.addEventListener("load", this.onLoadEndInternal(request, onLoadEnd, onError));
+		request.addEventListener("error", this.onErrorInternal(request, onError));
+		request.addEventListener("abort", this.onAbortInternal(request, onAbort));
 
 		
 		// Send the request
@@ -45,37 +75,37 @@ export class XHRLoader {
 		this.manager.load(request);
 	}
 
-	onLoadStart(request, args){
+	onLoadStartInternal(request, onLoadStart){
 		return (event) => {
-			args.onLoadStart(request, event);
+			onLoadStart(request, event);
 		}
 	}
-	onProgress(request, args) {
+	onProgressInternal(request, onProgress) {
 		return (event) => {
 			this.progress = event.loaded / event.total;
 
-			args.onProgress(request, event);
+			onProgress(request, event);
 		}
 	}
-	onLoadEnd(request, args) {
+	onLoadEndInternal(request, onLoadEnd, onError) {
 		return (event) => {
 			if(request.readyState === 4){
 				if(request.status === 200){
-					args.onLoadEnd(request, event);
+					onLoadEnd(request, event);
 				}else{
-					args.onError(request, event);
+					onError(request, event);
 				}
 			}
 		}
 	}
-	onError(request, args){
+	onErrorInternal(request, onError){
 		return (event) => {
-			args.onError(request, event);
+			onError(request, event);
 		}
 	}
-	onAbort(request, args){
+	onAbortInternal(request, onAbort){
 		return (event) => {
-			args.onAbort(request, event);
+			onAbort(request, event);
 		}
 	}
 };
