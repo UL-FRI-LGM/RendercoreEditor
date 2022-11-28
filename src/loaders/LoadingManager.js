@@ -13,12 +13,12 @@ export class LoadingManager {
 	#progress = 0.0;
 
 
-	constructor(onLoadStart, onProgress, onLoadEnd, onError, onAbort) {
-		this.onLoadStart = onLoadStart;
-		this.onProgress = onProgress;
-		this.onLoadEnd = onLoadEnd;
-		this.onError = onError;
-		this.onAbort = onAbort;
+	constructor(args = {}) {
+		this.onLoadStart = (args.onLoadStart !== undefined) ? args.onLoadStart : () => {};
+		this.onProgress = (args.onProgress !== undefined) ? args.onProgress : () => {};
+		this.onLoadEnd = (args.onLoadEnd !== undefined) ? args.onLoadEnd : () => {};
+		this.onError = (args.onError !== undefined) ? args.onError : () => {};
+		this.onAbort = (args.onAbort !== undefined) ? args.onAbort : () => {};
 
 		this.requestsTotal = new Map();
 		this.requestsFinished = new Map();
