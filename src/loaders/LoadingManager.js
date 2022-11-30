@@ -1,4 +1,13 @@
-export class LoadingManager {
+import { ObjectBase } from "../core/ObjectBase.js";
+
+
+export class LoadingManager extends ObjectBase {
+	static DEFAULT = {
+		NAME: "",
+		TYPE: "LoadingManager",
+
+		CALLBACK: () => {}
+	};
 
 
 	#onLoadStart;
@@ -14,11 +23,20 @@ export class LoadingManager {
 
 
 	constructor(args = {}) {
-		this.onLoadStart = (args.onLoadStart !== undefined) ? args.onLoadStart : () => {};
-		this.onProgress = (args.onProgress !== undefined) ? args.onProgress : () => {};
-		this.onLoadEnd = (args.onLoadEnd !== undefined) ? args.onLoadEnd : () => {};
-		this.onError = (args.onError !== undefined) ? args.onError : () => {};
-		this.onAbort = (args.onAbort !== undefined) ? args.onAbort : () => {};
+		super(
+			{
+				...args, 
+				name: (args.name !== undefined) ? args.name : LoadingManager.DEFAULT.NAME,
+				type: (args.type !== undefined) ? args.type : LoadingManager.DEFAULT.TYPE,
+			}
+		);
+
+
+		this.onLoadStart = (args.onLoadStart !== undefined) ? args.onLoadStart : LoadingManager.DEFAULT.CALLBACK;
+		this.onProgress = (args.onProgress !== undefined) ? args.onProgress : LoadingManager.DEFAULT.CALLBACK;
+		this.onLoadEnd = (args.onLoadEnd !== undefined) ? args.onLoadEnd : LoadingManager.DEFAULT.CALLBACK;
+		this.onError = (args.onError !== undefined) ? args.onError : LoadingManager.DEFAULT.CALLBACK;
+		this.onAbort = (args.onAbort !== undefined) ? args.onAbort : LoadingManager.DEFAULT.CALLBACK;
 
 		this.requestsTotal = new Map();
 		this.requestsFinished = new Map();
