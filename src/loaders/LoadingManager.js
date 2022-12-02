@@ -65,7 +65,7 @@ export class LoadingManager extends ObjectBase {
 
 	load(request) {
 		this.requestsTotal.set(request, request);
-		this.progress = this.requestsFinished.size/this.requestsTotal.size;
+		this.progress = this.requestsFinished.size / this.requestsTotal.size;
 
 		request.addEventListener("loadstart", this.#onLoadStartInternal(request));
 		request.addEventListener("progress", this.#onProgressInternal(request));
@@ -98,7 +98,7 @@ export class LoadingManager extends ObjectBase {
 			// }
 
 			this.requestsFinished.set(request, request);
-			this.progress = this.requestsFinished.size/this.requestsTotal.size;
+			this.progress = this.requestsFinished.size / this.requestsTotal.size;
 
 			this.onProgress(request, event);
 			this.onLoadEnd(request, event);
