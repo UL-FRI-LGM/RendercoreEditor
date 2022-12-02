@@ -50,6 +50,6 @@ export class DirectionalLight extends Light {
 	}
 
 
-	get direction(){ return this.#direction; }
-	set direction(direction){ this.#direction = direction; }
+	get direction() { return this.#direction; }
+	set direction(direction) { this.#direction = direction; }
 };
