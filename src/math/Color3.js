@@ -6,25 +6,50 @@ export class Color3 {
 	};
 
 
-	#color;
+	#arrayBuffer = new Float32Array(3);
+
+	#r;
+	#g;
+	#b;
 
 
-	constructor (r, g, b) {
-		this.color = { r: null, g: null, b: null };
-
+	constructor (r, g, b, arrayBuffer = new Float32Array(3)) {
+		this.arrayBuffer = arrayBuffer;
 		this.r = (r !== undefined) ? r : Color3.DEFAULT.R;
 		this.g = (g !== undefined) ? g : Color3.DEFAULT.G;
 		this.b = (b !== undefined) ? b : Color3.DEFAULT.B;
 	}
 
 
-	get color() { return this.#color; }
-	set color(color) { this.#color = color; }
+	get arrayBuffer() { return this.#arrayBuffer; }
+	set arrayBuffer(arrayBuffer) { this.#arrayBuffer = arrayBuffer; }
 
-	get r() { return this.color.r; }
-	set r(r) { this.color.r = r; }
-	get g() { return this.color.g; }
-	set g(g) { this.color.g = g; }
-	get b() { return this.color.b; }
-	set b(b) { this.color.b = b; }
+	get r() { return this.#r; }
+	set r(r) { 
+		this.arrayBuffer[0] = r;
+		this.#r = r; 
+	}
+	get g() { return this.#g; }
+	set g(g) { 
+		this.arrayBuffer[1] = g;
+		this.#g = g; 
+	}
+	get b() { return this.#b; }
+	set b(b) {
+		this.arrayBuffer[2] = b; 
+		this.#b = b; 
+	}
+
+
+	copy(color) {
+		this.r = color.r;
+		this.g = color.g;
+		this.b = color.b;
+	}
+	clone() {
+		return new Color3(this.r, this.g, this.b);
+	}
+	toArray() {
+		return new Array(this.r, this.g, this.b);
+	}
 };
