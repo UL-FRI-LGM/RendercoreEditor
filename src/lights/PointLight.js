@@ -10,17 +10,22 @@ export class PointLight extends Light {
 		NAME: "",
 		TYPE: "PointLight",
 
+		FRUSTUM_CULLED: false,
+
 		COLOR_INTENSITY: new Color4(1.0, 1.0, 1.0, 1.0),
 		COLOR: new Color3(1.0, 1.0, 1.0),
 		INTENSITY: 1.0,
-
-		FRUSTUM_CULLED: false,
 
 		DECAY_DISTANCE: new Vector4(1.0, 0.01, 0.0001, 0.0),
 		DECAY: new Vector3(1.0, 0.01, 0.0001),
 		DISTANCE: 0.0,
 	};
 
+
+	#decayDistance = PointLight.DEFAULT.DECAY_DISTANCE.clone();
+	#decay = PointLight.DEFAULT.DECAY.clone();
+	#distance = PointLight.DEFAULT.DISTANCE;
+	
 
 	constructor (args = {}) {
 		super(
@@ -32,13 +37,50 @@ export class PointLight extends Light {
 				frustumCulled: (args.frustumCulled !== undefined) ? args.frustumCulled : PointLight.DEFAULT.FRUSTUM_CULLED,
 
 				colorIntensity: (args.colorIntensity !== undefined) ? args.colorIntensity : PointLight.DEFAULT.COLOR_INTENSITY,
-				color: (args.color !== undefined) ? args.color : PointLight.DEFAULT.COLOR,
-				intensity: (args.intensity !== undefined) ? args.intensity : PointLight.DEFAULT.INTENSITY,
-
-				decayDistance: (args.decayDistance !== undefined) ? args.decayDistance : PointLight.DEFAULT.DECAY_DISTANCE,
-				decay: (args.decay !== undefined) ? args.decay : PointLight.DEFAULT.DECAY,
-				distance: (args.distance !== undefined) ? args.distance : PointLight.DEFAULT.DISTANCE,
+				// color: (args.color !== undefined) ? args.color : PointLight.DEFAULT.COLOR,
+				// intensity: (args.intensity !== undefined) ? args.intensity : PointLight.DEFAULT.INTENSITY,
 			}
 		);
+
+		this.decayDistance = (args.decayDistance !== undefined) ? args.decayDistance : this.decayDistance;
+		this.decay = (args.decay !== undefined) ? args.decay : this.decay;
+		this.distance = (args.distance !== undefined) ? args.distance : this.distance;
 	}
+
+
+	get decayDistance() { return this.#decayDistance; }
+	set decayDistance(decayDistance) {
+		this.#decayDistance.copy(decayDistance);
+		this.#decay.x = decayDistance.x;
+		this.#decay.y = decayDistance.y;
+		this.#decay.z = decayDistance.z;
+		this.#distance = decayDistance.w;
+	}
+	get decay() { return this.#decay; }
+	set decay(decay) {
+		this.#decayDistance.x = decay.x;
+		this.#decayDistance.y = decay.y;
+		this.#decayDistance.z = decay.z;
+		this.#decay.copy(decay);
+	}
+	get distance() { return this.#distance; }
+	set distance(distance) { 
+		this.#decayDistance.w = distance;
+		this.#distance = distance;
+	}
+	// get constant() { return this.#decay.x; }
+	// set constant(constant) { 
+	// 	this.#decayDistance.x = constant;
+	// 	this.#decay.x = constant;
+	// }
+	// get linear() { return this.#decay.y; }
+	// set linear(linear) { 
+	// 	this.#decayDistance.y = linear;
+	// 	this.#decay.y = linear;
+	// }
+	// get quadratic() { return this.#decay.z; }
+	// set quadratic(quadratic) { 
+	// 	this.#decayDistance.z = quadratic;
+	// 	this.#decay.z = quadratic;
+	// }
 };
