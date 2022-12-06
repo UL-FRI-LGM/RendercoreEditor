@@ -1,7 +1,7 @@
 import { GPUPrimitiveTopology } from "../core/ENUM/GPUPrimitiveTopology.js";
 import { Mesh } from "./Mesh.js";
 import { PointGeometry } from "./PointGeometry.js";
-import { Vector3 } from "../RenderCore.js";
+import { Vector3 } from "../math/Vector3.js";
 import { PointBasicMaterial } from "../materials/PointBasicMaterial.js";
 
 

@@ -1,7 +1,7 @@
 import { Mesh } from "./Mesh.js";
 import { GPUPrimitiveTopology } from "../core/ENUM/GPUPrimitiveTopology.js";
 import { CubeGeometry } from "./CubeGeometry.js";
-import { MeshBasicMaterial } from "../materials/MeshBasicMaterial.js";
+import { CubeBasicMaterial } from "../materials/CubeBasicMaterial.js";
 import { Vector3 } from "../math/Vector3.js";
 
 
@@ -21,7 +21,7 @@ export class Cube extends Mesh {
 				}
 			}
 		),
-		MATERIAL: new MeshBasicMaterial(),
+		MATERIAL: new CubeBasicMaterial(),
 		PICKABLE: false,
 		PRIMITIVE: GPUPrimitiveTopology.TRIANGLE_LIST,
 	};

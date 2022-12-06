@@ -91,7 +91,7 @@ export class LineGeometry extends MeshGeometry {
 		} else {
 			let normalsArray = new Array();
 
-			for (let p = 0; p < positions.length; p++) {
+			for (let p = 0; p < positions.length; p+=2) {
 				const array = new Array(2 * 3);
 
 
@@ -125,7 +125,7 @@ export class LineGeometry extends MeshGeometry {
 		} else {
 			let uvsArray = new Array();
 
-			for (let p = 0; p < positions.length; p++) {
+			for (let p = 0; p < positions.length; p+=2) {
 				const array = new Array(2 * 2);
 
 
