@@ -1,13 +1,14 @@
-import { Object3D } from "../objects/Object3D.js";
 import { Color3 } from "../math/Color3.js";
 import { Color4 } from "../math/Color4.js";
+import { Group } from "../objects/Group.js";
 
 
-export class Light extends Object3D {
+export class Light extends Group {
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "Light",
 
+		VISIBLE: true,
 		FRUSTUM_CULLED: false,
 
 		COLOR_INTENSITY: new Color4(1.0, 1.0, 1.0, 1.0),
@@ -28,6 +29,7 @@ export class Light extends Object3D {
 				name: (args.name !== undefined) ? args.name : Light.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : Light.DEFAULT.TYPE,
 
+				visible: (args.visible !== undefined) ? args.visible : Light.DEFAULT.VISIBLE,
 				frustumCulled: (args.frustumCulled !== undefined) ? args.frustumCulled : Light.DEFAULT.FRUSTUM_CULLED,
 			}
 		);

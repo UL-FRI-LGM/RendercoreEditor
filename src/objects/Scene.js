@@ -1,11 +1,12 @@
-import { Object3D } from "../core/Object3D.js";
+import { Group } from "./Group.js";
 
 
-export class Scene extends Object3D {
+export class Scene extends Group {
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "Scene",
 
+		VISIBLE: true,
 		FRUSTUM_CULLED: false,
 		
 		AUTO_UPDATE: true,
@@ -22,6 +23,7 @@ export class Scene extends Object3D {
 				name: (args.name !== undefined) ? args.name : Scene.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : Scene.DEFAULT.TYPE,
 
+				visible: (args.visible !== undefined) ? args.visible : Scene.DEFAULT.VISIBLE,
 				frustumCulled: (args.frustumCulled !== undefined) ? args.frustumCulled : Scene.DEFAULT.FRUSTUM_CULLED,
 			}
 		);
