@@ -37,4 +37,14 @@ export class Color4 extends Color3 {
 	toArray() {
 		return new Array(this.r, this.g, this.b, this.a);
 	}
+
+	lerp(color, alpha) {
+		this.r = this.r + (color.r - this.r) * alpha;
+		this.g = this.g + (color.g - this.g) * alpha;
+		this.b = this.b + (color.b - this.b) * alpha;
+		this.a = this.a + (color.a - this.a) * alpha;
+
+		
+		return this;
+	}
 };

@@ -52,4 +52,13 @@ export class Color3 {
 	toArray() {
 		return new Array(this.r, this.g, this.b);
 	}
+
+	lerp(color, alpha) {
+		this.r = this.r + (color.r - this.r) * alpha;
+		this.g = this.g + (color.g - this.g) * alpha;
+		this.b = this.b + (color.b - this.b) * alpha;
+
+		
+		return this;
+	}
 };
