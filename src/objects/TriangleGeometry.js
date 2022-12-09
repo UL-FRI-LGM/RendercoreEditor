@@ -69,7 +69,7 @@ export class TriangleGeometry extends MeshGeometry {
 			const verticesArrayBuffer = new Float32Array(verticesArray);
 			const verticesBufferDescriptor = new RCBufferDescriptor(
                 {
-                    array: verticesArrayBuffer,
+                    arrayBuffer: verticesArrayBuffer,
                     itemSize: 3,
                 }
             )
@@ -113,7 +113,7 @@ export class TriangleGeometry extends MeshGeometry {
 			const normalsArrayBuffer = new Float32Array(normalsArray);
 			const normalsBufferDescriptor = new RCBufferDescriptor(
                 {
-                    array: normalsArrayBuffer,
+                    arrayBuffer: normalsArrayBuffer,
                     itemSize: 3,
                 }
             )
@@ -148,7 +148,7 @@ export class TriangleGeometry extends MeshGeometry {
 			const uvsArrayBuffer = new Float32Array(uvsArray);
 			const uvsBufferDescriptor = new RCBufferDescriptor(
                 {
-                    array: uvsArrayBuffer,
+                    arrayBuffer: uvsArrayBuffer,
                     itemSize: 2,
                 }
             )
