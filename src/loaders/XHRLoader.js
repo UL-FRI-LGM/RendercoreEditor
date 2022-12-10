@@ -30,7 +30,7 @@ export class XHRLoader extends ObjectBase {
 	#progress = 0.0;
 
 
-	constructor (loadingManager, args = {}) {
+	constructor(args = {}) {
 		super(
 			{
 				...args, 
@@ -39,7 +39,7 @@ export class XHRLoader extends ObjectBase {
 			}
 		);
 
-		this.loadingManager = (loadingManager !== undefined) ? loadingManager : XHRLoader.DEFAULT.LOADING_MANAGER;
+		this.loadingManager = (args.loadingManager !== undefined) ? args.loadingManager : XHRLoader.DEFAULT.LOADING_MANAGER;
 		this.responseType = (args.responseType !== undefined) ? args.responseType : XHRLoader.DEFAULT.RESPONSE_TYPE;
 
 		this.onLoadStart = (args.onLoadStart !== undefined) ? args.onLoadStart : XHRLoader.DEFAULT.CALLBACK;
@@ -48,7 +48,7 @@ export class XHRLoader extends ObjectBase {
 		this.onError = (args.onError !== undefined) ? args.onError : XHRLoader.DEFAULT.CALLBACK;
 		this.onAbort = (args.onAbort !== undefined) ? args.onAbort : XHRLoader.DEFAULT.CALLBACK;
 
-		this.eventToData = (args.eventToData !== undefined) ? eventToData : XHRLoader.EVENT_TO_DATA;
+		this.eventToData = (args.eventToData !== undefined) ? args.eventToData : XHRLoader.EVENT_TO_DATA;
 	}
 
 
@@ -79,18 +79,18 @@ export class XHRLoader extends ObjectBase {
 
 
 	async load(url, args = {}) {
-		if(this.dataCache.has(url)) {
-			if(this.dataCache.get(url).loadEnd) {
+		if (this.dataCache.has(url)) {
+			if (this.dataCache.get(url).loadEnd) {
 				return new Promise((resolve, reject) => {
 					resolve(this.dataCache.get(url).data);
 				});
-			}else if(this.dataCache.get(url).loadStart) {
+			} else if (this.dataCache.get(url).loadStart) {
 				return new Promise((resolve, reject) => {
 					this.dataCache.get(url).resolves.add(resolve);
 					this.dataCache.get(url).rejects.add(reject);
 				});
 			} 
-		}else {
+		} else {
 			return new Promise((resolve, reject) => { 
 				this.dataCache.set(url, 
 					{ 
@@ -121,20 +121,21 @@ export class XHRLoader extends ObjectBase {
 				request.addEventListener("loadstart", this.#onLoadStartInternal(request, onLoadStart));
 				request.addEventListener("progress", this.#onProgressInternal(request, onProgress));
 				request.addEventListener("loadend", this.#onLoadEndInternal(request, onLoadEnd, onError, onAbort, url, eventToData));
-				request.addEventListener("error", this.#onErrorInternal(request, onError));
-				request.addEventListener("abort", this.#onAbortInternal(request, onAbort));
+				request.addEventListener("error", this.#onErrorInternal(request, onError, url));
+				request.addEventListener("abort", this.#onAbortInternal(request, onAbort, url));
 	
 				
 				// Send the request
-				// request.send();
+				request.send();
 				// Send the request
-				this.loadingManager.load(request);
+				// this.loadingManager.load(request);
 			});
 		}
 	}
 
 	#onLoadStartInternal(request, onLoadStart) {
 		return (event) => {
+			this.loadingManager.onLoadStartInternal(request)(event);
 			onLoadStart(request, event);
 		}
 	}
@@ -143,12 +144,13 @@ export class XHRLoader extends ObjectBase {
 			this.progress = event.loaded / event.total;
 
 			onProgress(request, event);
+			this.loadingManager.onProgressInternal(request)(event);
 		}
 	}
 	#onLoadEndInternal(request, onLoadEnd, onError, onAbort, url, eventToData) {
 		return (event) => {
-			if(request.readyState === 4) {
-				if(request.status === 200) {
+			if (request.readyState === 4) {
+				if (request.status === 200) {
 					const data = eventToData(event);
 
 					this.dataCache.get(url).loadStart = false;
@@ -161,34 +163,51 @@ export class XHRLoader extends ObjectBase {
 					resolveSet.clear();
 
 					onLoadEnd(request, event);
-				}else{
-					const rejectSet = this.dataCache.get(url).rejects;
-					for (const reject of rejectSet) {
-						reject(null); //reject all
-					}
-					rejectSet.clear()
+					this.loadingManager.onLoadEndInternal(request)(event);
+				} else {
+					// const rejectSet = this.dataCache.get(url).rejects;
+					// for (const reject of rejectSet) {
+					// 	reject(null); //reject all
+					// }
+					// rejectSet.clear()
 
-					onError(request, event);
+					// onError(request, event);
+					// this.loadingManager.onErrorInternal(request)(event);
 				}
-			}else {
-				const rejectSet = this.dataCache.get(url).rejects;
-				for (const reject of rejectSet) {
-					reject(null); //reject all
-				}
-				rejectSet.clear()
+			} else {
+				// const rejectSet = this.dataCache.get(url).rejects;
+				// for (const reject of rejectSet) {
+				// 	reject(null); //reject all
+				// }
+				// rejectSet.clear()
 
-				onAbort(request, event);
+				// onAbort(request, event);
+				// this.loadingManager.onAbortInternal(request)(event);
 			}
 		}
 	}
-	#onErrorInternal(request, onError) {
+	#onErrorInternal(request, onError, url) {
 		return (event) => {
+			const rejectSet = this.dataCache.get(url).rejects;
+			for (const reject of rejectSet) {
+				reject(null); //reject all
+			}
+			rejectSet.clear()
+
 			onError(request, event);
+			this.loadingManager.onErrorInternal(request)(event);
 		}
 	}
-	#onAbortInternal(request, onAbort) {
+	#onAbortInternal(request, onAbort, url) {
 		return (event) => {
+			const rejectSet = this.dataCache.get(url).rejects;
+			for (const reject of rejectSet) {
+				reject(null); //reject all
+			}
+			rejectSet.clear()
+
 			onAbort(request, event);
+			this.loadingManager.onAbortInternal(request)(event);
 		}
 	}
 };

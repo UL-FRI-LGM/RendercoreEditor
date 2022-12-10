@@ -64,52 +64,52 @@ export class LoadingManager extends ObjectBase {
 
 
 	load(request) {
-		this.requestsTotal.set(request, request);
-		this.progress = this.requestsFinished.size / this.requestsTotal.size;
-
-		request.addEventListener("loadstart", this.#onLoadStartInternal(request));
-		request.addEventListener("progress", this.#onProgressInternal(request));
-		request.addEventListener("loadend", this.#onLoadEndInternal(request));
-		request.addEventListener("error", this.#onErrorInternal(request));
-		request.addEventListener("abort", this.#onAbortInternal(request));
+		request.addEventListener("loadstart", this.onLoadStartInternal(request));
+		request.addEventListener("progress", this.onProgressInternal(request));
+		request.addEventListener("loadend", this.onLoadEndInternal(request));
+		request.addEventListener("error", this.onErrorInternal(request));
+		request.addEventListener("abort", this.onAbortInternal(request));
 
 
 		// Send the request
 		request.send();
 	}
-	#onLoadStartInternal(request) {
+	onLoadStartInternal(request) {
 		return (event) => {
+			this.requestsTotal.set(request, request);
+			// this.progress = this.requestsFinished.size / this.requestsTotal.size;
+
 			this.onLoadStart(request, event);
+			this.#onProgressInternal(request)(event);;
+		}
+	}
+	onProgressInternal(request) {
+		return (event) => {
+			// this.progress = this.requestsFinished.size / this.requestsTotal.size;
+			// this.onProgress(request, event);
 		}
 	}
 	#onProgressInternal(request) {
 		return (event) => {
+			this.progress = this.requestsFinished.size / this.requestsTotal.size;
 			this.onProgress(request, event);
 		}
 	}
-	#onLoadEndInternal(request) {
+	onLoadEndInternal(request) {
 		return (event) => {
-			// if(request.readyState === 4){
-			// 	if(request.status === 200){
-			// 		this.itemsLoaded++;
-			// 	}else{
-			// 		this.itemsLoaded++;
-			// 	}
-			// }
-
 			this.requestsFinished.set(request, request);
-			this.progress = this.requestsFinished.size / this.requestsTotal.size;
+			// this.progress = this.requestsFinished.size / this.requestsTotal.size;
 
-			this.onProgress(request, event);
+			this.#onProgressInternal(request)(event);
 			this.onLoadEnd(request, event);
 		}
 	}
-	#onErrorInternal(request) {
+	onErrorInternal(request) {
 		return (event) => {
 			this.onError(request, event);
 		}
 	}
-	#onAbortInternal(request) {
+	onAbortInternal(request) {
 		return (event) => {
 			this.onAbort(request, event);
 		}
