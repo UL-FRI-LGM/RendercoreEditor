@@ -1,6 +1,7 @@
-import { RCBufferDescriptor } from "../core/RCBufferDescriptor.js";
+import { RCBufferDescriptor } from "../core/RC/buffers/RCBufferDescriptor.js";
 import { Vector3 } from "../math/Vector3.js";
 import { MeshGeometry } from "./MeshGeometry.js";
+import { GPUVertexFormat } from "../core/ENUM/GPUVertexFormat.js";
 
 
 export class TriangleGeometry extends MeshGeometry {
@@ -71,6 +72,8 @@ export class TriangleGeometry extends MeshGeometry {
                 {
                     arrayBuffer: verticesArrayBuffer,
                     itemSize: 3,
+					shaderLocation: 0,
+					format: GPUVertexFormat.FLOAT_32x3,
                 }
             )
 
@@ -115,6 +118,8 @@ export class TriangleGeometry extends MeshGeometry {
                 {
                     arrayBuffer: normalsArrayBuffer,
                     itemSize: 3,
+					shaderLocation: 1,
+					format: GPUVertexFormat.FLOAT_32x3,
                 }
             )
 			normalsBufferDescriptor.normalize();
@@ -150,6 +155,8 @@ export class TriangleGeometry extends MeshGeometry {
                 {
                     arrayBuffer: uvsArrayBuffer,
                     itemSize: 2,
+					shaderLocation: 2,
+					format: GPUVertexFormat.FLOAT_32x2,
                 }
             )
 

@@ -1,5 +1,6 @@
-import { RCBufferDescriptor } from "../core/RCBufferDescriptor.js";
+import { RCBufferDescriptor } from "../core/RC/buffers/RCBufferDescriptor.js";
 import { MeshGeometry } from "./MeshGeometry.js";
+import { GPUVertexFormat } from "../core/ENUM/GPUVertexFormat.js";
 
 
 export class PointGeometry extends MeshGeometry {
@@ -69,6 +70,8 @@ export class PointGeometry extends MeshGeometry {
                 {
                     arrayBuffer: verticesArrayBuffer,
                     itemSize: 3,
+					shaderLocation: 0,
+					format: GPUVertexFormat.FLOAT_32x3,
                 }
             )
 
@@ -101,6 +104,8 @@ export class PointGeometry extends MeshGeometry {
                 {
                     arrayBuffer: normalsArrayBuffer,
                     itemSize: 3,
+					shaderLocation: 1,
+					format: GPUVertexFormat.FLOAT_32x3,
                 }
             )
 			// normalsBufferDescriptor.normalize(); // no need to normalize for this configuration
@@ -134,6 +139,8 @@ export class PointGeometry extends MeshGeometry {
                 {
                     arrayBuffer: uvsArrayBuffer,
                     itemSize: 2,
+					shaderLocation: 2,
+					format: GPUVertexFormat.FLOAT_32x2,
                 }
             )
 
