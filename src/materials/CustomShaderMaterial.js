@@ -120,9 +120,9 @@ export class CustomShaderMaterial extends Material {
 		this.bindGroupDescriptor.layout = this.bindGroupLayout;
 		this.bindGroup = context.createBindGroup(this.bindGroupDescriptor);
 	}
-	updateUBO(context) {
-		for (const [u_name, u_desc] of this.dirtyCache) {
-			context.queue.writeBuffer(this.buffer, u_desc.offset, u_desc.data);
+	updateBufferObject(context) {
+		for (const [name, desc] of this.dirtyCache) {
+			context.queue.writeBuffer(this.buffer, desc.bufferOffset, desc.data, desc.dataOffset, desc.size);
 		}
 		this.dirtyCache.clear();
 	}

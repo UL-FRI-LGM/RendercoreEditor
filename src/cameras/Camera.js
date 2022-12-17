@@ -5,6 +5,7 @@ import { GPUBindGroupLayoutEntry } from "../core/DICTS/GPUBindGroupLayoutEntry.j
 import { GPUBufferBindingLayout } from "../core/DICTS/GPUBufferBindingLayout.js";
 import { GPUBufferDescriptor } from "../core/DICTS/GPUBufferDescriptor.js";
 import { GPUBufferBindingType } from "../core/ENUM/GPUBufferBindingType.js";
+import { GPUBufferUsage } from "../core/NAMESPACE/GPUBufferUsage.js";
 import { GPUShaderStage } from "../core/NAMESPACE/GPUShaderStage.js";
 import { RCBufferBindingResource } from "../core/RCBufferBindingResource.js";
 import { Matrix4 } from "../math/Matrix4.js";
@@ -18,8 +19,6 @@ export class Camera extends Group {
 
 		VISIBLE: true,
 		FRUSTUM_CULLED: false,
-
-		COMBINED: false,
 	};
 
 
@@ -103,6 +102,9 @@ export class Camera extends Group {
 	}
 
 
+	get dirtyCache() { return this.#dirtyCache; }
+	set dirtyCache(dirtyCache) { this.#dirtyCache = dirtyCache; }
+
 	get modelMatrix() { return super.modelMatrix; }
 	set modelMatrix(modelMatrix) {
 		super.modelMatrix.copy(modelMatrix);
@@ -111,14 +113,14 @@ export class Camera extends Group {
 	set viewMatrix (viewMatrix) { 
 		this.#viewMatrix.copy(viewMatrix); 
 
-		this.dirtyCache.set("VMat", {offset: 0*4*16, data: new Float32Array(viewMatrix.elements)});
+		this.dirtyCache.set("VMat", {bufferOffset: 0*4*16, data: new Float32Array(viewMatrix.elements).buffer, dataOffset: 0, size: 4*16});
 	}
     get projectionMatrix () { return this.#projectionMatrix; }
 	set projectionMatrix (projectionMatrix) { 
 		this.#projectionMatrix.copy(projectionMatrix); 
 		this.projectionMatrixInverse.getInverse(projectionMatrix);
 
-		this.dirtyCache.set("PMat", {offset: 1*4*16, data: new Float32Array(projectionMatrix.elements)});
+		this.dirtyCache.set("PMat", {bufferOffset: 1*4*16, data: new Float32Array(projectionMatrix.elements).buffer, dataOffset: 0, size: 4*16});
 	}
     get projectionMatrixInverse() { return this.#projectionMatrixInverse; }
 	set projectionMatrixInverse(projectionMatrixInverse) { this.#projectionMatrixInverse.copy(projectionMatrixInverse); }
@@ -130,9 +132,6 @@ export class Camera extends Group {
 	get PMatInv() { return this.projectionMatrixInverse; }
 	set PMatInv(PMatInv) { this.projectionMatrixInverse = PMatInv; }
 
-	get dirtyCache() { return this.#dirtyCache; }
-	set dirtyCache(dirtyCache) { this.#dirtyCache = dirtyCache; }
-
 
 	create(context) {
 		this.buffer = context.createBuffer(this.bufferDescriptor);
@@ -141,9 +140,9 @@ export class Camera extends Group {
 		this.bindGroupDescriptor.layout = this.bindGroupLayout;
 		this.bindGroup = context.createBindGroup(this.bindGroupDescriptor);
 	}
-	updateUBO(context) {
-		for (const [u_name, u_desc] of this.dirtyCache) {
-			context.queue.writeBuffer(this.buffer, u_desc.offset, u_desc.data);
+	updateBufferObject(context) {
+		for (const [name, desc] of this.dirtyCache) {
+			context.queue.writeBuffer(this.buffer, desc.bufferOffset, desc.data, desc.dataOffset, desc.size);
 		}
 		this.dirtyCache.clear();
 	}

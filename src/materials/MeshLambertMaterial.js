@@ -107,11 +107,11 @@ export class MeshLambertMaterial extends CustomShaderMaterial {
 	get emissive() { return this.#emissive; }
 	set emissive(emissive) { 
 		this.#emissive = emissive;
-		this.setUniform("emissive", {offset: 0*4*4, data: emissive.arrayBuffer});
+		this.setUniform("emissive", {bufferOffset: 0*4*4, data: emissive.arrayBuffer.buffer, dataOffset: 0, size: 4*4});
 	}
 	get diffuse() { return this.#diffuse; }
 	set diffuse(diffuse) { 
 		this.#diffuse = diffuse;
-		this.setUniform("diffuse", {offset: 1*4*4, data: diffuse.arrayBuffer});
+		this.setUniform("diffuse", {bufferOffset: 1*4*4, data: diffuse.arrayBuffer.buffer, dataOffset: 0, size: 4*4});
 	}
 };
