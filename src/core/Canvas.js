@@ -1,13 +1,26 @@
+// A GPUCanvasContext object is created via the getContext() method of an HTMLCanvasElement instance by passing the string literal 'webgpu' as its contextType argument.
+
+
 import { ObjectBase } from './ObjectBase.js';
 
 
-export class Canvas extends ObjectBase {
+export class Canvas extends ObjectBase { //GPUCanvasContext
+
+
+	// readonly attribute (HTMLCanvasElement or OffscreenCanvas) canvas;
+
+    // undefined configure(GPUCanvasConfiguration configuration);
+    // undefined unconfigure();
+
+    // GPUTexture getCurrentTexture();
+
+
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "Canvas",
 
-		PARENT_DOM: null,
-		CANVAS_DOM: Canvas.#generateCanvasDOM(),
+		PARENT: null,
+		CANVAS: Canvas.#generateCanvas(),
 
 		CONTEXT: null,
 
@@ -15,8 +28,9 @@ export class Canvas extends ObjectBase {
 	};
 
 
-	#parentDOM;
-	#canvasDOM;
+	#parent;
+	// readonly attribute (HTMLCanvasElement or OffscreenCanvas) canvas;
+	#canvas;
 
 	#context;
 
@@ -32,30 +46,30 @@ export class Canvas extends ObjectBase {
 			}
 		);
 
-		this.parentDOM = (args.parentDOM !== undefined) ? args.parentDOM : Canvas.DEFAULT.PARENT_DOM;
-		this.canvasDOM = (args.canvasDOM !== undefined) ? args.canvasDOM : Canvas.DEFAULT.CANVAS_DOM;
+		this.parent = (args.parent !== undefined) ? args.parent : Canvas.DEFAULT.PARENT;
+		this.canvas = (args.canvas !== undefined) ? args.canvas : Canvas.DEFAULT.CANVAS;
 
+		this.context = (args.contextType !== undefined) ? this.getContext(args.contextType, args.contextAttributes) : Canvas.DEFAULT.CONTEXT;
+	
 		this.pixelRatio = (args.pixelRatio !== undefined) ? args.pixelRatio : Canvas.DEFAULT.PIXEL_RATIO;
-
-		this.context = (args.contextType !== undefined) ? this.canvasDOM.getContext(args.contextType) : Canvas.DEFAULT.CONTEXT;
 	}
 
 
-	get parentDOM() { return this.#parentDOM; }
-	set parentDOM(parentDOM) {
-		this.#parentDOM = parentDOM;
+	get parent() { return this.#parent; }
+	set parent(parent) {
+		this.#parent = parent;
 
-		if (this.canvasDOM) {
-			this.parentDOM.appendChild(this.canvasDOM);
+		if (this.canvas) {
+			this.parent.appendChild(this.canvas);
 			this.updateSize();
 		}
 	}
-	get canvasDOM() { return this.#canvasDOM; }
-	set canvasDOM(canvasDOM) {
-		this.#canvasDOM = canvasDOM;
+	get canvas() { return this.#canvas; }
+	set canvas(canvas) {
+		this.#canvas = canvas;
 
-		if (this.parentDOM) {
-			this.parentDOM.appendChild(this.canvasDOM);
+		if (this.parent) {
+			this.parent.appendChild(this.canvas);
 			this.updateSize();
 		}
 	}
@@ -63,13 +77,13 @@ export class Canvas extends ObjectBase {
 	get context() { return this.#context; }
 	set context(context) { this.#context = context; }
 
-	get width() { return this.canvasDOM.width; }
+	get width() { return this.canvas.width; }
 	set width(width) { 
-		this.canvasDOM.width = width; 
+		this.canvas.width = width; 
 	}
-	get height() { return this.canvasDOM.height; }
+	get height() { return this.canvas.height; }
 	set height(height) { 
-		this.canvasDOM.height = height; 
+		this.canvas.height = height; 
 	}
 	get aspect() { return this.width / this.height; }
 	get pixelRatio() { return this.#pixelRatio; }
@@ -80,25 +94,43 @@ export class Canvas extends ObjectBase {
 	}
 
 	
-	static #generateCanvasDOM() {
-		const canvasDOM = document.createElement("canvas");
+	static #generateCanvas() {
+		const canvas = document.createElement("canvas");
 
 		//make it visually fill the positioned parent
 		//set the display size of the canvas
-		canvasDOM.style.width = "100%";
-		canvasDOM.style.height = "100%";
-		canvasDOM.style.padding = '0';
-		canvasDOM.style.margin = '0';
-		//canvasDOM.style.border = "1px solid";
+		canvas.style.width = "100%";
+		canvas.style.height = "100%";
+		canvas.style.padding = '0';
+		canvas.style.margin = '0';
+		//canvas.style.border = "1px solid";
 
 
-		return canvasDOM;
+		return canvas;
 	}
 
 	updateSize() {
 		//set the internal size to match
 		//set the size of the drawing buffer
-		this.canvasDOM.width = Math.floor(this.canvasDOM.clientWidth * this.pixelRatio);
-		this.canvasDOM.height = Math.floor(this.canvasDOM.clientHeight * this.pixelRatio);
+		this.canvas.width = Math.floor(this.canvas.clientWidth * this.pixelRatio);
+		this.canvas.height = Math.floor(this.canvas.clientHeight * this.pixelRatio);
+	}
+
+	getContext(contextType, contextAttributes) {
+		return this.canvas.getContext(contextType, contextAttributes);
+	}
+
+	// undefined configure(GPUCanvasConfiguration configuration);
+	configure(configuration) {
+		this.canvas.configure(configuration);
+	}
+	 // undefined unconfigure();
+    unconfigure() {
+		this.canvas.unconfigure();
+	}
+
+	// GPUTexture getCurrentTexture();
+	getCurrentTexture() {
+		return this.canvas.getCurrentTexture();
 	}
 }
