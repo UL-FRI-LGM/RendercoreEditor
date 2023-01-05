@@ -1,5 +1,5 @@
-import { LoadingManager } from "./LoadingManager.js";
 import { XHRLoader } from "./XHRLoader.js";
+import { LoadingManager } from "./LoadingManager.js";
 
 
 export class ShaderLoader extends XHRLoader {
