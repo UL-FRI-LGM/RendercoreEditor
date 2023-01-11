@@ -68,10 +68,12 @@ export class PointGeometry extends MeshGeometry {
 			const verticesArrayBuffer = new Float32Array(verticesArray);
 			const verticesBufferDescriptor = new RCBufferDescriptor(
                 {
-                    arrayBuffer: verticesArrayBuffer,
+					size: verticesArrayBuffer.length,
                     itemSize: 3,
 					shaderLocation: 0,
 					format: GPUVertexFormat.FLOAT_32x3,
+
+					arrayBuffer: verticesArrayBuffer,
                 }
             )
 
@@ -102,10 +104,12 @@ export class PointGeometry extends MeshGeometry {
 			const normalsArrayBuffer = new Float32Array(normalsArray);
 			const normalsBufferDescriptor = new RCBufferDescriptor(
                 {
-                    arrayBuffer: normalsArrayBuffer,
+					size: normalsArrayBuffer.length,
                     itemSize: 3,
 					shaderLocation: 1,
 					format: GPUVertexFormat.FLOAT_32x3,
+
+					arrayBuffer: normalsArrayBuffer,
                 }
             )
 			// normalsBufferDescriptor.normalize(); // no need to normalize for this configuration
@@ -137,10 +141,12 @@ export class PointGeometry extends MeshGeometry {
 			const uvsArrayBuffer = new Float32Array(uvsArray);
 			const uvsBufferDescriptor = new RCBufferDescriptor(
                 {
-                    arrayBuffer: uvsArrayBuffer,
+					size: uvsArrayBuffer.length,
                     itemSize: 2,
 					shaderLocation: 2,
 					format: GPUVertexFormat.FLOAT_32x2,
+
+					arrayBuffer: uvsArrayBuffer,
                 }
             )
 

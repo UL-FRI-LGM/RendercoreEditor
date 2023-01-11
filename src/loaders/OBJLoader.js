@@ -318,23 +318,30 @@ export class OBJLoader extends XHRLoader {
 			const meshGeometry = new MeshGeometry();
 
 			// Add position of vertices
+			const verticesArrayBuffer = new Float32Array(geometry.vertices);
 			meshGeometry.vertices = new RCBufferDescriptor(
 				{
-					arrayBuffer: new Float32Array(geometry.vertices), 
+					size: verticesArrayBuffer.length,
 					itemSize: 3,
 					shaderLocation: 0,
 					format: GPUVertexFormat.FLOAT_32x3,
+
+					arrayBuffer: verticesArrayBuffer, 
 				}
 			);
 
 			// Check if normals are specified. Otherwise calculate them
 			if (geometry.normals.length > 0) {
+				const normalsArrayBuffer = new Float32Array(geometry.normals);
+
 				meshGeometry.normals = new RCBufferDescriptor(
 					{
-						arrayBuffer: new Float32Array(geometry.normals),
+						size: normalsArrayBuffer.length,
 						itemSize: 3,
 						shaderLocation: 1,
 						format: GPUVertexFormat.FLOAT_32x3,
+
+						arrayBuffer: normalsArrayBuffer,
 					}
 				);
 			} else {
@@ -343,12 +350,16 @@ export class OBJLoader extends XHRLoader {
 
 			// If specified add texture uv-s
 			if (geometry.uvs.length > 0) {
+				const uvsArrayBuffer =  new Float32Array(geometry.uvs);
+
 				meshGeometry.uv = new RCBufferDescriptor(
 					{
-						arrayBuffer: new Float32Array(geometry.uvs),
+						size: uvsArrayBuffer.length,
 						itemSize: 2,
 						shaderLocation: 2,
 						format: GPUVertexFormat.FLOAT_32x2,
+
+						arrayBuffer: uvsArrayBuffer,
 					}
 				);
 			}
