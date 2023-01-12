@@ -352,7 +352,7 @@ export class OBJLoader extends XHRLoader {
 			if (geometry.uvs.length > 0) {
 				const uvsArrayBuffer =  new Float32Array(geometry.uvs);
 
-				meshGeometry.uv = new RCBufferDescriptor(
+				meshGeometry.uvs = new RCBufferDescriptor(
 					{
 						size: uvsArrayBuffer.length,
 						itemSize: 2,
