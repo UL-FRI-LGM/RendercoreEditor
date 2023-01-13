@@ -4,7 +4,7 @@
 import { ObjectBase } from './ObjectBase.js';
 
 
-export class Canvas extends ObjectBase { //GPUCanvasContext
+export class Canvas extends ObjectBase { //GPUCanvasContext //RC canvas object (wrapper)
 
 
 	// readonly attribute (HTMLCanvasElement or OffscreenCanvas) canvas;
@@ -20,24 +20,30 @@ export class Canvas extends ObjectBase { //GPUCanvasContext
 		TYPE: "Canvas",
 
 		PARENT: null,
+		VIEWPORT: { width: 1280, height: 720 },
+		WIDTH: 1280,
+		HEIGHT: 720,
+		PIXEL_RATIO: window.devicePixelRatio || 1,
+
 		CANVAS: Canvas.#generateCanvas(),
 
 		CONTEXT: null,
-
-		PIXEL_RATIO: window.devicePixelRatio || 1,
 	};
 
 
-	#parent;
 	// readonly attribute (HTMLCanvasElement or OffscreenCanvas) canvas;
-	#canvas;
+	#canvas = Canvas.DEFAULT.CANVAS.cloneNode(true);
+
+	#parent;
+	#viewport = Canvas.DEFAULT.VIEWPORT;
+	#width = Canvas.DEFAULT.WIDTH;
+	#height = Canvas.DEFAULT.HEIGHT;
+	#pixelRatio;
 
 	#context;
 
-	#pixelRatio;
 
-
-	constructor(args = {}) {
+	constructor(contextType, args = {}) {
 		super(
 			{
 				...args,
@@ -46,24 +52,18 @@ export class Canvas extends ObjectBase { //GPUCanvasContext
 			}
 		);
 
+		this.canvas = (args.canvas !== undefined) ? args.canvas : this.canvas;
+
 		this.parent = (args.parent !== undefined) ? args.parent : Canvas.DEFAULT.PARENT;
-		this.canvas = (args.canvas !== undefined) ? args.canvas : Canvas.DEFAULT.CANVAS;
-
-		this.context = (args.contextType !== undefined) ? this.getContext(args.contextType, args.contextAttributes) : Canvas.DEFAULT.CONTEXT;
-	
+		this.viewport = (args.viewport !== undefined) ? args.viewport : { width: this.canvas.clientWidth , height: this.canvas.clientHeight };
+		this.width = (args.width !== undefined) ? args.width : this.width;
+        this.height = (args.height !== undefined) ? args.height : this.height;
 		this.pixelRatio = (args.pixelRatio !== undefined) ? args.pixelRatio : Canvas.DEFAULT.PIXEL_RATIO;
+
+		this.context = (contextType !== undefined) ? this.getContext(contextType, args.contextAttributes) : Canvas.DEFAULT.CONTEXT;
 	}
 
 
-	get parent() { return this.#parent; }
-	set parent(parent) {
-		this.#parent = parent;
-
-		if (this.canvas) {
-			this.parent.appendChild(this.canvas);
-			this.updateSize();
-		}
-	}
 	get canvas() { return this.#canvas; }
 	set canvas(canvas) {
 		this.#canvas = canvas;
@@ -74,24 +74,57 @@ export class Canvas extends ObjectBase { //GPUCanvasContext
 		}
 	}
 
-	get context() { return this.#context; }
-	set context(context) { this.#context = context; }
+	get parent() { return this.#parent; }
+	set parent(parent) {
+		this.#parent = parent;
 
-	get width() { return this.canvas.width; }
-	set width(width) { 
-		this.canvas.width = width; 
+		if (this.canvas) {
+			this.parent.appendChild(this.canvas);
+			this.updateSize();
+		}
 	}
-	get height() { return this.canvas.height; }
-	set height(height) { 
-		this.canvas.height = height; 
+	get viewport() { return this.#viewport; }
+	set viewport(viewport) {
+		this.#viewport = viewport;
+
+		this.#width = viewport.width;
+		this.#height = viewport.height;
+
+		this.#canvas.width = Math.floor(viewport.width * this.pixelRatio);
+		this.#canvas.height = Math.floor(viewport.height * this.pixelRatio);
+	}
+	get width() { return this.#width; }
+	set width(width) {
+		this.#viewport.width = width;
+
+		this.#width = width;
+
+		this.#canvas.width = Math.floor(width * this.pixelRatio);
+	}
+	get height() { return this.#height; }
+	set height(height) {
+		this.#viewport.height = height;
+
+		this.#height = height;
+
+		this.#canvas.height = Math.floor(height * this.pixelRatio);
 	}
 	get aspect() { return this.width / this.height; }
 	get pixelRatio() { return this.#pixelRatio; }
 	set pixelRatio(pixelRatio) { 
 		this.#pixelRatio = pixelRatio; 
 
-		this.updateSize();
+		this.#canvas.width = Math.floor(this.width * pixelRatio);
+		this.#canvas.height = Math.floor(this.height * pixelRatio);
 	}
+
+	get clientWidth() { return this.canvas.clientWidth; }
+	get clientHeight() { return this.canvas.clientHeight; }
+	get bufferWidth() { return this.canvas.width; }
+	get bufferHeight() { return this.canvas.height; }
+
+	get context() { return this.#context; }
+	set context(context) { this.#context = context; }
 
 	
 	static #generateCanvas() {
@@ -112,8 +145,17 @@ export class Canvas extends ObjectBase { //GPUCanvasContext
 	updateSize() {
 		//set the internal size to match
 		//set the size of the drawing buffer
-		this.canvas.width = Math.floor(this.canvas.clientWidth * this.pixelRatio);
-		this.canvas.height = Math.floor(this.canvas.clientHeight * this.pixelRatio);
+		
+		const width = this.canvas.clientWidth;
+		const height = this.canvas.clientHeight;
+
+		this.#viewport = { width: width, height: height };
+
+		this.#width = width;
+		this.#height = height;
+
+		this.#canvas.width = Math.floor(width * this.pixelRatio);
+		this.#canvas.height = Math.floor(height * this.pixelRatio);
 	}
 
 	getContext(contextType, contextAttributes) {
@@ -133,4 +175,4 @@ export class Canvas extends ObjectBase { //GPUCanvasContext
 	getCurrentTexture() {
 		return this.canvas.getCurrentTexture();
 	}
-}
+};
