@@ -164,15 +164,15 @@ export class Canvas extends ObjectBase { //GPUCanvasContext //RC canvas object (
 
 	// undefined configure(GPUCanvasConfiguration configuration);
 	configure(configuration) {
-		this.canvas.configure(configuration);
+		this.context.configure(configuration);
 	}
 	 // undefined unconfigure();
     unconfigure() {
-		this.canvas.unconfigure();
+		this.context.unconfigure();
 	}
 
 	// GPUTexture getCurrentTexture();
 	getCurrentTexture() {
-		return this.canvas.getCurrentTexture();
+		return this.context.getCurrentTexture();
 	}
 };
