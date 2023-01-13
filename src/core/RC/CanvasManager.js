@@ -1,4 +1,5 @@
 import { Canvas } from "../Canvas.js";
+import { CanvasConfiguration } from "../CanvasConfiguration.js";
 import { CanvasDescriptor } from "../PRIMITIVES/canvas rendering/CanvasDescriptor.js";
 
 
@@ -7,18 +8,21 @@ export class CanvasManager { //RC canvas context manager
 
 	#api;
 	#descriptor;
+	#configuration;
 
 	#canvas;
 	// #context;
 
 
-	constructor(api, args = {}) {
+	constructor(api, context, args = {}) {
 		this.api = api;
 		this.descriptor = new CanvasDescriptor(api, args);
+		this.configuration = new CanvasConfiguration(context, args);
 
 		// this.canvas = this.descriptor.canvas;
 		// this.context = this.descriptor.context;
 		this.canvas = new Canvas(this.descriptor.api, this.descriptor);
+		this.canvas.configure(this.configuration);
 	}
 
 
