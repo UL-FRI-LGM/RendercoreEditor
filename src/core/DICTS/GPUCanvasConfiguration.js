@@ -1,4 +1,5 @@
 import { GPUCanvasAlphaMode } from "../ENUM/GPUCanvasAlphaMode.js";
+import { PredefinedColorSpace } from "../ENUM/PredefinedColorSpace.js";
 import { GPUTextureUsage } from "../NAMESPACE/GPUTextureUsage.js";
 
 
@@ -17,7 +18,7 @@ export class GPUCanvasConfiguration {
     #format;
     #usage = GPUTextureUsage.RENDER_ATTACHMENT;
     #viewFormats = new Array();
-    #colorSpace;
+    #colorSpace = PredefinedColorSpace.SRGB;
     #alphaMode = GPUCanvasAlphaMode.OPAQUE;
 
 
