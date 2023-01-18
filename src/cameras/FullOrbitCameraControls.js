@@ -173,7 +173,7 @@ export class FullOrbitCameraControls {
 	// 	this.cameraP.position = newPosition;
 	// 	this.#position.copy(newPosition);
 
-	// 	if (this.marker) this.marker.scale = new Vector3(1.0, 1.0, 1.0).multiplyScalar(newRadius / 32);
+	// 	if (this.marker) this.marker.scaling = new Vector3(1.0, 1.0, 1.0).multiplyScalar(newRadius / 32);
 	// }
 	get radius() { return this.#radius; }
 	set radius(radius) { 
@@ -191,7 +191,7 @@ export class FullOrbitCameraControls {
 		this.#position.copy(newPosition);
 		this.cameraP.position = newPosition;
 
-		if (this.marker) this.marker.scale = new Vector3(1.0, 1.0, 1.0).multiplyScalar(this.radius / 32);
+		if (this.marker) this.marker.scaling = new Vector3(1.0, 1.0, 1.0).multiplyScalar(this.radius / 32);
 	}
 
 	get clampMin() { return this.#clampMin; }
@@ -411,12 +411,16 @@ export class FullOrbitCameraControls {
 		if (keyboard.size > 0) {
 			const keyboardVecotr = this.#getKeyboardVectors(keyboard, time.delta);
 			this.#applyKeyboardTransform(keyboardVecotr);
+
+			if (this.marker) this.marker.position = this.orbitCenter;
 		}
 
 		if (mouse.buttons.left && !mouse.buttons.middle && !mouse.buttons.right && this.enableRotation) {
 			const mouseVectors = this.#getMouseVectors(mouse, time.delta);
 			this.#applyLeftTransform(mouseVectors);
 	
+			if (this.marker) this.marker.position = this.orbitCenter;
+
 			if (this.enableInertia) {
 				this.inertiaType = 0;
 				this.translationInertia = mouseVectors.translation;
@@ -428,6 +432,8 @@ export class FullOrbitCameraControls {
 			const mouseVectors = this.#getMouseVectors(mouse, time.delta);
 			this.#applyMiddleTransform(mouseVectors);
 	
+			if (this.marker) this.marker.position = this.orbitCenter;
+
 			if (this.enableInertia) {
 				this.inertiaType = 1;
 				this.translationInertia = mouseVectors.translation;
@@ -439,6 +445,8 @@ export class FullOrbitCameraControls {
 			const mouseVectors = this.#getMouseVectors(mouse, time.delta);
 			this.#applyRightTransform(mouseVectors);
 	
+			if (this.marker) this.marker.position = this.orbitCenter;
+
 			if (this.enableInertia) {
 				this.inertiaType = 2;
 				this.translationInertia = mouseVectors.translation;
@@ -450,15 +458,14 @@ export class FullOrbitCameraControls {
 			const zoomScale = this.#getZoomScale(mouse, time.delta);
 			this.#applyZoomTransform(zoomScale);
 
+			if (this.marker) this.marker.position = this.orbitCenter;
+			
 			if (this.enableInertia) {
 				this.inertiaType = 3;
 				this.translationInertia = zoomScale.translation;
 				this.rotationInertia = zoomScale.rotation;
 			}
 		}
-	
-	
-		if (this.marker) this.marker.position = this.orbitCenter;
 	
 	
 		if(this.enableInertia && (this.translationInertia.length() > 0.001 || this.#rotationInertia.length() > 0.001)) {
