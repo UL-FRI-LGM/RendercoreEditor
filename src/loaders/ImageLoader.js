@@ -11,7 +11,7 @@ export class ImageLoader extends XHRLoader {
 		RESPONSE_TYPE: "blob",
 		CALLBACK: () => {},
 	};
-	static EVENT_TO_DATA = (event) => { return ImageLoader.parse(event.target.response); };
+	static EVENT_TO_DATA = async (event) => { return await ImageLoader.parse(event.target.response); };
 
 
 	constructor(args = {}) {
@@ -61,11 +61,36 @@ export class ImageLoader extends XHRLoader {
 		return promise;
 	}
 
-	static parse(blob) {
+	static async parse(blob) {
 		const image = new Image();
 		image.src = window.URL.createObjectURL(blob);
+		await image.decode();
+
+		const imageBitmap = await window.createImageBitmap(image);
+		const imageData = ImageLoader.imageBitmapToImageData(imageBitmap, false, true);
 
 
-		return image;
+		return imageData;
 	}
+
+	static imageBitmapToImageData(imageBitmap, flipH, flipV) {
+		const width = imageBitmap.width;
+		const height = imageBitmap.height;
+	
+		const oc = new OffscreenCanvas(width, height);
+		const ctx = oc.getContext("2d");
+	
+		const scaleH = flipH ? -1 : 1;
+		const scaleV = flipV ? -1 : 1;
+		const posX = flipH ? width * -1 : 0;
+		const posY = flipV ? height * -1 : 0;
+		
+		ctx.scale(scaleH, scaleV);
+		ctx.drawImage(imageBitmap, posX, posY, width, height);
+
+		const imageData = ctx.getImageData(0, 0, width, height);
+
+
+		return imageData;
+	};
 };

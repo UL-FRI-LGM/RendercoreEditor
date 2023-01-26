@@ -148,10 +148,10 @@ export class XHRLoader extends ObjectBase {
 		}
 	}
 	#onLoadEndInternal(request, onLoadEnd, onError, onAbort, url, eventToData) {
-		return (event) => {
+		return async (event) => {
 			if (request.readyState === 4) {
 				if (request.status === 200) {
-					const data = eventToData(event);
+					const data = await eventToData(event);
 
 					this.dataCache.get(url).loadStart = false;
 					this.dataCache.get(url).loadEnd = true;
