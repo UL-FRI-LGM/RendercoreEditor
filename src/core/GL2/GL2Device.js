@@ -1,4 +1,4 @@
-export class GLDevice { //GL device descriptor
+export class GL2Device { //GL device wrapper
 
 
     #device;

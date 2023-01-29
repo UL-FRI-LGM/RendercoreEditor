@@ -1,21 +1,18 @@
-import { ContextDescriptorBase } from "../core/ContextDescriptorBase.js";
-import { GLDevice } from "./GLDevice.js";
+import { GL2Device } from "./GL2Device.js";
 
 
-export class GLContextDescriptor extends ContextDescriptorBase { //WebGL context descriptor
+export class GL2Context { //WebGL context wrapper
 
 
     #device
-
     #context;
 
 
     constructor(args = {}) {
         return (async () => {
-            super(args);
+            // super(args);
 
-            this.device = await new GLDevice(this.adapter, args.deviceDescriptor);
-
+            this.device = await new GL2Device(this.adapter, args.deviceDescriptor);
             this.context = null;
 
 
@@ -26,7 +23,6 @@ export class GLContextDescriptor extends ContextDescriptorBase { //WebGL context
 
     get device() { return this.#device; }
     set device(device) { this.#device = device; }
-
     get context() { return this.#context; }
     set context(context) { this.#context = context; }
 };

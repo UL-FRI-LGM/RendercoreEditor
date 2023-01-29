@@ -1,11 +1,7 @@
 // A GPUAdapter encapsulates an adapter, and describes its capabilities (features and limits).
 
 
-import { GPURequestAdapterOptions } from "../DICTS/GPURequestAdapterOptions.js";
-import { GPUPowerPreference } from "../ENUM/GPUPowerPreference.js";
-
-
-export class GPUAdapter { //GPU adapter descriptor
+export class GPUAdapter { //GPU adapter wrapper
 
 
     // [SameObject] readonly attribute GPUSupportedFeatures features;
@@ -16,27 +12,8 @@ export class GPUAdapter { //GPU adapter descriptor
     // Promise<GPUAdapterInfo> requestAdapterInfo(optional sequence<DOMString> unmaskHints = []);
 
 
-    static DEFAULT = {
-        DESCRIPTOR: new GPURequestAdapterOptions(
-            {
-                powerPreference: GPUPowerPreference.HIGH_PERFORMANCE, 
-                forceFallbackAdapter: false, 
-            }
-        ),
-    };
-    static FALLBACK = {
-        DESCRIPTOR: new GPURequestAdapterOptions(
-            {
-                powerPreference: GPUPowerPreference.HIGH_PERFORMANCE, 
-                forceFallbackAdapter: true, 
-            }
-        ),
-    };
-
-
     #gpu;
     #options;
-
     #adapter;
 
 
@@ -45,7 +22,6 @@ export class GPUAdapter { //GPU adapter descriptor
 
             this.gpu = gpu;
             this.options = options;
-
             this.adapter = await gpu.requestAdapter(options);
           
             
@@ -58,7 +34,6 @@ export class GPUAdapter { //GPU adapter descriptor
     set gpu(gpu) { this.#gpu = gpu; }
     get options() { return this.#options; }
     set options(options) { this.#options = options; }
-
     get adapter() { return this.#adapter; }
     set adapter(adapter) { this.#adapter = adapter; }
 
@@ -74,9 +49,9 @@ export class GPUAdapter { //GPU adapter descriptor
 
 
     async requestDevice(descriptor) {
-        return this.adapter.requestDevice(descriptor);
+        return await this.adapter.requestDevice(descriptor);
     }
     async requestInfo(unmaskHints = []) {
-        return this.adapter.requestAdapterInfo(unmaskHints);
+        return await this.adapter.requestAdapterInfo(unmaskHints);
     }
 };

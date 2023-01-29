@@ -1,39 +1,38 @@
-import { API } from "../RenderCore.js";
-import { GLContextDescriptor } from "../GL/GLContextDescriptor.js";
-import { GPUContextDescriptor } from "./GPUContextDescriptor.js";
+import { DescriptorBase } from "./RC/DescriptorBase.js";
 
 
-export class ContextDescriptor { //RC context descriptor
+export class ContextDescriptor extends DescriptorBase { //RC context descriptor
 
 
-    #api;
-    #descriptor;
+    #powerPreference;
+    #forceFallbackAdapter;
 
-    #context;
-
-
-    constructor(api, descriptor) {
-        return (async () => {
-            this.api = api;
-            this.descriptor = descriptor;
-
-            if(api === API.WEBGL2){
-                this.context = (await new GLContextDescriptor(descriptor)).context;
-            }else if(api === API.WEBGPU){
-                this.context = (await new GPUContextDescriptor(descriptor)).context;
-            }
+    #requiredFeatures;
+    #requiredLimits;
+    #defaultQueue;
 
 
-            return this;
-        })();
+    constructor(args = {}) {
+        super(args);
+
+        this.powerPreference = args.powerPreference !== undefined ? args.powerPreference : undefined;
+        this.forceFallbackAdapter = args.forceFallbackAdapter !== undefined ? args.forceFallbackAdapter : false;
+
+        this.requiredFeatures = (args.requiredFeatures !== undefined) ? args.requiredFeatures : undefined;
+        this.requiredLimits = (args.requiredLimits !== undefined) ? args.requiredLimits : undefined;
+        this.defaultQueue = (args.defaultQueue !== undefined) ? args.defaultQueue : undefined;
     }
 
 
-    get api() { return this.#api; }
-    set api(api) { this.#api = api; }
-    get descriptor() { return this.#descriptor; }
-    set descriptor(descriptor) { this.#descriptor = descriptor; }
+    get powerPreference() { return this.#powerPreference; }
+    set powerPreference(powerPreference) { this.#powerPreference = powerPreference; }
+    get forceFallbackAdapter() { return this.#forceFallbackAdapter; }
+    set forceFallbackAdapter(forceFallbackAdapter) { this.#forceFallbackAdapter = forceFallbackAdapter; }
 
-    get context() { return this.#context; }
-    set context(context) { this.#context = context; }
+    get requiredFeatures() { return this.#requiredFeatures; }
+    set requiredFeatures(requiredFeatures) { this.#requiredFeatures = requiredFeatures; }
+    get requiredLimits() { return this.#requiredLimits; }
+    set requiredLimits(requiredLimits) { this.#requiredLimits = requiredLimits; }
+    get defaultQueue() { return this.#defaultQueue; }
+    set defaultQueue(defaultQueue) { this.#defaultQueue = defaultQueue; }
 };

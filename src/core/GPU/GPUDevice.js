@@ -2,10 +2,7 @@
 // GPUDevice is the top-level interface through which WebGPU interfaces are created.
 
 
-import { GPUDeviceDescriptor } from "../DICTS/GPUDeviceDescriptor.js";
-
-
-export class GPUDevice { //GPU device descriptor
+export class GPUDevice { //GPU device wrapper
 
 
     // [SameObject] readonly attribute GPUSupportedFeatures features;
@@ -36,18 +33,8 @@ export class GPUDevice { //GPU device descriptor
     // GPUQuerySet createQuerySet(GPUQuerySetDescriptor descriptor);
 
 
-    static DEFAULT = {
-        DESCRIPTOR: new GPUDeviceDescriptor({
-            requiredFeatures: [], 
-            requiredLimits: {}, 
-            defaultQueue: {}, 
-        }),
-    };
-
-
     #adapter;
     #descriptor;
-
     #device;
 
 
@@ -56,23 +43,7 @@ export class GPUDevice { //GPU device descriptor
 
             this.adapter = adapter;
             this.descriptor = descriptor;
-
             this.device = await adapter.requestDevice(descriptor);
-            this.device.lost.then((info) => {
-                console.error(`WebGPU device was lost: ${info.message}`);
-                console.error(info);
-        
-                this.device = null;
-        
-                // Many causes for lost devices are transient, so applications should try getting a
-                // new device once a previous one has been lost unless the loss was caused by the
-                // application intentionally destroying the device. Note that any WebGPU resources
-                // created with the previous device (buffers, textures, etc) will need to be
-                // re-created with the new one.
-                if (info.reason !== "destroyed") {
-                    // initialize
-                }
-            });
 
             
             return this;
@@ -84,7 +55,6 @@ export class GPUDevice { //GPU device descriptor
     set adapter(adapter) { this.#adapter = adapter; }
     get descriptor() { return this.#descriptor}
     set descriptor(descriptor) { this.#descriptor = descriptor; }
-
     get device() { return this.#device; }
     set device(device) { this.#device = device; } 
 
