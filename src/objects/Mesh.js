@@ -33,6 +33,14 @@ import { GPUCullMode } from "../core/ENUM/GPUCullMode.js";
 import { GPUMultisampleState } from "../core/DICTS/GPUMultisampleState.js";
 import { GPUBufferUsage } from "../core/NAMESPACE/GPUBufferUsage.js";
 import { GPUShaderStage } from "../core/NAMESPACE/GPUShaderStage.js";
+import { GPUColorWrite } from "../core/NAMESPACE/GPUColorWrite.js";
+import { GPUBlendState } from "../core/DICTS/GPUBlendState.js";
+import { GPUBlendComponent } from "../core/DICTS/GPUBlendComponent.js";
+import { GPUBlendOperation } from "../core/ENUM/GPUBlendOperation.js";
+import { GPUBlendFactor } from "../core/ENUM/GPUBlendFactor.js";
+import { GPUSamplerBindingLayout } from "../core/DICTS/GPUSamplerBindingLayout.js";
+import { GPUSamplerBindingType } from "../core/ENUM/GPUSamplerBindingType.js";
+import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
 
 
 export class Mesh extends Group {
@@ -51,6 +59,8 @@ export class Mesh extends Group {
 		INSTANCED: false,
 		INSTANCED_TRANSLATION: false,
 		INSTANCE_COUNT: 1,
+		FIRST_VERTEX: 0,
+		FIRST_INSTANCE: 0,
 	};
 
 
@@ -62,6 +72,8 @@ export class Mesh extends Group {
 	#instanced;
 	#instancedTranslation;
 	#instanceCount;
+	#firstVertex = 0;
+	#firstInstance = 0;
 
 
 	constructor(args = {}) {
@@ -84,14 +96,21 @@ export class Mesh extends Group {
 		this.instanced = (args.instanced !== undefined) ? args.instanced : Mesh.DEFAULT.INSTANCED;
 		this.instancedTranslation = (args.instancedTranslation !== undefined) ? args.instancedTranslation : Mesh.DEFAULT.INSTANCED_TRANSLATION;
 		this.instanceCount = (args.instanceCount !== undefined) ? args.instanceCount : Mesh.DEFAULT.INSTANCE_COUNT;
+		this.firstVertex = (args.firstVertex !== undefined) ? args.firstVertex : Mesh.DEFAULT.FIRST_VERTEX;
+		this.firstInstance = (args.firstInstance !== undefined) ? args.firstInstance : Mesh.DEFAULT.FIRST_INSTANCE;
 
-		this.bufferDescriptor = new GPUBufferDescriptor(
+		this.bufferDescriptor = new BufferDescriptor(
 			{
-				size: (4*16) + (4*(9 + 7)),
+				label: "mesh buffer",
+				// size: (16 + (9 + 7)) * 4,
+				size: (16 + (9 + 7)),
 				usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
 				mappedAtCreation: false,
+
+				arrayBuffer: new Float32Array(16 + (9 + 7)),
 			}
 		);
+
 		this.bindGroupLayoutEntry = new GPUBindGroupLayoutEntry(
 			{
 				binding: 0,
@@ -107,19 +126,21 @@ export class Mesh extends Group {
 		);
 		this.bindGroupLayoutDescriptor = new GPUBindGroupLayoutDescriptor(
 			{
+				label: "mesh bind group layout",
 				entries: [
 					this.bindGroupLayoutEntry,
 				],
 			}
 		);
-		this.bindGroupEntry = new GPUBindGroupEntry(
+
+		this.bufferBindGroupEntry = new GPUBindGroupEntry(
 			{
-				binding: 0,
+				binding: this.bindGroupLayoutEntry.binding,
 				resource: new RCBufferBindingResource(
 					{
 						buffer: null,
 						offset: 0,
-						size: 4*16*2,
+						size: this.bufferDescriptor.size,
 					}
 				),
 			}
@@ -129,87 +150,10 @@ export class Mesh extends Group {
 				label: "mesh bind group",
 				layout: null,
 				entries: [
-					this.bindGroupEntry,
+					this.bufferBindGroupEntry,
 				],
 			}
 		);
-
-		this.pipelineLayoutDescriptor = new GPUPipelineLayoutDescriptor(
-			{
-				bindGroupLayouts: new Array(),
-			}
-		);
-		this.vs_state =  new GPUVertexState(
-			{
-				module: null,
-				entryPoint: "main",
-				buffers: new Array(),
-			}
-		);
-		this.fs_state = new GPUFragmentState(
-			{
-				module: null,
-				entryPoint: "main",
-				targets: [
-					new GPUColorTargetState(
-						{
-							format: GPUTextureFormat.RGBA_8_UNORM,
-						}
-					),
-				],
-			}
-		)
-		this.renderPipelineDescriptor = new GPURenderPipelineDescriptor(
-            {
-                layout: GPUAutoLayoutMode.AUTO,
-                vertex: this.vs_state,
-                primitive: new GPUPrimitiveState(
-                    {
-                        topology: this.primitive,
-                        stripIndexFormat: undefined,
-                        frontFace: GPUFrontFace.CCW,
-                        cullMode: GPUCullMode.NONE,
-                        unclippedDepth: false,
-                    }
-                ),
-                depthStencil: new GPUDepthStencilState(
-                    {
-                        format: GPUTextureFormat.DEPTH_32_FLOAT,
-                        depthWriteEnabled: true,
-                        depthCompare: GPUCompareFunction.LESS_EQUAL,
-                        stencilFront: new GPUStencilFaceState(
-                            {
-                                compare: GPUCompareFunction.ALWAYS,
-                                failOp: GPUStencilOperation.KEEP,
-                                depthFailOp: GPUStencilOperation.KEEP,
-                                passOp: GPUStencilOperation.KEEP,
-                            }
-                        ),
-                        stencilBack: new GPUStencilFaceState(
-                            {
-                                compar: GPUCompareFunction.ALWAYS,
-                                failOp: GPUStencilOperation.KEEP,
-                                depthFailOp: GPUStencilOperation.KEEP,
-                                passOp: GPUStencilOperation.KEEP,
-                            }
-                        ),
-                        stencilReadMask: 0xFFFFFFFF,
-                        stencilWriteMask: 0xFFFFFFFF,
-                        depthBias: 0,
-                        depthBiasSlopeScale: 0,
-                        depthBiasClamp: 0,
-                    }
-                ),
-                multisample: new GPUMultisampleState(
-                    {
-                        count: 1,
-                        mask: 0xFFFFFFFF,
-                        alphaToCoverageEnabled: false,
-                    }
-                ),
-                fragment: this.fs_state,
-            }
-        );
 	}
 
 
@@ -232,116 +176,71 @@ export class Mesh extends Group {
 	}
 	get instanceCount() { return this.#instanceCount; }
 	set instanceCount(instanceCount) { this.#instanceCount = instanceCount; }
+	get firstVertex() { return this.#firstVertex; }
+	set firstVertex(firstVertex) { this.#firstVertex = firstVertex; }
+	get firstInstance() { return this.#firstInstance; }
+	set firstInstance(firstInstance) { this.#firstInstance = firstInstance; }
 
-	fillRenderArray(_renderArrayManager) {
-		if (this.material.transparent) {
-			_renderArrayManager.transparentObjects.addlast(this);
-		} else {
-			_renderArrayManager.opaqueObjects.addlast(this);
-		}
+
+	// draw(renderPassManager, renderer, camera) {
+	// 	//record draw command
+	// 	// renderPassEncoder.draw(this.geometry.vertices.count(), this.instanceCount, this.firstVertex, this.firstInstance);
+	// 	renderPassManager.draw(this.geometry.vertices.count(), this.instanceCount, this.firstVertex, this.firstInstance);
+	// }
+
+	// setupContext(context) {
+	// 	if (this.buffer) this.buffer.destroy();
+	// 	this.buffer = context.createBuffer(this.bufferDescriptor);
+	// 	this.bufferBindGroupEntry.resource.buffer = this.buffer;
+
+	// 	this.bindGroupLayout = context.createBindGroupLayout(Mesh.bindGroupLayoutDescriptor);
+	// 	this.bindGroupDescriptor.layout = this.bindGroupLayout;
+		
+	// 	this.bindGroup = context.createBindGroup(this.bindGroupDescriptor);
+	// }
+	setup(context, camera) {
+		super.setup();
+
+		this.geometry.setup(context, camera);
+		this.material.setup(context);
+
+		// this.setupContext(context, camera, renderer);
 	}
-	async draw(renderer, renderPassEncoder, bindGroupLayout, camera) {
-		const context = renderer.context;
+	// updateContext(context, camera) {
+	// 	const MMat = new Float32Array(this.g_MMat.elements);
+	// 	context.queue.writeBuffer(this.buffer, 0*4*16, MMat.buffer);
+	// 	this.MVMat.multiplyMatrices(camera.VMat, this.g_MMat);
+	// 	this.NMat.getNormalMatrix(this.MVMat);
+	// 	// const NMat = new Float32Array(this.NMat.elements);
+	// 	const me = this.NMat.elements;
+	// 	const NMat4 = new Matrix4().set(
+	// 		me[0], me[3], me[6], 0,
+	// 		me[1], me[4], me[7], 0,
+	// 		me[2], me[5], me[8], 0,
+	// 		    0,     0,     0, 1
+	// 	);
+	// 	const NMat = new Float32Array(NMat4.elements);
+	// 	context.queue.writeBuffer(this.buffer, 1*4*16, NMat.buffer);
+	// }
+	update(context, camera) {
+		super.update();
 
-
-		//geomtry property
-		//************************************************* */
-		if(!this.geometry.GENERATED) {
-			this.geometry.generate(context, camera);
-			this.geometry.GENERATED = true;
-		}
-
-		this.geometry.update(context);
-
-		// renderPassEncoder.setVertexBuffer(0, this.geometry.vertices.buffer);
-		// renderPassEncoder.setVertexBuffer(1, this.geometry.normals.buffer);
-		// renderPassEncoder.setVertexBuffer(2, this.geometry.uvs.buffer);
-		this.geometry.set(renderPassEncoder);
-
-
-
-
-		//PER MATERIAL property (plugs into bind group descriptor)
-		//************************************************* */
-		if(!this.material.GENERATED){
-			await this.material.generate(context, this.renderPipelineDescriptor);
-			this.material.GENERATED = true;
-		}
-
-		this.material.update(context);
-
-		renderPassEncoder.setBindGroup(3, this.material.bindGroup);
-
-
-
-
-		//PER MESH property (plugs into bind group descriptor)
-		//************************************************* */
-		//geom + mat = mesh info
-		//************************************************* */
-		if(!this.GENERATED) {
-			await this.generate(context, camera, bindGroupLayout);
-			this.GENERATED = true;
-		}
-		this.updateBufferObject(context, camera);
-
-		renderPassEncoder.setBindGroup(2, this.bindGroup);
-
-		if(renderer.PIP != this.renderPipeline){
-			renderPassEncoder.setPipeline(this.renderPipeline); //TODO add only once
-			renderer.PIP = this.renderPipeline;
-		}
-
-
-
-
-
-		renderPassEncoder.draw(this.geometry.vertices.count(), this.instanceCount, 0, 0);
-	}
-
-	async generate(context, camera, bindGroupLayout) {
-		this.buffer = context.createBuffer(this.bufferDescriptor);
-
-		this.bindGroupEntry.resource.buffer = this.buffer;
-		this.bindGroupLayout = context.createBindGroupLayout(this.bindGroupLayoutDescriptor);
-		this.bindGroupDescriptor.layout = this.bindGroupLayout;
-		this.bindGroup = context.createBindGroup(this.bindGroupDescriptor);
-
-
-		this.pipelineLayoutDescriptor.bindGroupLayouts = [];
-		this.pipelineLayoutDescriptor.bindGroupLayouts.push(camera.bindGroupLayout);
-		this.pipelineLayoutDescriptor.bindGroupLayouts.push(bindGroupLayout);
-		this.pipelineLayoutDescriptor.bindGroupLayouts.push(this.bindGroupLayout);
-		this.pipelineLayoutDescriptor.bindGroupLayouts.push(this.material.bindGroupLayout);
-
-		this.renderPipelineDescriptor.layout = context.createPipelineLayout(this.pipelineLayoutDescriptor);
-
-
-
-
-		this.vs_state.buffers = [];
-		this.vs_state.buffers.push(this.geometry.vertices.vertexBufferLayout);
-		this.vs_state.buffers.push(this.geometry.normals.vertexBufferLayout);
-		if (this.geometry.uvs) this.vs_state.buffers.push(this.geometry.uvs.vertexBufferLayout);
-
-
-
-		this.renderPipeline  = context.createRenderPipeline(this.renderPipelineDescriptor);
-	}
-	updateBufferObject(context, camera) {
-		const MMat = new Float32Array(this.g_MMat.elements);
-		context.queue.writeBuffer(this.buffer, 0*4*16, MMat.buffer);
 		this.MVMat.multiplyMatrices(camera.VMat, this.g_MMat);
 		this.NMat.getNormalMatrix(this.MVMat);
-		// const NMat = new Float32Array(this.NMat.elements);
+
 		const me = this.NMat.elements;
-		const NMat4 = new Matrix4().set(
+		this.NMat4 = new Matrix4().set(
 			me[0], me[3], me[6], 0,
 			me[1], me[4], me[7], 0,
 			me[2], me[5], me[8], 0,
 			    0,     0,     0, 1
 		);
-		const NMat = new Float32Array(NMat4.elements);
-		context.queue.writeBuffer(this.buffer, 1*4*16, NMat.buffer);
+
+
+		this.geometry.update(context);
+		this.material.update(context);
+
+
+		// this.updateContext(context, camera);
 	}
 };
