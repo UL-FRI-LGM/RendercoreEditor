@@ -1,4 +1,4 @@
-import { CustomShaderMaterial } from "./CustomShaderMaterial.js";
+import { MeshCustomMaterial } from "./MeshCustomMaterial.js";
 import { Color4 } from "../math/Color4.js";
 import { GPUBufferDescriptor } from "../core/DICTS/GPUBufferDescriptor.js";
 import { GPUBindGroupLayoutEntry } from "../core/DICTS/GPUBindGroupLayoutEntry.js";
@@ -10,9 +10,20 @@ import { GPUBindGroupEntry } from "../core/DICTS/GPUBindGroupEntry.js";
 import { RCBufferBindingResource } from "../core/RCBufferBindingResource.js";
 import { GPUBindGroupLayoutDescriptor } from "../core/DICTS/GPUBindGroupLayoutDescriptor.js";
 import { GPUBindGroupDescriptor } from "../core/DICTS/GPUBindGroupDescriptor.js";
+import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
+import { TextureDescriptor } from "../core/RC/textures/TextureDescriptor.js";
+import { GPUExtent3D } from "../core/DICTS/GPUExtent3D.js";
+import { GPUTextureFormat } from "../core/ENUM/GPUTextureFormat.js";
+import { GPUTextureUsage } from "../core/NAMESPACE/GPUTextureUsage.js";
+import { GPUFilterMode } from "../core/ENUM/GPUFilterMode.js";
+import { GPUSamplerBindingLayout } from "../core/DICTS/GPUSamplerBindingLayout.js";
+import { GPUSamplerBindingType } from "../core/ENUM/GPUSamplerBindingType.js";
+import { GPUTextureBindingLayout } from "../core/DICTS/GPUTextureBindingLayout.js";
+import { GPUTextureSamplingType } from "../core/ENUM/GPUTextureSamplingType.js";
+import { GPUTextureViewDimension } from "../core/ENUM/GPUTextureViewDimension.js";
 
 
-export class MeshBasicMaterial extends CustomShaderMaterial {
+export class MeshBasicMaterial extends MeshCustomMaterial {
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "MeshBasicMaterial",
@@ -44,14 +55,33 @@ export class MeshBasicMaterial extends CustomShaderMaterial {
 		this.emissive = (args.emissive !== undefined) ? args.emissive : new Color4(0, 0, 0, 0);
 		this.diffuse = (args.diffuse !== undefined) ? args.diffuse : new Color4(Math.random(), Math.random(), Math.random(), Math.random());
 	
-		this.bufferDescriptor = new GPUBufferDescriptor(
+		this.bufferDescriptor = new BufferDescriptor(
 			{
-				size: 2*4*4,
+				// size: (2*4) * 4,
+				size: (2*4),
 				usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
 				mappedAtCreation: false,
 			}
 		);
-		this.bindGroupLayoutEntry = new GPUBindGroupLayoutEntry(
+		//default texture
+		this.textureDescriptor = new TextureDescriptor(
+			{
+				arrayBuffer: new Uint8ClampedArray([255, 255, 255, 255]),
+				size: new GPUExtent3D({ width: 1, height: 1, depthOrArrayLayers: 1 }),
+				// format: GPUTextureFormat.RGBA_8_UNORM_SRGB,
+				format: GPUTextureFormat.RGBA_8_UNORM,
+				usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
+	
+				magFilter: GPUFilterMode.LINEAR,
+				minFilter: GPUFilterMode.LINEAR,
+				mipmapFilter: GPUFilterMode.LINEAR,
+	
+				samplerBinding: 10,
+				textureBinding: 20,
+			}
+		);
+
+		this.bufferBindGroupLayoutEntry = new GPUBindGroupLayoutEntry(
 			{
 				binding: 0,
 				visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
@@ -66,19 +96,45 @@ export class MeshBasicMaterial extends CustomShaderMaterial {
 		);
 		this.bindGroupLayoutDescriptor = new GPUBindGroupLayoutDescriptor(
 			{
+				label: "mesh basic material bind group layer",
 				entries: [
-					this.bindGroupLayoutEntry,
+					this.bufferBindGroupLayoutEntry,
+					new GPUBindGroupLayoutEntry(
+						{
+							binding: 10,
+							visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+							sampler: new GPUSamplerBindingLayout(
+								{
+									type: GPUSamplerBindingType.FILTERING
+								}
+							),
+						}
+					),
+					new GPUBindGroupLayoutEntry(
+						{
+							binding: 20,
+							visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+							texture: new GPUTextureBindingLayout(
+								{
+									sampleType: GPUTextureSamplingType.FLOAT,
+									viewDimension: GPUTextureViewDimension.D2,
+									multisampled: false
+								}
+							),
+						}
+					),
 				],
 			}
 		);
-		this.bindGroupEntry = new GPUBindGroupEntry(
+
+		this.bufferBindGroupEntry = new GPUBindGroupEntry(
 			{
-				binding: 0,
+				binding: this.bufferBindGroupLayoutEntry.binding,
 				resource: new RCBufferBindingResource(
 					{
 						buffer: null,
 						offset: 0,
-						size: 4*4*2,
+						size: this.bufferDescriptor.size,
 					}
 				),
 			}
@@ -88,7 +144,19 @@ export class MeshBasicMaterial extends CustomShaderMaterial {
 				label: "mesh basic material bind group",
 				layout: null,
 				entries: [
-					this.bindGroupEntry,
+					this.bufferBindGroupEntry,
+					new GPUBindGroupEntry(
+						{
+							binding: 10,
+							resource: null,
+						}
+					),
+					new GPUBindGroupEntry(
+						{
+							binding: 20,
+							resource: null,
+						}
+					),
 				],
 			}
 		);
