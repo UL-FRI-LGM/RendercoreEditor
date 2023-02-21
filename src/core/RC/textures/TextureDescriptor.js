@@ -14,14 +14,18 @@ import { GPUOrigin3D } from "../../DICTS/GPUOrigin3D.js";
 import { GPUSamplerDescriptor } from "../../DICTS/GPUSamplerDescriptor.js";
 import { GPUAddressMode } from "../../ENUM/GPUAddressMode.js";
 import { GPUFilterMode } from "../../ENUM/GPUFilterMode.js";
+import { DescriptorBase } from "../DescriptorBase.js";
 
 
-export class TextureDescriptor extends ObjectBase { // RC texture descriptor (WebGL / WebGPU)
+export class TextureDescriptor extends DescriptorBase { //RC texture descriptor (WebGL / WebGPU)
 
 
     static DEFAULT = {
         NAME: "",
 		TYPE: "TextureDescriptor",
+
+        LABEL: "",
+        DIRTY_CACHE: new Map(),
 
         SIZE: new GPUExtent3D(
             {
@@ -47,8 +51,6 @@ export class TextureDescriptor extends ObjectBase { // RC texture descriptor (We
     };
 
     
-    #dirtyCache;
-
     #size;
     #mipLevelCount;
     #sampleCount;
@@ -63,13 +65,15 @@ export class TextureDescriptor extends ObjectBase { // RC texture descriptor (We
     constructor(args = {}) {
         super(
 			{
-				...args, 
+				...args,
+
 				name: (args.name !== undefined) ? args.name : TextureDescriptor.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : TextureDescriptor.DEFAULT.TYPE,
+
+                label: (args.label !== undefined) ? args.label : TextureDescriptor.DEFAULT.LABEL,
+                dirtyCache: (args.dirtyCache !== undefined) ? args.dirtyCache : new Map(TextureDescriptor.DEFAULT.DIRTY_CACHE), //copy
 			}
 		);
-
-        this.dirtyCache = new Map();
 
         this.size = args.size !== undefined ? args.size : TextureDescriptor.DEFAULT.SIZE;
         this.mipLevelCount = args.mipLevelCount !== undefined ? args.mipLevelCount : TextureDescriptor.DEFAULT.MIP_LEVEL_COUNT;
@@ -84,9 +88,6 @@ export class TextureDescriptor extends ObjectBase { // RC texture descriptor (We
         this.textureBinding = (args.textureBinding !== undefined) ? args.textureBinding : 20;
     }
 
-
-    get dirtyCache() { return this.#dirtyCache; }
-	set dirtyCache(dirtyCache) { this.#dirtyCache = dirtyCache; }
 
     get arrayBuffer() { return this.#arrayBuffer; }
     set arrayBuffer(arrayBuffer) { 
