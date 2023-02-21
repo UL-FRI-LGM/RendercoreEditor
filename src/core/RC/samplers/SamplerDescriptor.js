@@ -1,14 +1,18 @@
 import { ObjectBase } from "../../ObjectBase.js";
 import { GPUAddressMode } from "../../ENUM/GPUAddressMode.js";
 import { GPUFilterMode } from "../../ENUM/GPUFilterMode.js";
+import { DescriptorBase } from "../DescriptorBase.js";
 
 
-export class SamplerDescriptor extends ObjectBase { //RC sampler descriptor (WebGL / WebGPU)
+export class SamplerDescriptor extends DescriptorBase { //RC sampler descriptor (WebGL / WebGPU)
 
 
     static DEFAULT = {
         NAME: "",
 		TYPE: "SamplerDescriptor",
+
+        LABEL: "",
+        DIRTY_CACHE: new Map(),
 
         ADDRESS: {
             U: GPUAddressMode.CLAMP_TO_EDGE,
@@ -35,8 +39,6 @@ export class SamplerDescriptor extends ObjectBase { //RC sampler descriptor (Web
     };
 
     
-    #dirtyCache;
-
     #addressModeU = "clamp-to-edge";
     #addressModeV = "clamp-to-edge";
     #addressModeW = "clamp-to-edge";
@@ -54,13 +56,15 @@ export class SamplerDescriptor extends ObjectBase { //RC sampler descriptor (Web
     constructor(args = {}) {
         super(
 			{
-				...args, 
+				...args,
+
 				name: (args.name !== undefined) ? args.name : SamplerDescriptor.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : SamplerDescriptor.DEFAULT.TYPE,
+
+                label: (args.label !== undefined) ? args.label : SamplerDescriptor.DEFAULT.LABEL,
+                dirtyCache: (args.dirtyCache !== undefined) ? args.dirtyCache : new Map(SamplerDescriptor.DEFAULT.DIRTY_CACHE), //copy
 			}
 		);
-
-        this.dirtyCache = new Map();
 
         this.addressModeU = (args.addressModeU !== undefined) ? args.addressModeU : SamplerDescriptor.DEFAULT.ADDRESS.U;
         this.addressModeV = (args.addressModeV !== undefined) ? args.addressModeV : SamplerDescriptor.DEFAULT.ADDRESS.V;
@@ -78,9 +82,6 @@ export class SamplerDescriptor extends ObjectBase { //RC sampler descriptor (Web
         this.samplerBinding = (args.samplerBinding !== undefined) ? args.samplerBinding : 10;
     }
 
-
-    get dirtyCache() { return this.#dirtyCache; }
-	set dirtyCache(dirtyCache) { this.#dirtyCache = dirtyCache; }
 
     get addressModeU() { return this.#addressModeU; }
     set addressModeU(addressModeU) { this.#addressModeU = addressModeU; }
