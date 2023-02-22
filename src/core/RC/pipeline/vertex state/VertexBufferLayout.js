@@ -29,4 +29,4 @@ export class VertexBufferLayout { //RC vertex buffer layout
     set stepMode(stepMode) { this.#stepMode = stepMode; }
     get attributes() { return this.#attributes; }
     set attributes(attributes) { this.#attributes = attributes; }
-}
+};

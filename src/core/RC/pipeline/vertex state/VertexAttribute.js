@@ -30,4 +30,4 @@ export class VertexAttribute { //RC vertex attribute
 
     get shaderLocation() { return this.#shaderLocation; }
     set shaderLocation(shaderLocation) { this.#shaderLocation = shaderLocation; }
-}
+};

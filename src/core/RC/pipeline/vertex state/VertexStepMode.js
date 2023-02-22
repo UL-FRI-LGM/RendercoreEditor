@@ -6,4 +6,4 @@ export class VertexStepMode { //RC vertex step mode
 
 
     constructor(args = {}) {}
-}
+};
