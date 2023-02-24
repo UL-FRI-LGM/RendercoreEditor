@@ -1,9 +1,15 @@
-import { RCBufferDescriptor } from "../core/RC/buffers/RCBufferDescriptor.js";
+import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
 import { MeshGeometry } from "./MeshGeometry.js";
-import { GPUVertexFormat } from "../core/ENUM/GPUVertexFormat.js";
+import { AttributeDescriptor } from "../core/data layouts/AttributeDescriptor.js";
+import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
+import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
+import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
+import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
 
 
 export class PointGeometry extends MeshGeometry {
+
+
 	static DEFAULT = {
 		TYPE: "PointGeometry",
 		NAME: "",
@@ -13,7 +19,7 @@ export class PointGeometry extends MeshGeometry {
 	constructor(args = {}) {
 		super(
 			{
-				...args, 
+				...args,
 				name: (args.name !== undefined) ? args.name : PointGeometry.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : PointGeometry.DEFAULT.TYPE,
 
@@ -66,19 +72,38 @@ export class PointGeometry extends MeshGeometry {
 			}
 
 			const verticesArrayBuffer = new Float32Array(verticesArray);
-			const verticesBufferDescriptor = new RCBufferDescriptor(
+			const verticesBufferDescriptor = new BufferDescriptor(
                 {
+					label: "point vertices buffer",
 					size: verticesArrayBuffer.length,
                     itemSize: 3,
-					shaderLocation: 0,
-					format: GPUVertexFormat.FLOAT_32x3,
 
 					arrayBuffer: verticesArrayBuffer,
                 }
-            )
+            );
+			const verticesAttributeDescriptor = new AttributeDescriptor(
+				{
+					bufferDescriptor: verticesBufferDescriptor,
+					vertexBufferLayout: new VertexBufferLayout(
+						{
+							arrayStride: 3 * 4,
+							stepMode: VertexStepMode.VERTEX,
+							attributes: [
+								new VertexAttribute(
+									{
+										format: VertexFormat.FLOAT_32x3,
+										offset: 0,
+										shaderLocation: 0,
+									}
+								)
+							],						
+						}
+					)
+				}
+			);
 
 
-			return verticesBufferDescriptor;
+			return verticesAttributeDescriptor;
 		}
 	}
 	static assembleNormals(args = {}) {
@@ -102,20 +127,39 @@ export class PointGeometry extends MeshGeometry {
 			}
 
 			const normalsArrayBuffer = new Float32Array(normalsArray);
-			const normalsBufferDescriptor = new RCBufferDescriptor(
+			const normalsBufferDescriptor = new BufferDescriptor(
                 {
+					label: "point normals buffer",
 					size: normalsArrayBuffer.length,
                     itemSize: 3,
-					shaderLocation: 1,
-					format: GPUVertexFormat.FLOAT_32x3,
 
 					arrayBuffer: normalsArrayBuffer,
                 }
-            )
+            );
 			// normalsBufferDescriptor.normalize(); // no need to normalize for this configuration
+			const normalsAttributeDescriptor = new AttributeDescriptor(
+				{
+					bufferDescriptor: normalsBufferDescriptor,
+					vertexBufferLayout: new VertexBufferLayout(
+						{
+							arrayStride: 3 * 4,
+							stepMode: VertexStepMode.VERTEX,
+							attributes: [
+								new VertexAttribute(
+									{
+										format: VertexFormat.FLOAT_32x3,
+										offset: 0,
+										shaderLocation: 1,
+									}
+								)
+							],						
+						}
+					)
+				}
+			);
 
 
-			return normalsBufferDescriptor;
+			return normalsAttributeDescriptor;
 		}
 	}
 	static assembleUVs(args = {}) {
@@ -139,19 +183,38 @@ export class PointGeometry extends MeshGeometry {
 			}
 
 			const uvsArrayBuffer = new Float32Array(uvsArray);
-			const uvsBufferDescriptor = new RCBufferDescriptor(
+			const uvsBufferDescriptor = new BufferDescriptor(
                 {
+					label: "point uvs buffer",
 					size: uvsArrayBuffer.length,
                     itemSize: 2,
-					shaderLocation: 2,
-					format: GPUVertexFormat.FLOAT_32x2,
 
 					arrayBuffer: uvsArrayBuffer,
                 }
-            )
+            );
+			const uvsAttributeDescriptor = new AttributeDescriptor(
+				{
+					bufferDescriptor: uvsBufferDescriptor,
+					vertexBufferLayout: new VertexBufferLayout(
+						{
+							arrayStride: 2 * 4,
+							stepMode: VertexStepMode.VERTEX,
+							attributes: [
+								new VertexAttribute(
+									{
+										format: VertexFormat.FLOAT_32x2,
+										offset: 0,
+										shaderLocation: 2,
+									}
+								)
+							],						
+						}
+					)
+				}
+			);
 
 
-			return uvsBufferDescriptor;
+			return uvsAttributeDescriptor;
 		}
 	}
 };

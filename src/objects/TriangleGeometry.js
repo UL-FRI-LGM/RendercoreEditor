@@ -1,10 +1,16 @@
-import { RCBufferDescriptor } from "../core/RC/buffers/RCBufferDescriptor.js";
+import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
 import { Vector3 } from "../math/Vector3.js";
 import { MeshGeometry } from "./MeshGeometry.js";
-import { GPUVertexFormat } from "../core/ENUM/GPUVertexFormat.js";
+import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
+import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
+import { AttributeDescriptor } from "../core/data layouts/AttributeDescriptor.js";
+import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
+import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
 
 
 export class TriangleGeometry extends MeshGeometry {
+
+
 	static DEFAULT = {
 		TYPE: "TriangleGeometry",
 		NAME: "",
@@ -14,7 +20,7 @@ export class TriangleGeometry extends MeshGeometry {
 	constructor(args = {}) {
 		super(
 			{
-				...args, 
+				...args,
 				name: (args.name !== undefined) ? args.name : TriangleGeometry.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : TriangleGeometry.DEFAULT.TYPE,
 
@@ -68,19 +74,38 @@ export class TriangleGeometry extends MeshGeometry {
 			}
 
 			const verticesArrayBuffer = new Float32Array(verticesArray);
-			const verticesBufferDescriptor = new RCBufferDescriptor(
+			const verticesBufferDescriptor = new BufferDescriptor(
                 {
+					label: "triangle vertices buffer",
 					size: verticesArrayBuffer.length,
                     itemSize: 3,
-					shaderLocation: 0,
-					format: GPUVertexFormat.FLOAT_32x3,
 
 					arrayBuffer: verticesArrayBuffer,
                 }
-            )
+            );
+			const verticesAttributeDescriptor = new AttributeDescriptor(
+				{
+					bufferDescriptor: verticesBufferDescriptor,
+					vertexBufferLayout: new VertexBufferLayout(
+						{
+							arrayStride: 3 * 4,
+							stepMode: VertexStepMode.VERTEX,
+							attributes: [
+								new VertexAttribute(
+									{
+										format: VertexFormat.FLOAT_32x3,
+										offset: 0,
+										shaderLocation: 0,
+									}
+								)
+							],						
+						}
+					)
+				}
+			);
 
 
-			return verticesBufferDescriptor;
+			return verticesAttributeDescriptor;
 		}
 	}
 	static assembleNormals(args = {}) {
@@ -116,20 +141,39 @@ export class TriangleGeometry extends MeshGeometry {
 			}
 
 			const normalsArrayBuffer = new Float32Array(normalsArray);
-			const normalsBufferDescriptor = new RCBufferDescriptor(
+			const normalsBufferDescriptor = new BufferDescriptor(
                 {
+					label: "triangle normals buffer",
 					size: normalsArrayBuffer.length,
                     itemSize: 3,
-					shaderLocation: 1,
-					format: GPUVertexFormat.FLOAT_32x3,
 
 					arrayBuffer: normalsArrayBuffer,
                 }
-            )
+            );
 			normalsBufferDescriptor.normalize();
+			const normalsAttributeDescriptor = new AttributeDescriptor(
+				{
+					bufferDescriptor: normalsBufferDescriptor,
+					vertexBufferLayout: new VertexBufferLayout(
+						{
+							arrayStride: 3 * 4,
+							stepMode: VertexStepMode.VERTEX,
+							attributes: [
+								new VertexAttribute(
+									{
+										format: VertexFormat.FLOAT_32x3,
+										offset: 0,
+										shaderLocation: 1,
+									}
+								)
+							],						
+						}
+					)
+				}
+			);
 
 
-			return normalsBufferDescriptor;
+			return normalsAttributeDescriptor;
 		}
 	}
 	static assembleUVs(args = {}) {
@@ -155,19 +199,38 @@ export class TriangleGeometry extends MeshGeometry {
 			}
 
 			const uvsArrayBuffer = new Float32Array(uvsArray);
-			const uvsBufferDescriptor = new RCBufferDescriptor(
+			const uvsBufferDescriptor = new BufferDescriptor(
                 {
+					label: "triangle uvs buffer",
 					size: uvsArrayBuffer.length,
                     itemSize: 2,
-					shaderLocation: 2,
-					format: GPUVertexFormat.FLOAT_32x2,
 
 					arrayBuffer: uvsArrayBuffer,
                 }
-            )
+            );
+			const uvsAttributeDescriptor = new AttributeDescriptor(
+				{
+					bufferDescriptor: uvsBufferDescriptor,
+					vertexBufferLayout: new VertexBufferLayout(
+						{
+							arrayStride: 2 * 4,
+							stepMode: VertexStepMode.VERTEX,
+							attributes: [
+								new VertexAttribute(
+									{
+										format: VertexFormat.FLOAT_32x2,
+										offset: 0,
+										shaderLocation: 2,
+									}
+								)
+							],						
+						}
+					)
+				}
+			);
 
 
-			return uvsBufferDescriptor;
+			return uvsAttributeDescriptor;
 		}
 	}
 };

@@ -1,21 +1,29 @@
 import { Vector2 } from "../math/Vector2.js";
 import { Vector3 } from "../math/Vector3.js";
+import { Box3 } from "../math/Box3.js";
+import { Sphere } from "../math/Sphere.js";
 import { Geometry } from "./Geometry.js";
-import { RCBufferDescriptor } from "../core/RC/buffers/RCBufferDescriptor.js";
-import { GPUVertexFormat } from "../core/ENUM/GPUVertexFormat.js";
+import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
+import { AttributeDescriptor } from "../core/data layouts/AttributeDescriptor.js";
+import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
+import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
+import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
+import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
 
 
-export class MeshGeometry extends Geometry {
+export class MeshGeometry extends Geometry { //mesh custom geometry
+
+
 	static DEFAULT = {
 		TYPE: "MeshGeometry",
 		NAME: "",
 	};
 
 
-	#bufferDescriptors;
+	#attributeDescriptors;
 
 	#indices;
-	#vertices;
+	#vertices; //positions
 	#normals;
 	#tangents;
 	#bitangents;
@@ -25,21 +33,36 @@ export class MeshGeometry extends Geometry {
 	#translations;
 
 	#wireframeIndices;
+
+	#boundingBox;
+	#boundingSphere;
 	
 
 	constructor(args = {}) {
 		super(
 			{
-				...args, 
+				...args,
 				name: (args.name !== undefined) ? args.name : MeshGeometry.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : MeshGeometry.DEFAULT.TYPE,
 			}
 		);
 
 
-		this.bufferDescriptors = new Map();
+		this.attributeDescriptors = new Map([
+			["indices", null],
+			["vertices", null],
+			["normals", null],
+			["tangents", null],
+			["bitangents", null],
+			["colors", null],
+			["uvs", null],
+			["MMats", null],
+			["translations", null],
+			
+			["wireframeIndices", null],
+		]);
 
-		// buffer descriptors
+		// attribute descriptors
 		this.indices = (args.indices !== undefined) ? args.indices : null;
 		this.vertices = (args.vertices !== undefined) ? args.vertices : null;
 		this.normals = (args.normals !== undefined) ? args.normals : null;
@@ -51,70 +74,89 @@ export class MeshGeometry extends Geometry {
 		this.translations = (args.translations !== undefined) ? args.translations : null;
 
 		this.wireframeIndices = (args.wireframeIndices !== undefined) ? args.wireframeIndices : null;
+	
+		// Bounding
+		this.boundingBox = null;
+		this.boundingSphere = null;
 	}
 
 
-	get bufferDescriptors() { return this.#bufferDescriptors; }
-	set bufferDescriptors(bufferDescriptors) { this.#bufferDescriptors = bufferDescriptors; }
+	get attributeDescriptors() { return this.#attributeDescriptors; }
+	set attributeDescriptors(attributeDescriptors) { this.#attributeDescriptors = attributeDescriptors; }
 
 	get indices() { return this.#indices; }
 	set indices(indices) { 
 		this.#indices = indices;
-		this.bufferDescriptors.set("indices", indices);
+		this.attributeDescriptors.set("indices", indices);
 	}
 	get vertices() { return this.#vertices; }
 	set vertices(vertices) { 
 		this.#vertices = vertices;
-		this.bufferDescriptors.set("vertices", vertices);
+		this.attributeDescriptors.set("vertices", vertices);
 	}
 	get normals() { return this.#normals; }
 	set normals(normals) { 
 		this.#normals = normals;
-		this.bufferDescriptors.set("normals", normals);
+		this.attributeDescriptors.set("normals", normals);
 	}
 	get tangents() { return this.#tangents; }
 	set tangents(tangents) { 
 		this.#tangents = tangents;
-		this.bufferDescriptors.set("tangents", tangents);
+		this.attributeDescriptors.set("tangents", tangents);
 	}
 	get bitangents() { return this.#bitangents; }
 	set bitangents(bitangents) { 
 		this.#bitangents = bitangents;
-		this.bufferDescriptors.set("bitangents", bitangents);
+		this.attributeDescriptors.set("bitangents", bitangents);
 	}
 	get colors() { return this.#colors; }
 	set colors(colors) { 
 		this.#colors = colors;
-		this.bufferDescriptors.set("colors", colors);
+		this.attributeDescriptors.set("colors", colors);
 	}
 	get uvs() { return this.#uvs; }
 	set uvs(uvs) { 
 		this.#uvs = uvs;
-		this.bufferDescriptors.set("uvs", uvs);
+		this.attributeDescriptors.set("uvs", uvs);
 	}
 	get MMats() { return this.#MMats; }
 	set MMats(MMats) { 
 		this.#MMats = MMats;
-		this.bufferDescriptors.set("MMats", MMats);
+		this.attributeDescriptors.set("MMats", MMats);
 	}
 	get translations() { return this.#translations; }
 	set translations(translations) { 
 		this.#translations = translations;
-		this.bufferDescriptors.set("translations", translations);
+		this.attributeDescriptors.set("translations", translations);
 	}
 
 	get wireframeIndices() { return this.#wireframeIndices; }
 	set wireframeIndices(wireframeIndices) { 
 		this.#wireframeIndices = wireframeIndices;
-		this.bufferDescriptors.set("wireframeIndices", wireframeIndices);
+		this.attributeDescriptors.set("wireframeIndices", wireframeIndices);
 	}
+
+	get boundingBox() {
+		// If the bounding sphere was not yet computed compute it
+		if (this.#boundingBox === null) this.computeBoundingBox();
+
+		return this.#boundingBox;
+	}
+	set boundingBox(boundingBox) { this.#boundingBox = boundingBox; }
+	get boundingSphere() {
+		// If the bounding sphere was not yet computed compute it
+		if (this.#boundingSphere === null) this.computeBoundingSphere();
+
+		return this.#boundingSphere;
+	}
+	set boundingSphere(boundingSphere) { this.#boundingSphere = boundingSphere; }
 
 
 	buildWireframeBuffer() {
 		const indicesArray = [];
 
 		if (this.indices !== null) {
-			const indices = this.indices;
+			const indices = this.indices.bufferDescriptor;
 			const vertexMap = new Map();
 
 			for (let i = 0; i < indices.arrayBuffer.length; i += 3) {
@@ -129,7 +171,7 @@ export class MeshGeometry extends Geometry {
 				this.#sanitize(vertexMap, c, a, indicesArray);
 			}
 		} else {
-			const vertices = this.vertices;
+			const vertices = this.vertices.bufferDescriptor;
 
 			for (let i = 0; i < vertices.count(); i += 3) {
 				const a = i;
@@ -143,17 +185,36 @@ export class MeshGeometry extends Geometry {
 
 		// Create new buffer geometry for the wireframe
 		const wireframeIndicesArrayBuffer = new Uint32Array(indicesArray);
-		const wireframeIndicesBufferDescriptor = new RCBufferDescriptor(
+		const wireframeIndicesBufferDescriptor = new BufferDescriptor(
 			{
+				label: "mesh geometry wireframe indices buffer",
 				size: wireframeIndicesArrayBuffer.length,
 				itemSize: 1,
-				shaderLocation: -1,
-				format: GPUVertexFormat.UINT_32,
 
 				arrayBuffer: wireframeIndicesArrayBuffer,
 			}
 		);
-		this.wireframeIndices = wireframeIndicesBufferDescriptor;
+		const wireframeIndicesAttributeDescriptor = new AttributeDescriptor(
+			{
+				bufferDescriptor: wireframeIndicesBufferDescriptor,
+				vertexBufferLayout: new VertexBufferLayout(
+					{
+						arrayStride: 1 * 4,
+						stepMode: VertexStepMode.VERTEX,
+						attributes: [
+							new VertexAttribute(
+								{
+									format: VertexFormat.UINT_32,
+									offset: 0,
+									shaderLocation: -1,
+								}
+							)
+						],						
+					}
+				)
+			}
+		);
+		this.wireframeIndices = wireframeIndicesAttributeDescriptor;
 	}
 	#sanitize(vertexMap, x, y, indicesArray){
 		let foundX = false, foundY = false, foundXY = false, foundYX = false;
@@ -210,7 +271,7 @@ export class MeshGeometry extends Geometry {
 	}
 
 	computeVertexNormals() {
-		const positions = this.vertices.arrayBuffer;
+		const positions = this.vertices.bufferDescriptor.arrayBuffer;
 		const normals = new Float32Array(positions.length);
 
 		const pA = new Vector3();
@@ -220,7 +281,7 @@ export class MeshGeometry extends Geometry {
 		const ab = new Vector3();
 
 		if (this.indices && this.vertices) {
-			const indices = this.indices.arrayBuffer;
+			const indices = this.indices.bufferDescriptor.arrayBuffer;
 
 			for (let i = 0; i < indices.length; i += 3) {
 				const vA = indices[i    ] * 3;
@@ -273,27 +334,46 @@ export class MeshGeometry extends Geometry {
 
 
 		const normalsArrayBuffer = new Float32Array(normals);
-		const normalsBufferDescriptor = new RCBufferDescriptor(
+		const normalsBufferDescriptor = new BufferDescriptor(
 			{
+				label: "mesh geometry normals buffer",
 				size: normalsArrayBuffer.length,
 				itemSize: 3,
-				shaderLocation: 1,
-				format: GPUVertexFormat.FLOAT_32x3,
 
 				arrayBuffer: normalsArrayBuffer,
 			}
 		);
 		normalsBufferDescriptor.normalize();
+		const normalsAttributeDescriptor = new AttributeDescriptor(
+			{
+				bufferDescriptor: normalsBufferDescriptor,
+				vertexBufferLayout: new VertexBufferLayout(
+					{
+						arrayStride: 3 * 4,
+						stepMode: VertexStepMode.VERTEX,
+						attributes: [
+							new VertexAttribute(
+								{
+									format: VertexFormat.FLOAT_32x3,
+									offset: 0,
+									shaderLocation: 1,
+								}
+							)
+						],						
+					}
+				)
+			}
+		);
 
-		this.normals = normalsBufferDescriptor;
+		this.normals = normalsAttributeDescriptor;
 		this.normals.needsUpdate = true;
-		return normalsBufferDescriptor;
+		return normalsAttributeDescriptor;
 	}
 	computeVertexTangents(){
 		if (this.indices) {
-			const indices = this.indices;
-			const vertices = this.vertices;
-			const UVs = this.uvs;
+			const indices = this.indices.bufferDescriptor;
+			const vertices = this.vertices.bufferDescriptor;
+			const UVs = this.uvs.bufferDescriptor;
 
 			const v1 = new Vector3();
 			const v2 = new Vector3();
@@ -367,21 +447,40 @@ export class MeshGeometry extends Geometry {
 			}
 
 
-			const tangentsBufferDescriptor = new RCBufferDescriptor(
+			const tangentsBufferDescriptor = new BufferDescriptor(
 				{
+					label: "mesh geometry tangents buffer",
 					size: tangents.length,
 					itemSize: 3,
-					shaderLocation: -1,
-					format: GPUVertexFormat.FLOAT_32x3,
 
 					arrayBuffer: tangents,
 				}
 			);
 			// tangentsBufferDescriptor.normalize();
-			this.tangents = tangentsBufferDescriptor;
+			const tangentsAttributeDescriptor = new AttributeDescriptor(
+				{
+					bufferDescriptor: tangentsBufferDescriptor,
+					vertexBufferLayout: new VertexBufferLayout(
+						{
+							arrayStride: 3 * 4,
+							stepMode: VertexStepMode.VERTEX,
+							attributes: [
+								new VertexAttribute(
+									{
+										format: VertexFormat.FLOAT_32x3,
+										offset: 0,
+										shaderLocation: -1,
+									}
+								)
+							],						
+						}
+					)
+				}
+			);
+			this.tangents = tangentsAttributeDescriptor;
 		} else {
-			const vertices = this.vertices;
-			const UVs = this.uv;
+			const vertices = this.vertices.bufferDescriptor;
+			const UVs = this.uv.bufferDescriptor;
 
 			const v1 = new Vector3();
 			const v2 = new Vector3();
@@ -452,25 +551,44 @@ export class MeshGeometry extends Geometry {
 			}
 	
 
-			const tangentsBufferDescriptor = new RCBufferDescriptor(
+			const tangentsBufferDescriptor = new BufferDescriptor(
 				{
+					label: "mesh geometry tangents buffer",
 					size: tangents.length,
 					itemSize: 3,
-					shaderLocation: -1,
-					format: GPUVertexFormat.FLOAT_32x3,
 
 					arrayBuffer: tangents,
 				}
 			);
 			// tangentsBufferDescriptor.normalize();
-			this.tangents = tangentsBufferDescriptor;
+			const tangentsAttributeDescriptor = new AttributeDescriptor(
+				{
+					bufferDescriptor: tangentsBufferDescriptor,
+					vertexBufferLayout: new VertexBufferLayout(
+						{
+							arrayStride: 3 * 4,
+							stepMode: VertexStepMode.VERTEX,
+							attributes: [
+								new VertexAttribute(
+									{
+										format: VertexFormat.FLOAT_32x3,
+										offset: 0,
+										shaderLocation: -1,
+									}
+								)
+							],						
+						}
+					)
+				}
+			);
+			this.tangents = tangentsAttributeDescriptor;
 		}
 	}
 	computeVertexBitangents(){
 		if (this.indices) {
-			const indices = this.indices;
-			const vertices = this.vertices;
-			const UVs = this.uv;
+			const indices = this.indices.bufferDescriptor;
+			const vertices = this.vertices.bufferDescriptor;
+			const UVs = this.uv.bufferDescriptor;
 
 			const v1 = new Vector3();
 			const v2 = new Vector3();
@@ -543,21 +661,40 @@ export class MeshGeometry extends Geometry {
 			}
 
 
-			const bitangentsBufferDescriptor = new RCBufferDescriptor(
+			const bitangentsBufferDescriptor = new BufferDescriptor(
 				{
+					label: "mesh geometry bitangents buffer",
 					size: bitangents.length,
 					itemSize: 3,
-					shaderLocation: -1,
-					format: GPUVertexFormat.FLOAT_32x3,
 
 					arrayBuffer: bitangents,
 				}
 			);
 			// bitangentsBufferDescriptor.normalize();
-			this.bitangents = bitangentsBufferDescriptor;
+			const bitangentsAttributeDescriptor = new AttributeDescriptor(
+				{
+					bufferDescriptor: bitangentsBufferDescriptor,
+					vertexBufferLayout: new VertexBufferLayout(
+						{
+							arrayStride: 3 * 4,
+							stepMode: VertexStepMode.VERTEX,
+							attributes: [
+								new VertexAttribute(
+									{
+										format: VertexFormat.FLOAT_32x3,
+										offset: 0,
+										shaderLocation: -1,
+									}
+								)
+							],						
+						}
+					)
+				}
+			);
+			this.bitangents = bitangentsAttributeDescriptor;
 		} else {
-			const vertices = this.vertices;
-			const UVs = this.uv;
+			const vertices = this.vertices.bufferDescriptor;
+			const UVs = this.uv.bufferDescriptor;
 
 			const v1 = new Vector3();
 			const v2 = new Vector3();
@@ -628,47 +765,96 @@ export class MeshGeometry extends Geometry {
 			}
 
 
-			const bitangentsBufferDescriptor = new RCBufferDescriptor(
+			const bitangentsBufferDescriptor = new BufferDescriptor(
 				{
+					label: "mesh geometry bitangents buffer",
 					size: bitangents.length,
 					itemSize: 3,
-					shaderLocation: -1,
-					format: GPUVertexFormat.FLOAT_32x3,
 
 					arrayBuffer: bitangents,
 				}
 			);
 			// bitangentsBufferDescriptor.normalize();
-			this.bitangents = bitangentsBufferDescriptor;
+			const bitangentsAttributeDescriptor = new AttributeDescriptor(
+				{
+					bufferDescriptor: bitangentsBufferDescriptor,
+					vertexBufferLayout: new VertexBufferLayout(
+						{
+							arrayStride: 3 * 4,
+							stepMode: VertexStepMode.VERTEX,
+							attributes: [
+								new VertexAttribute(
+									{
+										format: VertexFormat.FLOAT_32x3,
+										offset: 0,
+										shaderLocation: -1,
+									}
+								)
+							],						
+						}
+					)
+				}
+			);
+			this.bitangents = bitangentsAttributeDescriptor;
 		}
 	}
 
-	generateBuffer(context, bufferDescriptor) {
-		bufferDescriptor.generate(context);
-	}
-	generate(context, camera) {
-		for (const [name, descriptor] of this.bufferDescriptors) {
-			if (descriptor !== null) this.generateBuffer(context, descriptor);
+	/**
+	 * Compute minimal bounding box that encapsulates all triangles.
+	 */
+	computeBoundingBox() {
+
+		// Check if the bounding box already exist
+		if (this.#boundingBox === null) {
+			this.#boundingBox = new Box3();
+		}
+
+		// Create new bounding box using the vertices
+		if (this.vertices) {
+			this.boundingBox.setFromArray(this.vertices.bufferDescriptor.arrayBuffer);
+		} else {
+			this.boundingBox.makeEmpty();
+		}
+
+		if (isNaN(this.boundingBox.min.x) || isNaN(this.boundingBox.min.y) || isNaN(this.boundingBox.min.z)) {
+			console.error("Geometry error: One or more of bounding box axis min is NaN.");
 		}
 	}
 
-	updateBuffer(context, bufferDescriptor) {
-		bufferDescriptor.update(context);
-	}
-	update(context) {
-		for (const [name, descriptor] of this.bufferDescriptors) {
-			if (descriptor !== null) this.updateBuffer(context, descriptor);
+	/**
+	 * Compute minimal bounding sphere that encapsulates all triangles.
+	 */
+	computeBoundingSphere() {
+		const box = new Box3();
+		const vector = new Vector3();
+
+		// Check if the sphere already exists
+		if (this.#boundingSphere === null) {
+			this.#boundingSphere = new Sphere();
 		}
-	}
 
-	setBuffer(renderPassEncoder, bufferDescriptor, slot) {
-		bufferDescriptor.set(renderPassEncoder, slot);
-	}
-	set(renderPassEncoder) {
-		let slot = 0; //TODO: this has to be managed somehow
+		// Create new bounding sphere using the vertices
+		if (this.vertices) {
+			const arrayBuffer = this.vertices.bufferDescriptor.arrayBuffer;
+			const center = this.boundingSphere.center;
 
-		for (const [name, descriptor] of this.bufferDescriptors) {
-			if (descriptor !== null) this.setBuffer(renderPassEncoder, descriptor, slot++);
+			// Set initial bounding sphere based on the bounding box
+			box.setFromArray(arrayBuffer);
+			box.center(center);
+
+			// Optimize sphere radius
+			let maxRadiusSq = 0;
+
+			for (let i = 0; i < arrayBuffer.length; i += 3) {
+				vector.fromArray(arrayBuffer, i);
+				maxRadiusSq = Math.max(maxRadiusSq, center.distanceToSquared(vector));
+			}
+
+			this.boundingSphere.radius = Math.sqrt(maxRadiusSq);
+		}
+
+		if (isNaN(this.boundingSphere.radius)) {
+			console.error("Geometry error: Bounding sphere radius is NaN.");
 		}
 	}
 };

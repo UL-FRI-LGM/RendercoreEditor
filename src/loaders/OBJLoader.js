@@ -1,15 +1,21 @@
 import { XHRLoader } from "./XHRLoader.js";
 import { Mesh } from "../objects/Mesh.js";
-import { RCBufferDescriptor } from "../core/RC/buffers/RCBufferDescriptor.js";
+import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
 import { MeshGeometry } from "../objects/MeshGeometry.js";
 import { MeshBasicMaterial } from "../materials/MeshBasicMaterial.js";
 import { Group } from "../objects/Group.js";
 import { LoadingManager } from "./LoadingManager.js";
-import { GPUVertexFormat } from "../core/ENUM/GPUVertexFormat.js";
 import { MeshLambertMaterial } from "../materials/MeshLambertMaterial.js";
+import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
+import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
+import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
+import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
+import { AttributeDescriptor } from "../core/x/AttributeDescriptor.js";
 
 
 export class OBJLoader extends XHRLoader {
+
+	
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "OBJLoader",
@@ -319,14 +325,33 @@ export class OBJLoader extends XHRLoader {
 
 			// Add position of vertices
 			const verticesArrayBuffer = new Float32Array(geometry.vertices);
-			meshGeometry.vertices = new RCBufferDescriptor(
+			
+			meshGeometry.vertices = new AttributeDescriptor(
 				{
-					size: verticesArrayBuffer.length,
-					itemSize: 3,
-					shaderLocation: 0,
-					format: GPUVertexFormat.FLOAT_32x3,
-
-					arrayBuffer: verticesArrayBuffer, 
+					bufferDescriptor: new BufferDescriptor(
+						{
+							label: "OBJ vertices buffer",
+							size: verticesArrayBuffer.length,
+							itemSize: 3,
+		
+							arrayBuffer: verticesArrayBuffer, 
+						}
+					),
+					vertexBufferLayout: new VertexBufferLayout(
+						{
+							arrayStride: 3 * 4,
+							stepMode: VertexStepMode.VERTEX,
+							attributes: [
+								new VertexAttribute(
+									{
+										format: VertexFormat.FLOAT_32x3,
+										offset: 0,
+										shaderLocation: 0,
+									}
+								)
+							],						
+						}
+					)
 				}
 			);
 
@@ -334,14 +359,32 @@ export class OBJLoader extends XHRLoader {
 			if (geometry.normals.length > 0) {
 				const normalsArrayBuffer = new Float32Array(geometry.normals);
 
-				meshGeometry.normals = new RCBufferDescriptor(
+				meshGeometry.normals = new AttributeDescriptor(
 					{
-						size: normalsArrayBuffer.length,
-						itemSize: 3,
-						shaderLocation: 1,
-						format: GPUVertexFormat.FLOAT_32x3,
-
-						arrayBuffer: normalsArrayBuffer,
+						bufferDescriptor: new BufferDescriptor(
+							{
+								label: "OBJ normals buffer",
+								size: normalsArrayBuffer.length,
+								itemSize: 3,
+			
+								arrayBuffer: normalsArrayBuffer, 
+							}
+						),
+						vertexBufferLayout: new VertexBufferLayout(
+							{
+								arrayStride: 3 * 4,
+								stepMode: VertexStepMode.VERTEX,
+								attributes: [
+									new VertexAttribute(
+										{
+											format: VertexFormat.FLOAT_32x3,
+											offset: 0,
+											shaderLocation: 1,
+										}
+									)
+								],						
+							}
+						)
 					}
 				);
 			} else {
@@ -352,14 +395,32 @@ export class OBJLoader extends XHRLoader {
 			if (geometry.uvs.length > 0) {
 				const uvsArrayBuffer =  new Float32Array(geometry.uvs);
 
-				meshGeometry.uvs = new RCBufferDescriptor(
+				meshGeometry.uvs = new AttributeDescriptor(
 					{
-						size: uvsArrayBuffer.length,
-						itemSize: 2,
-						shaderLocation: 2,
-						format: GPUVertexFormat.FLOAT_32x2,
-
-						arrayBuffer: uvsArrayBuffer,
+						bufferDescriptor: new BufferDescriptor(
+							{
+								label: "OBJ uvs buffer",
+								size: uvsArrayBuffer.length,
+								itemSize: 2,
+			
+								arrayBuffer: uvsArrayBuffer, 
+							}
+						),
+						vertexBufferLayout: new VertexBufferLayout(
+							{
+								arrayStride: 2 * 4,
+								stepMode: VertexStepMode.VERTEX,
+								attributes: [
+									new VertexAttribute(
+										{
+											format: VertexFormat.FLOAT_32x2,
+											offset: 0,
+											shaderLocation: 2,
+										}
+									)
+								],						
+							}
+						)
 					}
 				);
 			}

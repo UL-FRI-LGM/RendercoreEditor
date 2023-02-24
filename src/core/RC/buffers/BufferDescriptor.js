@@ -1,5 +1,4 @@
 import { DescriptorBase } from "../DescriptorBase.js";
-import { VertexFormat } from "../pipeline/vertex state/VertexFormat.js";
 import { BufferUsage } from "./BufferUsage.js";
 
 
@@ -13,15 +12,12 @@ export class BufferDescriptor extends DescriptorBase { //RC buffer descriptor (W
         LABEL: "",
         DIRTY_CACHE: new Map(),
 
-        ARRAY_BUFFER: new Float32Array(),
-
         SIZE: 0,
         ITEM_SIZE: 4,
         USAGE: BufferUsage.VERTEX | BufferUsage.COPY_DST,
         MAPPED_AT_CREATION: false,
 
-        FORMAT: VertexFormat.FLOAT_32x4,
-        SHADER_LOCATION: 0,
+        ARRAY_BUFFER: new Float32Array(),
     };
 
     
@@ -30,16 +26,13 @@ export class BufferDescriptor extends DescriptorBase { //RC buffer descriptor (W
     #usage;
     #mappedAtCreation;
 
-    #format;
-    #shaderLocation;
-
     #arrayBuffer;
 
 
     constructor(args = {}) {
         super(
 			{
-				...args, 
+				...args,
 				
                 name: (args.name !== undefined) ? args.name : BufferDescriptor.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : BufferDescriptor.DEFAULT.TYPE,
@@ -49,17 +42,23 @@ export class BufferDescriptor extends DescriptorBase { //RC buffer descriptor (W
             }
 		);
 
-        this.arrayBuffer = (args.arrayBuffer !== undefined) ? args.arrayBuffer : BufferDescriptor.DEFAULT.ARRAY_BUFFER;
-
         this.size = (args.size !== undefined) ? args.size : BufferDescriptor.DEFAULT.SIZE;
         this.itemSize = (args.itemSize !== undefined) ? args.itemSize : BufferDescriptor.DEFAULT.ITEM_SIZE;
         this.usage = (args.usage !== undefined) ? args.usage : BufferDescriptor.DEFAULT.USAGE;
         this.mappedAtCreation = args.mappedAtCreation !== undefined ? args.mappedAtCreation : BufferDescriptor.DEFAULT.MAPPED_AT_CREATION;
 
-        this.format = (args.format !== undefined) ? args.format : BufferDescriptor.DEFAULT.FORMAT;
-        this.shaderLocation = (args.shaderLocation !== undefined) ? args.shaderLocation : BufferDescriptor.DEFAULT.SHADER_LOCATION;
+        this.arrayBuffer = (args.arrayBuffer !== undefined) ? args.arrayBuffer : BufferDescriptor.DEFAULT.ARRAY_BUFFER;
     }
 
+    
+    get size() { return this.#size; }
+    set size(size) { this.#size = size; }
+    get itemSize() { return this.#itemSize; }
+    set itemSize(itemSize) { this.#itemSize = itemSize; }
+    get usage() { return this.#usage; }
+    set usage(usage) { this.#usage = usage; }
+    get mappedAtCreation() { return this.#mappedAtCreation; }
+    set mappedAtCreation(mappedAtCreation) { this.#mappedAtCreation = mappedAtCreation; }
 
     get arrayBuffer() { return this.#arrayBuffer; }
     set arrayBuffer(arrayBuffer) { 
@@ -75,22 +74,8 @@ export class BufferDescriptor extends DescriptorBase { //RC buffer descriptor (W
             }
         );
     }
+
     
-    get size() { return this.#size; }
-    set size(size) { this.#size = size; }
-    get itemSize() { return this.#itemSize; }
-    set itemSize(itemSize) { this.#itemSize = itemSize; }
-    get usage() { return this.#usage; }
-    set usage(usage) { this.#usage = usage; }
-    get mappedAtCreation() { return this.#mappedAtCreation; }
-    set mappedAtCreation(mappedAtCreation) { this.#mappedAtCreation = mappedAtCreation; }
-
-    get shaderLocation() { return this.#shaderLocation; }
-    set shaderLocation(shaderLocation) { this.#shaderLocation = shaderLocation; }
-    get format() { return this.#format; }
-    set format(format) { this.#format = format; }
-
-
     count() {
 		return this.arrayBuffer.length / this.itemSize;
 	}
