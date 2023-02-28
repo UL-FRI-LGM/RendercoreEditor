@@ -1,18 +1,22 @@
-import { GPUBindGroupDescriptor } from "../core/DICTS/GPUBindGroupDescriptor.js";
-import { GPUBindGroupEntry } from "../core/DICTS/GPUBindGroupEntry.js";
-import { GPUBindGroupLayoutDescriptor } from "../core/DICTS/GPUBindGroupLayoutDescriptor.js";
-import { GPUBindGroupLayoutEntry } from "../core/DICTS/GPUBindGroupLayoutEntry.js";
 import { GPUBufferBindingLayout } from "../core/DICTS/GPUBufferBindingLayout.js";
-import { GPUBufferDescriptor } from "../core/DICTS/GPUBufferDescriptor.js";
 import { GPUBufferBindingType } from "../core/ENUM/GPUBufferBindingType.js";
-import { GPUBufferUsage } from "../core/NAMESPACE/GPUBufferUsage.js";
-import { GPUShaderStage } from "../core/NAMESPACE/GPUShaderStage.js";
+import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
+import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 import { RCBufferBindingResource } from "../core/RCBufferBindingResource.js";
 import { Matrix4 } from "../math/Matrix4.js";
 import { Group } from "../objects/Group.js";
+import { Frustum } from "../RenderCore.js";
+import { UniformDescriptor } from "../core/data layouts/UniformDescriptor.js";
+import { BindGroupLayoutEntry } from "../core/RC/resource binding/BindGroupLayoutEntry.js";
+import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
+import { BindGroupLayoutDescriptor } from "../core/RC/resource binding/BindGroupLayoutDescriptor.js";
+import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
+import { BindGroupDescriptor } from "../core/RC/resource binding/BindGroupDescriptor.js";
 
 
 export class Camera extends Group {
+
+
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "Camera",
@@ -22,20 +26,24 @@ export class Camera extends Group {
 	};
 
 
-	#dirtyCache;
+	// #dirtyCache = new Map();
 
 	#viewMatrix = new Matrix4();
 	#projectionMatrix = new Matrix4();
 	#projectionMatrixInverse = new Matrix4();
+	#viewProjectionMatrix = new Matrix4();
 	// #VMat;
 	// #PMat;
 	// #PMatInv;
+
+	#frustum = new Frustum();
 
 
 	constructor(args = {}) {
 		super(
 			{
-				...args, 
+				...args,
+
 				name: (args.name !== undefined) ? args.name : Camera.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : Camera.DEFAULT.TYPE,
 
@@ -44,86 +52,112 @@ export class Camera extends Group {
 			}
 		);
 
-		this.dirtyCache = new Map();
+		// this.dirtyCache = new Map();
 
 		this.viewMatrix = new Matrix4(); 				//VMat
 		this.projectionMatrix = new Matrix4(); 			//PMat
         this.projectionMatrixInverse = new Matrix4(); 	//PMatInv
+		this.viewProjectionMatrix = new Matrix4();		//VPMat
 
-		this.bufferDescriptor = new GPUBufferDescriptor(
+		this.frustum = new Frustum();
+
+		this.uniformDescriptor = new UniformDescriptor(
 			{
-				size: 2*4*16,
-				usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-				mappedAtCreation: false,
-			}
-		);
-		this.bindGroupLayoutEntry = new GPUBindGroupLayoutEntry(
-			{
-				binding: 0,
-				visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
-				buffer: new GPUBufferBindingLayout(
+				resourceDescriptors: [
+					new BufferDescriptor(
+						{
+							label: "camera buffer",
+							// size: (16*2) * 4,
+							size: 16*2,
+							usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
+							mappedAtCreation: false,
+						}
+					)
+				],
+				bindGroupLayoutDescriptor: new BindGroupLayoutDescriptor(
 					{
-						type: GPUBufferBindingType.UNIFORM,
-						hasDynamicOffset: false,
-						minBindingSize: 0,
+						label: "camera bind group layout",
+						entries: [
+							new BindGroupLayoutEntry(
+								{
+									binding: 0,
+									visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
+									buffer: new GPUBufferBindingLayout(
+										{
+											type: GPUBufferBindingType.UNIFORM,
+											hasDynamicOffset: false,
+											minBindingSize: 0,
+										}
+									),
+								}
+							),
+						],
 					}
 				),
-			}
-		);
-		this.bindGroupLayoutDescriptor = new GPUBindGroupLayoutDescriptor(
-			{
-				label: "camera bind group layout",
-				entries: [
-					this.bindGroupLayoutEntry,
-				],
-			}
-		);
-		this.bindGroupEntry = new GPUBindGroupEntry(
-			{
-				binding: 0,
-				resource: new RCBufferBindingResource(
+				bindGroupDescriptor: new BindGroupDescriptor(
 					{
-						buffer: null,
-						offset: 0,
-						size: 2*4*16,
+						label: "camera bind group",
+						layout: null,
+						entries: [
+							new BindGroupEntry(
+								{
+									binding: 0,
+									resource: new RCBufferBindingResource(
+										{
+											buffer: null,
+											offset: 0,
+											size: (16*2) * 4,
+										}
+									),
+								}
+							),
+						],
 					}
-				),
-			}
-		);
-		this.bindGroupDescriptor = new GPUBindGroupDescriptor(
-			{
-				label: "camera bind group",
-				layout: null,
-				entries: [
-					this.bindGroupEntry,
-				],
+				)
 			}
 		);
 	}
 
 
-	get dirtyCache() { return this.#dirtyCache; }
-	set dirtyCache(dirtyCache) { this.#dirtyCache = dirtyCache; }
+	// get dirtyCache() { return this.#dirtyCache; }
+	// set dirtyCache(dirtyCache) { this.#dirtyCache = dirtyCache; }
 
-	get modelMatrix() { return super.modelMatrix; }
-	set modelMatrix(modelMatrix) {
-		super.modelMatrix.copy(modelMatrix);
+	get localModelMatrix() { return super.localModelMatrix; }
+	set localModelMatrix(modelMatrix) { super.localModelMatrix = modelMatrix; }
+	get globalModelMatrix() { return super.globalModelMatrix; }
+	set globalModelMatrix(modelMatrix) { 
+		super.globalModelMatrix = modelMatrix;
+
+		this.VMat = this.VMat.getInverse(this.g_MMat);
 	}
-    get viewMatrix () { return this.#viewMatrix; }
-	set viewMatrix (viewMatrix) { 
+
+    get viewMatrix() { return this.#viewMatrix; }
+	set viewMatrix(viewMatrix) { 
 		this.#viewMatrix.copy(viewMatrix); 
+
+		this.VPMat = this.VPMat.multiplyMatrices(this.PMat, this.VMat);
 
 		this.dirtyCache.set("VMat", {bufferOffset: 0*4*16, data: new Float32Array(viewMatrix.elements).buffer, dataOffset: 0, size: 4*16});
 	}
-    get projectionMatrix () { return this.#projectionMatrix; }
-	set projectionMatrix (projectionMatrix) { 
+    get projectionMatrix() { return this.#projectionMatrix; }
+	set projectionMatrix(projectionMatrix) { 
 		this.#projectionMatrix.copy(projectionMatrix); 
+
 		this.projectionMatrixInverse.getInverse(projectionMatrix);
+		this.VPMat = this.VPMat.multiplyMatrices(this.PMat, this.VMat);
 
 		this.dirtyCache.set("PMat", {bufferOffset: 1*4*16, data: new Float32Array(projectionMatrix.elements).buffer, dataOffset: 0, size: 4*16});
 	}
     get projectionMatrixInverse() { return this.#projectionMatrixInverse; }
-	set projectionMatrixInverse(projectionMatrixInverse) { this.#projectionMatrixInverse.copy(projectionMatrixInverse); }
+	set projectionMatrixInverse(projectionMatrixInverse) { 
+		this.#projectionMatrixInverse.copy(projectionMatrixInverse); 
+	}
+	get viewProjectionMatrix() { return this.#viewProjectionMatrix; }
+	set viewProjectionMatrix(viewProjectionMatrix) { 
+		this.#viewProjectionMatrix.copy(viewProjectionMatrix);
+
+		this.frustum.setFromMatrix(this.VPMat);
+	}
 
 	get VMat() { return this.viewMatrix; }
 	set VMat(VMat) { this.viewMatrix = VMat; }
@@ -131,19 +165,13 @@ export class Camera extends Group {
 	set PMat(PMat) { this.projectionMatrix = PMat; }
 	get PMatInv() { return this.projectionMatrixInverse; }
 	set PMatInv(PMatInv) { this.projectionMatrixInverse = PMatInv; }
+	get VPMat() { return this.viewProjectionMatrix; }
+	set VPMat(VPMat) { this.viewProjectionMatrix = VPMat; }
 
-
-	create(context) {
-		this.buffer = context.createBuffer(this.bufferDescriptor);
-		this.bindGroupEntry.resource.buffer = this.buffer;
-		this.bindGroupLayout = context.createBindGroupLayout(this.bindGroupLayoutDescriptor);
-		this.bindGroupDescriptor.layout = this.bindGroupLayout;
-		this.bindGroup = context.createBindGroup(this.bindGroupDescriptor);
-	}
-	updateBufferObject(context) {
-		for (const [name, desc] of this.dirtyCache) {
-			context.queue.writeBuffer(this.buffer, desc.bufferOffset, desc.data, desc.dataOffset, desc.size);
-		}
-		this.dirtyCache.clear();
+	get frustum() { return this.#frustum; }
+	set frustum(frustum) { 
+		this.#frustum.copy(frustum); 
+	
+		this.frustum.setFromMatrix(this.VPMat);
 	}
 };

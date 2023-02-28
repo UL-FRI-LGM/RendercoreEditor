@@ -1,7 +1,7 @@
 import { DescriptorBase } from '../RC/DescriptorBase.js';
 
 
-export class UniformDescriptor extends DescriptorBase {
+export class UniformDescriptor extends DescriptorBase { //Uniform group descriptor
 
 
 	static DEFAULT = {
@@ -11,13 +11,13 @@ export class UniformDescriptor extends DescriptorBase {
 		LABEL: "",
         DIRTY_CACHE: new Map(),
 
-		BUFFER_DESCRIPTOR: undefined,
+		RESOURCE_DESCRIPTORS: new Map(),
 		BIND_GROUP_LAYOUT_DESCRIPTOR: undefined,
 		BIND_GROUP_DESCRIPTOR: undefined,
 	};
 
 
-	#bufferDescriptor;
+	#resourceDescriptors;
 	#bindGroupLayoutDescriptor;
 	#bindGroupDescriptor;
 
@@ -35,14 +35,14 @@ export class UniformDescriptor extends DescriptorBase {
             }
 		);
 
-		this.bufferDescriptor = (args.bufferDescriptor !== undefined) ? args.bufferDescriptor : UniformDescriptor.DEFAULT.BUFFER_DESCRIPTOR;
+		this.resourceDescriptors = (args.resourceDescriptors !== undefined) ? args.resourceDescriptors : new Map(UniformDescriptor.DEFAULT.RESOURCE_DESCRIPTORS); //copy
 		this.bindGroupLayoutDescriptor = (args.bindGroupLayoutDescriptor !== undefined) ? args.bindGroupLayoutDescriptor : UniformDescriptor.DEFAULT.BIND_GROUP_LAYOUT_DESCRIPTOR;
 		this.bindGroupDescriptor = (args.bindGroupDescriptor !== undefined) ? args.bindGroupDescriptor : UniformDescriptor.DEFAULT.BIND_GROUP_DESCRIPTOR;
 	}
 
 
-	get bufferDescriptor() { return this.#bufferDescriptor }
-	set bufferDescriptor(bufferDescriptor){ this.#bufferDescriptor = bufferDescriptor; }
+	get resourceDescriptors() { return this.#resourceDescriptors }
+	set resourceDescriptors(resourceDescriptors){ this.#resourceDescriptors = resourceDescriptors; }
 	get bindGroupLayoutDescriptor() { return this.#bindGroupLayoutDescriptor; }
 	set bindGroupLayoutDescriptor(bindGroupLayoutDescriptor) { this.#bindGroupLayoutDescriptor = bindGroupLayoutDescriptor; }
 	get bindGroupDescriptor() { return this.#bindGroupDescriptor; }

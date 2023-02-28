@@ -1,104 +1,45 @@
 import {FRONT_SIDE, BACK_SIDE, FRONT_AND_BACK_SIDE, FUNC_LEQUAL} from "../constants.js";
-import { GPUBindGroupDescriptor } from "../core/DICTS/GPUBindGroupDescriptor.js";
-import { GPUBindGroupLayoutDescriptor } from "../core/DICTS/GPUBindGroupLayoutDescriptor.js";
-import { GPUBindGroupLayoutEntry } from "../core/DICTS/GPUBindGroupLayoutEntry.js";
-import { GPUBufferBindingLayout } from "../core/DICTS/GPUBufferBindingLayout.js";
-import { GPUSamplerBindingLayout } from "../core/DICTS/GPUSamplerBindingLayout.js";
-import { GPUTextureBindingLayout } from "../core/DICTS/GPUTextureBindingLayout.js";
-import { GPUBufferBindingType } from "../core/ENUM/GPUBufferBindingType.js";
-import { GPUSamplerBindingType } from "../core/ENUM/GPUSamplerBindingType.js";
-import { GPUTextureSamplingType } from "../core/ENUM/GPUTextureSamplingType.js";
-import { GPUTextureViewDimension } from "../core/ENUM/GPUTextureViewDimension.js";
-import { GPUShaderStage } from "../core/NAMESPACE/GPUShaderStage.js";
-import { ObjectBase } from "../core/ObjectBase.js";
 import { ShaderLoader } from "../loaders/ShaderLoader.js";
 import { ShaderBuilder } from "../program_management/ShaderBuilder.js";
 import { LoadingManager, Material } from "../RenderCore.js";
 
 
-export class MeshMaterial extends Material {
+export class MeshMaterial extends Material { //mesh custom material
 
-	
-	static bindGroupLayoutEntry = new GPUBindGroupLayoutEntry(
-		{
-			binding: 0,
-			visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
-			buffer: new GPUBufferBindingLayout(
-				{
-					type: GPUBufferBindingType.UNIFORM,
-					hasDynamicOffset: false,
-					minBindingSize: 0,
-				}
-			),
-		}
-	);
-	static bindGroupLayoutDescriptor = new GPUBindGroupLayoutDescriptor(
-		{
-			label: "mesh material bind group layout",
-			entries: [
-				MeshMaterial.bindGroupLayoutEntry,
-				// new GPUBindGroupLayoutEntry(
-				// 	{
-				// 		binding: 10,
-				// 		visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
-				// 		sampler: new GPUSamplerBindingLayout(
-				// 			{
-				// 				type: GPUSamplerBindingType.FILTERING
-				// 			}
-				// 		),
-				// 	}
-				// ),
-				// new GPUBindGroupLayoutEntry(
-				// 	{
-				// 		binding: 20,
-				// 		visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
-				// 		texture: new GPUTextureBindingLayout(
-				// 			{
-				// 				sampleType: GPUTextureSamplingType.FLOAT,
-				// 				viewDimension: GPUTextureViewDimension.D2,
-				// 				multisampled: false
-				// 			}
-				// 		),
-				// 	}
-				// ),
-			],
-		}
-	);
 
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "MeshMaterial",
 
-		SHADER_PATH: "/src/shaders/default",
-		PROGRAM_NAME: "default",
-
 		SHADER_LOADER: new ShaderLoader(
 			{ 
-				loadingManager: new LoadingManager({ name: "material default loading manager" }), 
-				name: "material shader loader" 
+				loadingManager: new LoadingManager({ name: "mesh material default loading manager" }), 
+				name: "mesh material shader loader" 
 			}
 		),
-		SHADER_PREPROCESSOR: new ShaderBuilder({ name: "material default shader preprocessor" }),
+		SHADER_PREPROCESSOR: new ShaderBuilder({ name: "mesh material default shader preprocessor" }),
+
+		SHADER_PATH: "/src/shaders/default",
+		PROGRAM_NAME: "default",
 
 		TRANSPARENT: false,
 		OPACITY: 1.0,
 	};
 
 
-	#shaderSource = { vert: null, frag: null };
-	#preprocessedShaderSource = { vert: null, frag: null };
-	// #program;
-	#shaderPath;
-	#programName;
-
 	#shaderLoader;
 	#shaderPreprocessor;
+
+	#shaderPath;
+	#programName;
+	#shaderSource = { vert: null, frag: null };
+	#preprocessedShaderSource = { vert: null, frag: null };
 
 	#requiredProgramTemplate;
 	#flags;
 	#values;
 
-	#lights;
+	#lights;//TODO move to flags?????????
 	#side;
 
 	#depthFunc;
@@ -109,6 +50,12 @@ export class MeshMaterial extends Material {
 	#opacity;
 
 	#updated = true;
+
+	#uniforms;
+	#attributes;
+	#maps;
+
+	#dirtyCache;
 
 
 	constructor(args = {}) {
@@ -142,29 +89,11 @@ export class MeshMaterial extends Material {
 
 		this.updated = true;
 
-
-		// this.samplersBindGroupLayoutDescriptor = new GPUBindGroupLayoutDescriptor(
-		// 	{
-		// 		entries: new Array(),
-		// 	}
-		// );
-		// this.samplersBindGroupDescriptor = new GPUBindGroupDescriptor(
-		// 	{
-		// 		layout: null,
-		// 		entries: new Array(),
-		// 	}
-		// );
-		// this.texturesBindGroupLayoutDescriptor = new GPUBindGroupLayoutDescriptor(
-		// 	{
-		// 		entries: new Array(),
-		// 	}
-		// );
-		// this.texturesBindGroupDescriptor = new GPUBindGroupDescriptor(
-		// 	{
-		// 		layout: null,
-		// 		entries: new Array(),
-		// 	}
-		// );
+		this.uniforms = (args.uniforms !== undefined) ? args.uniforms : new Map();
+		this.attributes = (args.attributes !== undefined) ? args.attributes : new Map();
+		this.maps = new Map();
+		
+		this.dirtyCache = new Map();
 	}
 
 
@@ -308,6 +237,17 @@ export class MeshMaterial extends Material {
 	get updated() { return this.#updated; }
 	set updated(updated) { this.#updated = updated; }
 
+	get uniforms() { return this.#uniforms; }
+	set uniforms(uniforms) { this.#uniforms = uniforms; }
+	get attributes() { return this.#attributes; }
+	set attributes(attributes) { this.#attributes = attributes; }
+	get maps() { return this.#maps; }
+	set maps(maps) { this.#maps = maps; }
+	//TODO textures, samplers
+	
+	get dirtyCache() { return this.#dirtyCache; }
+	set dirtyCache(dirtyCache) { this.#dirtyCache = dirtyCache; }
+
 
 	addSBFlag(flag) {
 		this.requiredProgramTemplate = null;
@@ -333,5 +273,54 @@ export class MeshMaterial extends Material {
 	clearSBValues() {
 		this.requiredProgramTemplate = null;
 		this.values.clear();
+	}
+
+	getUniform(name) {
+		return this.uniforms.get(name);
+	}
+	setUniform(name, value) {
+		this.uniforms.set(name, value);
+		this.dirtyCache.set(name, value);
+	}
+	removeUniform(name) {
+		this.uniforms.delete(name);
+		this.dirtyCache.delete(name);
+	}
+
+	getAttribute(name) {
+		return this.attributes.get(name);
+	}
+	setAttribute(name, value) {
+		this.attributes.set(name, value);
+		this.dirtyCache.set(name, value);
+	}
+	removeAttribute(name) {
+		this.attributes.delete(name);
+		this.dirtyCache.delete(name);
+	}
+
+	getMap(name) {
+		return this.maps.get(name);
+	}
+	setMap(name, map) {
+		this.requiredProgramTemplate = null;
+		this.maps.set(name, map);
+
+		this.addSBFlag("TEXTURES"); //TODO rename to MAPS?
+		this.addSBValue("NUM_TEXTURES", this.maps.size);
+	}
+	removeMap(name) {
+		this.requiredProgramTemplate = null;
+		this.maps.delete(name);
+
+		if (this.maps.size === 0) this.rmSBFlag("TEXTURES");
+		this.addSBValue("NUM_TEXTURES", this.maps.size);
+	}
+	clearMaps() {
+		this.requiredProgramTemplate = null;
+		this.maps.clear();
+
+		this.rmSBFlag("TEXTURES");
+		this.addSBValue("NUM_TEXTURES", this.maps.size);
 	}
 };

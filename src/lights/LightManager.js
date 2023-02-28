@@ -1,18 +1,24 @@
-import { GPUBindGroupDescriptor } from "../core/DICTS/GPUBindGroupDescriptor.js";
-import { GPUBindGroupEntry } from "../core/DICTS/GPUBindGroupEntry.js";
-import { GPUBindGroupLayoutDescriptor } from "../core/DICTS/GPUBindGroupLayoutDescriptor.js";
-import { GPUBindGroupLayoutEntry } from "../core/DICTS/GPUBindGroupLayoutEntry.js";
+import { GPUBindGroupDescriptor } from "../core/DICTS/resource binding/GPUBindGroupDescriptor.js";
+import { GPUBindGroupEntry } from "../core/DICTS/resource binding/GPUBindGroupEntry.js";
+import { GPUBindGroupLayoutDescriptor } from "../core/DICTS/resource binding/GPUBindGroupLayoutDescriptor.js";
+import { GPUBindGroupLayoutEntry } from "../core/DICTS/resource binding/GPUBindGroupLayoutEntry.js";
 import { GPUBufferBindingLayout } from "../core/DICTS/GPUBufferBindingLayout.js";
-import { GPUBufferDescriptor } from "../core/DICTS/GPUBufferDescriptor.js";
 import { GPUBufferBindingType } from "../core/ENUM/GPUBufferBindingType.js";
-import { GPUBufferUsage } from "../core/NAMESPACE/GPUBufferUsage.js";
-import { GPUShaderStage } from "../core/NAMESPACE/GPUShaderStage.js";
+import { GPUShaderStage } from "../core/NAMESPACE/resource binding/GPUShaderStage.js";
 import { ObjectBase } from "../core/ObjectBase.js";
+import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
+import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 import { RCBufferBindingResource } from "../core/RCBufferBindingResource.js";
 import { AmbientLight } from "./AmbientLight.js";
 import { DirectionalLight } from "./DirectionalLight.js";
 import { PointLight } from "./PointLight.js";
 import { SpotLight } from "./SpotLight.js";
+import { UniformDescriptor } from "../core/data layouts/UniformDescriptor.js";
+import { BindGroupLayoutEntry } from "../core/RC/resource binding/BindGroupLayoutEntry.js";
+import { BindGroupLayoutDescriptor } from "../core/RC/resource binding/BindGroupLayoutDescriptor.js";
+import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
+import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
+import { BindGroupDescriptor } from "../core/RC/resource binding/BindGroupDescriptor.js";
 
 
 export class LightManager extends ObjectBase {
@@ -26,22 +32,19 @@ export class LightManager extends ObjectBase {
     };
 
 
-	#context;
-
 	#lights;
 	#maxLights;
 
 
-	constructor(context, args = {}) {
+	constructor(args = {}) {
 		super(
 			{
-				...args, 
+				...args,
+
 				name: (args.name !== undefined) ? args.name : LightManager.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : LightManager.DEFAULT.TYPE,
 			}
 		);
-
-		this.context = context;
 
 		this.lights = new Map([
 			[AmbientLight.DEFAULT.TYPE, new Set()],
@@ -51,66 +54,62 @@ export class LightManager extends ObjectBase {
 		]);
 		this.maxLights = (args.maxLights !== undefined) ? args.maxLights : LightManager.DEFAULT.MAX_LIGHTS;
 
-		this.uniformBufferSize = 4 * ((4) * 1 + (4+4+4 + 1+1+1+1) * 1);
-		console.error(this);
-
-		this.uniformBufferSize = ((4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights) * 4;
-		this.bufferDescriptor = new GPUBufferDescriptor(
+		this.uniformDescriptor = new UniformDescriptor(
 			{
-				size: this.uniformBufferSize,
-				usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-				mappedAtCreation: false,
-			}
-		);
-
-		this.bindGroupLayoutEntry = new GPUBindGroupLayoutEntry(
-			{
-				binding: 10,
-				visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
-				buffer: new GPUBufferBindingLayout(
+				resourceDescriptors: [
+					new BufferDescriptor(
+						{
+							label: "light manager buffer",
+							size: (4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights,
+							usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
+							mappedAtCreation: false,
+						}
+					)
+				],
+				bindGroupLayoutDescriptor: new BindGroupLayoutDescriptor(
 					{
-						type: GPUBufferBindingType.UNIFORM,
-						hasDynamicOffset: false,
-						minBindingSize: 0,
+						label: "light manager bing group layout",
+						entries: [
+							new BindGroupLayoutEntry(
+								{
+									binding: 10,
+									visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
+									buffer: new GPUBufferBindingLayout(
+										{
+											type: GPUBufferBindingType.UNIFORM,
+											hasDynamicOffset: false,
+											minBindingSize: 0,
+										}
+									),
+								}
+							),
+						],
 					}
 				),
-			}
-		);
-		this.bindGroupLayoutDescriptor = new GPUBindGroupLayoutDescriptor(
-			{
-				label: "light manager bing group layout",
-				entries: [
-					this.bindGroupLayoutEntry,
-				],
-			}
-		);
-
-		this.bufferBindGroupEntry = new GPUBindGroupEntry(
-			{
-				binding: 10,
-				resource: new RCBufferBindingResource(
+				bindGroupDescriptor: new BindGroupDescriptor(
 					{
-						buffer: null,
-						offset: 0,
-						size: this.uniformBufferSize,
+						label: "light manager bind group",
+						layout: null,
+						entries: [
+							new BindGroupEntry(
+								{
+									binding: 10,
+									resource: new RCBufferBindingResource(
+										{
+											buffer: null,
+											offset: 0,
+											size: ((4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights) * 4,
+										}
+									),
+								}
+							),
+						],
 					}
-				),
-			}
-		);
-		this.bindGroupDescriptor = new GPUBindGroupDescriptor(
-			{
-				label: "light manager bind group",
-				layout: null,
-				entries: [
-					this.bufferBindGroupEntry,
-				],
+				)
 			}
 		);
 	}
 
-
-	get context() { return this.#context; }
-    set context(context) { this.#context = context; }
 
 	get lights() { return this.#lights; }
 	set lights(lights) { this.#lights = lights; }
@@ -158,16 +157,6 @@ export class LightManager extends ObjectBase {
 		this.lights.get(SpotLight.DEFAULT.TYPE).clear();
 	}
 
-	setupContex(renderer) {
-		// if (this.buffer) this.buffer.destroy();
-		// this.buffer = this.context.createBuffer(this.bufferDescriptor);
-		// this.bufferBindGroupEntry.resource.buffer = this.buffer;
-
-		// this.bindGroupLayout = this.context.createBindGroupLayout(LightManager.bindGroupLayoutDescriptor);
-		// this.bindGroupDescriptor.layout = this.bindGroupLayout;
-
-		// this.bindGroup = this.context.createBindGroup(this.bindGroupDescriptor);
-	}
 	setup(scene, renderer) {
 		const lights = this.lights;
 
@@ -188,39 +177,12 @@ export class LightManager extends ObjectBase {
 		// 		//LOCAL SETUP
 
 
-		// 		//LCOAL CONTEXT SETUP
-		// 		light.setupContex(this.context);
-		// 	}
 		// }
 
 
-		if (!this.contextSet){
-			this.setupContex(renderer);
-			this.contextSet = true;
-		}
-	}
-	updateContext(scene) {
-
-		// let offset = (0) * 4;
-		// if (scene.descendants.has(AmbientLight.DEFAULT.TYPE))
-		// for(const aLight of scene.descendants.get(AmbientLight.DEFAULT.TYPE)) {
-		// 	this.context.queue.writeBuffer(this.buffer, offset, aLight.colorIntensity.arrayBuffer);
-		// 	offset += (4) * 4;
-		// }
-		// if (scene.descendants.has(PointLight.DEFAULT.TYPE))
-		// for(const pLight of scene.descendants.get(PointLight.DEFAULT.TYPE)) {
-		// 	this.context.queue.writeBuffer(this.buffer, offset + 0      , new Float32Array(pLight.position.toArray()));
-		// 	this.context.queue.writeBuffer(this.buffer, offset + 1*4 * 4, new Float32Array(pLight.position.toArray()));
-		// 	this.context.queue.writeBuffer(this.buffer, offset + 2*4 * 4, pLight.colorIntensity.arrayBuffer);
-		// 	this.context.queue.writeBuffer(this.buffer, offset + 3*4 * 4, new Float32Array(pLight.decayDistance.toArray()));
-		
-		// 	offset += (4 + 4 + 4 + 4) * 4;
-		// }
 	}
 	update(scene, renderer) {
 		const lights = this.lights;
 
-
-		this.updateContext(scene, renderer);
 	}
 };
