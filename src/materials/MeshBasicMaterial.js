@@ -16,7 +16,7 @@ import { GPUTextureViewDimension } from "../core/ENUM/GPUTextureViewDimension.js
 import { SamplerDescriptor } from "../core/RC/samplers/SamplerDescriptor.js";
 import { FilterMode } from "../core/RC/samplers/FilterMode.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
-import { UniformDescriptor } from "../core/data layouts/UniformDescriptor.js";
+import { UniformGroupDescriptor } from "../core/data layouts/UniformGroupDescriptor.js";
 import { BindGroupDescriptor } from "../core/RC/resource binding/BindGroupDescriptor.js";
 import { BindGroupLayoutEntry } from "../core/RC/resource binding/BindGroupLayoutEntry.js";
 import { BindGroupLayoutDescriptor } from "../core/RC/resource binding/BindGroupLayoutDescriptor.js";
@@ -59,7 +59,7 @@ export class MeshBasicMaterial extends MeshMaterial {
 		this.emissive = (args.emissive !== undefined) ? args.emissive : new Color4(0, 0, 0, 0);
 		this.diffuse = (args.diffuse !== undefined) ? args.diffuse : new Color4(Math.random(), Math.random(), Math.random(), Math.random());
 	
-		this.uniformDescriptor = new UniformDescriptor(
+		this.uniformGroupDescriptor = new UniformGroupDescriptor(
 			{
 				resourceDescriptors: [
 					new BufferDescriptor(

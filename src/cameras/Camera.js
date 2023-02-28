@@ -6,7 +6,7 @@ import { RCBufferBindingResource } from "../core/RCBufferBindingResource.js";
 import { Matrix4 } from "../math/Matrix4.js";
 import { Group } from "../objects/Group.js";
 import { Frustum } from "../RenderCore.js";
-import { UniformDescriptor } from "../core/data layouts/UniformDescriptor.js";
+import { UniformGroupDescriptor } from "../core/data layouts/UniformGroupDescriptor.js";
 import { BindGroupLayoutEntry } from "../core/RC/resource binding/BindGroupLayoutEntry.js";
 import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
 import { BindGroupLayoutDescriptor } from "../core/RC/resource binding/BindGroupLayoutDescriptor.js";
@@ -61,7 +61,7 @@ export class Camera extends Group {
 
 		this.frustum = new Frustum();
 
-		this.uniformDescriptor = new UniformDescriptor(
+		this.uniformGroupDescriptor = new UniformGroupDescriptor(
 			{
 				resourceDescriptors: [
 					new BufferDescriptor(

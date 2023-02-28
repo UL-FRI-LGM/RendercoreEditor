@@ -7,7 +7,7 @@ import { Matrix4 } from "../RenderCore.js";
 import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 import { PrimitiveTopology } from "../core/RC/pipeline/primitive state/PrimitiveTopology.js";
-import { UniformDescriptor } from "../core/data layouts/UniformDescriptor.js";
+import { UniformGroupDescriptor } from "../core/data layouts/UniformGroupDescriptor.js";
 import { BindGroupLayoutDescriptor } from "../core/RC/resource binding/BindGroupLayoutDescriptor.js";
 import { BindGroupLayoutEntry } from "../core/RC/resource binding/BindGroupLayoutEntry.js";
 import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
@@ -74,7 +74,7 @@ export class Mesh extends Group {
 		this.firstVertex = (args.firstVertex !== undefined) ? args.firstVertex : Mesh.DEFAULT.FIRST_VERTEX;
 		this.firstInstance = (args.firstInstance !== undefined) ? args.firstInstance : Mesh.DEFAULT.FIRST_INSTANCE;
 
-		this.uniformDescriptor = new UniformDescriptor(
+		this.uniformGroupDescriptor = new UniformGroupDescriptor(
 			{
 				resourceDescriptors: [
 					new BufferDescriptor(

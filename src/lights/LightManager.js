@@ -13,7 +13,7 @@ import { AmbientLight } from "./AmbientLight.js";
 import { DirectionalLight } from "./DirectionalLight.js";
 import { PointLight } from "./PointLight.js";
 import { SpotLight } from "./SpotLight.js";
-import { UniformDescriptor } from "../core/data layouts/UniformDescriptor.js";
+import { UniformGroupDescriptor } from "../core/data layouts/UniformGroupDescriptor.js";
 import { BindGroupLayoutEntry } from "../core/RC/resource binding/BindGroupLayoutEntry.js";
 import { BindGroupLayoutDescriptor } from "../core/RC/resource binding/BindGroupLayoutDescriptor.js";
 import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
@@ -54,7 +54,7 @@ export class LightManager extends ObjectBase {
 		]);
 		this.maxLights = (args.maxLights !== undefined) ? args.maxLights : LightManager.DEFAULT.MAX_LIGHTS;
 
-		this.uniformDescriptor = new UniformDescriptor(
+		this.uniformGroupDescriptor = new UniformGroupDescriptor(
 			{
 				resourceDescriptors: [
 					new BufferDescriptor(
