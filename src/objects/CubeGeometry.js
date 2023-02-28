@@ -3,7 +3,7 @@ import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribut
 import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
 import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
 import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
-import { AttributeDescriptor } from "../core/data layouts/AttributeDescriptor.js";
+import { AttributeLocationDescriptor } from "../core/data layouts/AttributeLocationDescriptor.js";
 import { MeshGeometry } from "./MeshGeometry.js";
 
 
@@ -123,7 +123,7 @@ export class CubeGeometry extends MeshGeometry {
 			}
 
 			const verticesArrayBuffer = new Float32Array(verticesArray);
-			const verticesAttributeDescriptor = new AttributeDescriptor(
+			const verticesAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
 					bufferDescriptor: new BufferDescriptor(
 						{
@@ -153,7 +153,7 @@ export class CubeGeometry extends MeshGeometry {
 			);
 
 
-			return verticesAttributeDescriptor;
+			return verticesAttributeLocationDescriptor;
 		}
 	}
 	static assembleNormals(args = {}) {
@@ -238,7 +238,7 @@ export class CubeGeometry extends MeshGeometry {
                 }
             );
 			// normalsBufferDescriptor.normalize(); // no need to normalize for this configuration
-			const normalAttributeDescriptor = new AttributeDescriptor(
+			const normalAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
 					bufferDescriptor: normalsBufferDescriptor,
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
@@ -260,7 +260,7 @@ export class CubeGeometry extends MeshGeometry {
 			);
 
 
-			return normalAttributeDescriptor;
+			return normalAttributeLocationDescriptor;
 		}
 	}
 	static assembleUVs(args = {}) {
@@ -344,7 +344,7 @@ export class CubeGeometry extends MeshGeometry {
 					arrayBuffer: uvsArrayBuffer,
                 }
             );
-			const normalAttributeDescriptor = new AttributeDescriptor(
+			const normalAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
 					bufferDescriptor: uvsBufferDescriptor,
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
@@ -366,7 +366,7 @@ export class CubeGeometry extends MeshGeometry {
 			);
 
 
-			return normalAttributeDescriptor;
+			return normalAttributeLocationDescriptor;
 		}
 	}
 };

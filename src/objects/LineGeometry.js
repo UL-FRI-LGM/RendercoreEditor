@@ -1,6 +1,6 @@
 import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
 import { MeshGeometry } from "./MeshGeometry.js";
-import { AttributeDescriptor } from "../core/data layouts/AttributeDescriptor.js";
+import { AttributeLocationDescriptor } from "../core/data layouts/AttributeLocationDescriptor.js";
 import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
 import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
 import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
@@ -86,7 +86,7 @@ export class LineGeometry extends MeshGeometry {
 					arrayBuffer: verticesArrayBuffer,
                 }
             );
-			const verticesAttributeDescriptor = new AttributeDescriptor(
+			const verticesAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
 					bufferDescriptor: verticesBufferDescriptor,
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
@@ -108,7 +108,7 @@ export class LineGeometry extends MeshGeometry {
 			);
 
 
-			return verticesAttributeDescriptor;
+			return verticesAttributeLocationDescriptor;
 		}
 	}
 	static assembleNormals(args = {}) {
@@ -143,7 +143,7 @@ export class LineGeometry extends MeshGeometry {
                 }
             );
 			// normalsBufferDescriptor.normalize(); // no need to normalize for this configuration
-			const normalsAttributeDescriptor = new AttributeDescriptor(
+			const normalsAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
 					bufferDescriptor: normalsBufferDescriptor,
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
@@ -165,7 +165,7 @@ export class LineGeometry extends MeshGeometry {
 			);
 
 
-			return normalsAttributeDescriptor;
+			return normalsAttributeLocationDescriptor;
 		}
 	}
 	static assembleUVs(args = {}) {
@@ -199,7 +199,7 @@ export class LineGeometry extends MeshGeometry {
 					arrayBuffer: uvsArrayBuffer,
                 }
             );
-			const uvsAttributeDescriptor = new AttributeDescriptor(
+			const uvsAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
 					bufferDescriptor: uvsBufferDescriptor,
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
@@ -221,7 +221,7 @@ export class LineGeometry extends MeshGeometry {
 			);
 
 
-			return uvsAttributeDescriptor;
+			return uvsAttributeLocationDescriptor;
 		}
 	}
 };

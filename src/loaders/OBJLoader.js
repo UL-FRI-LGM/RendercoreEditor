@@ -10,7 +10,7 @@ import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBuffe
 import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
 import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
 import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
-import { AttributeDescriptor } from "../core/data layouts/AttributeDescriptor.js";
+import { AttributeLocationDescriptor } from "../core/data layouts/AttributeLocationDescriptor.js";
 
 
 export class OBJLoader extends XHRLoader {
@@ -326,7 +326,7 @@ export class OBJLoader extends XHRLoader {
 			// Add position of vertices
 			const verticesArrayBuffer = new Float32Array(geometry.vertices);
 			
-			meshGeometry.vertices = new AttributeDescriptor(
+			meshGeometry.vertices = new AttributeLocationDescriptor(
 				{
 					bufferDescriptor: new BufferDescriptor(
 						{
@@ -359,7 +359,7 @@ export class OBJLoader extends XHRLoader {
 			if (geometry.normals.length > 0) {
 				const normalsArrayBuffer = new Float32Array(geometry.normals);
 
-				meshGeometry.normals = new AttributeDescriptor(
+				meshGeometry.normals = new AttributeLocationDescriptor(
 					{
 						bufferDescriptor: new BufferDescriptor(
 							{
@@ -395,7 +395,7 @@ export class OBJLoader extends XHRLoader {
 			if (geometry.uvs.length > 0) {
 				const uvsArrayBuffer =  new Float32Array(geometry.uvs);
 
-				meshGeometry.uvs = new AttributeDescriptor(
+				meshGeometry.uvs = new AttributeLocationDescriptor(
 					{
 						bufferDescriptor: new BufferDescriptor(
 							{
