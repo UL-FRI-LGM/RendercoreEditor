@@ -84,7 +84,7 @@ export class PointGeometry extends MeshGeometry {
 			const verticesAttributeDescriptor = new AttributeDescriptor(
 				{
 					bufferDescriptor: verticesBufferDescriptor,
-					vertexBufferLayout: new VertexBufferLayout(
+					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 3 * 4,
 							stepMode: VertexStepMode.VERTEX,
@@ -140,7 +140,7 @@ export class PointGeometry extends MeshGeometry {
 			const normalsAttributeDescriptor = new AttributeDescriptor(
 				{
 					bufferDescriptor: normalsBufferDescriptor,
-					vertexBufferLayout: new VertexBufferLayout(
+					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 3 * 4,
 							stepMode: VertexStepMode.VERTEX,
@@ -195,7 +195,7 @@ export class PointGeometry extends MeshGeometry {
 			const uvsAttributeDescriptor = new AttributeDescriptor(
 				{
 					bufferDescriptor: uvsBufferDescriptor,
-					vertexBufferLayout: new VertexBufferLayout(
+					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 2 * 4,
 							stepMode: VertexStepMode.VERTEX,

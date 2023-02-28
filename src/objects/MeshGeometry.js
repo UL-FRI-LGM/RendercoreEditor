@@ -197,7 +197,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		const wireframeIndicesAttributeDescriptor = new AttributeDescriptor(
 			{
 				bufferDescriptor: wireframeIndicesBufferDescriptor,
-				vertexBufferLayout: new VertexBufferLayout(
+				vertexBufferLayoutDescriptor: new VertexBufferLayout(
 					{
 						arrayStride: 1 * 4,
 						stepMode: VertexStepMode.VERTEX,
@@ -347,7 +347,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		const normalsAttributeDescriptor = new AttributeDescriptor(
 			{
 				bufferDescriptor: normalsBufferDescriptor,
-				vertexBufferLayout: new VertexBufferLayout(
+				vertexBufferLayoutDescriptor: new VertexBufferLayout(
 					{
 						arrayStride: 3 * 4,
 						stepMode: VertexStepMode.VERTEX,
@@ -460,7 +460,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 			const tangentsAttributeDescriptor = new AttributeDescriptor(
 				{
 					bufferDescriptor: tangentsBufferDescriptor,
-					vertexBufferLayout: new VertexBufferLayout(
+					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 3 * 4,
 							stepMode: VertexStepMode.VERTEX,
@@ -564,7 +564,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 			const tangentsAttributeDescriptor = new AttributeDescriptor(
 				{
 					bufferDescriptor: tangentsBufferDescriptor,
-					vertexBufferLayout: new VertexBufferLayout(
+					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 3 * 4,
 							stepMode: VertexStepMode.VERTEX,
@@ -674,7 +674,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 			const bitangentsAttributeDescriptor = new AttributeDescriptor(
 				{
 					bufferDescriptor: bitangentsBufferDescriptor,
-					vertexBufferLayout: new VertexBufferLayout(
+					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 3 * 4,
 							stepMode: VertexStepMode.VERTEX,
@@ -778,7 +778,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 			const bitangentsAttributeDescriptor = new AttributeDescriptor(
 				{
 					bufferDescriptor: bitangentsBufferDescriptor,
-					vertexBufferLayout: new VertexBufferLayout(
+					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 3 * 4,
 							stepMode: VertexStepMode.VERTEX,

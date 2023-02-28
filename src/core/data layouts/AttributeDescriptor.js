@@ -1,7 +1,7 @@
 import { DescriptorBase } from '../RC/DescriptorBase.js';
 
 
-export class AttributeDescriptor extends DescriptorBase {
+export class AttributeDescriptor extends DescriptorBase { //Attribute location descriptor
 
 
 	static DEFAULT = {
@@ -12,12 +12,12 @@ export class AttributeDescriptor extends DescriptorBase {
         DIRTY_CACHE: new Map(),
 
 		BUFFER_DESCRIPTOR: undefined,
-		VERTEX_BUFFER_LAYOUT: undefined,
+		VERTEX_BUFFER_LAYOUT_DESCRIPTOR: undefined,
 	};
 
 
 	#bufferDescriptor;
-	#vertexBufferLayout;
+	#vertexBufferLayoutDescriptor;
 
 
 	constructor(args = {}) {
@@ -34,12 +34,12 @@ export class AttributeDescriptor extends DescriptorBase {
 		);
 
 		this.bufferDescriptor = (args.bufferDescriptor !== undefined) ? args.bufferDescriptor : AttributeDescriptor.DEFAULT.BUFFER_DESCRIPTOR;
-		this.vertexBufferLayout = (args.vertexBufferLayout !== undefined) ? args.vertexBufferLayout : AttributeDescriptor.DEFAULT.VERTEX_BUFFER_LAYOUT;
+		this.vertexBufferLayoutDescriptor = (args.vertexBufferLayoutDescriptor !== undefined) ? args.vertexBufferLayoutDescriptor : AttributeDescriptor.DEFAULT.VERTEX_BUFFER_LAYOUT_DESCRIPTOR;
 	}
 
 
 	get bufferDescriptor() { return this.#bufferDescriptor }
 	set bufferDescriptor(bufferDescriptor){ this.#bufferDescriptor = bufferDescriptor; }
-	get vertexBufferLayout() { return this.#vertexBufferLayout; }
-	set vertexBufferLayout(vertexBufferLayout) { this.#vertexBufferLayout = vertexBufferLayout; }
-}
+	get vertexBufferLayoutDescriptor() { return this.#vertexBufferLayoutDescriptor; }
+	set vertexBufferLayoutDescriptor(vertexBufferLayoutDescriptor) { this.#vertexBufferLayoutDescriptor = vertexBufferLayoutDescriptor; }
+};

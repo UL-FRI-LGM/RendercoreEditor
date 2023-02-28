@@ -10,7 +10,7 @@ import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBuffe
 import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
 import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
 import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
-import { AttributeDescriptor } from "../core/x/AttributeDescriptor.js";
+import { AttributeDescriptor } from "../core/data layouts/AttributeDescriptor.js";
 
 
 export class OBJLoader extends XHRLoader {
@@ -337,7 +337,7 @@ export class OBJLoader extends XHRLoader {
 							arrayBuffer: verticesArrayBuffer, 
 						}
 					),
-					vertexBufferLayout: new VertexBufferLayout(
+					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 3 * 4,
 							stepMode: VertexStepMode.VERTEX,
@@ -370,7 +370,7 @@ export class OBJLoader extends XHRLoader {
 								arrayBuffer: normalsArrayBuffer, 
 							}
 						),
-						vertexBufferLayout: new VertexBufferLayout(
+						vertexBufferLayoutDescriptor: new VertexBufferLayout(
 							{
 								arrayStride: 3 * 4,
 								stepMode: VertexStepMode.VERTEX,
@@ -406,7 +406,7 @@ export class OBJLoader extends XHRLoader {
 								arrayBuffer: uvsArrayBuffer, 
 							}
 						),
-						vertexBufferLayout: new VertexBufferLayout(
+						vertexBufferLayoutDescriptor: new VertexBufferLayout(
 							{
 								arrayStride: 2 * 4,
 								stepMode: VertexStepMode.VERTEX,

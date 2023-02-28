@@ -134,7 +134,7 @@ export class CubeGeometry extends MeshGeometry {
 							arrayBuffer: verticesArrayBuffer,
 						}
 					),
-					vertexBufferLayout: new VertexBufferLayout(
+					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 3 * 4,
 							stepMode: VertexStepMode.VERTEX,
@@ -241,7 +241,7 @@ export class CubeGeometry extends MeshGeometry {
 			const normalAttributeDescriptor = new AttributeDescriptor(
 				{
 					bufferDescriptor: normalsBufferDescriptor,
-					vertexBufferLayout: new VertexBufferLayout(
+					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 3 * 4,
 							stepMode: VertexStepMode.VERTEX,
@@ -347,7 +347,7 @@ export class CubeGeometry extends MeshGeometry {
 			const normalAttributeDescriptor = new AttributeDescriptor(
 				{
 					bufferDescriptor: uvsBufferDescriptor,
-					vertexBufferLayout: new VertexBufferLayout(
+					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 2 * 4,
 							stepMode: VertexStepMode.VERTEX,
