@@ -11,6 +11,7 @@ import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.
 import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
 import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
 import { AttributeLocationDescriptor } from "../core/data layouts/AttributeLocationDescriptor.js";
+import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 
 
 export class OBJLoader extends XHRLoader {
@@ -325,16 +326,16 @@ export class OBJLoader extends XHRLoader {
 
 			// Add position of vertices
 			const verticesArrayBuffer = new Float32Array(geometry.vertices);
-			
 			meshGeometry.vertices = new AttributeLocationDescriptor(
 				{
+					itemSize: 3,
+					arrayBuffer: verticesArrayBuffer,
 					bufferDescriptor: new BufferDescriptor(
 						{
 							label: "OBJ vertices buffer",
 							size: verticesArrayBuffer.length,
-							itemSize: 3,
-		
-							arrayBuffer: verticesArrayBuffer, 
+							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
 						}
 					),
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
@@ -358,16 +359,16 @@ export class OBJLoader extends XHRLoader {
 			// Check if normals are specified. Otherwise calculate them
 			if (geometry.normals.length > 0) {
 				const normalsArrayBuffer = new Float32Array(geometry.normals);
-
 				meshGeometry.normals = new AttributeLocationDescriptor(
 					{
+						itemSize: 3,
+						arrayBuffer: normalsArrayBuffer,
 						bufferDescriptor: new BufferDescriptor(
 							{
 								label: "OBJ normals buffer",
 								size: normalsArrayBuffer.length,
-								itemSize: 3,
-			
-								arrayBuffer: normalsArrayBuffer, 
+								usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+								mappedAtCreation: false
 							}
 						),
 						vertexBufferLayoutDescriptor: new VertexBufferLayout(
@@ -394,16 +395,16 @@ export class OBJLoader extends XHRLoader {
 			// If specified add texture uv-s
 			if (geometry.uvs.length > 0) {
 				const uvsArrayBuffer =  new Float32Array(geometry.uvs);
-
 				meshGeometry.uvs = new AttributeLocationDescriptor(
 					{
+						itemSize: 2,
+						arrayBuffer: uvsArrayBuffer,
 						bufferDescriptor: new BufferDescriptor(
 							{
 								label: "OBJ uvs buffer",
 								size: uvsArrayBuffer.length,
-								itemSize: 2,
-			
-								arrayBuffer: uvsArrayBuffer, 
+								usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+								mappedAtCreation: false
 							}
 						),
 						vertexBufferLayoutDescriptor: new VertexBufferLayout(

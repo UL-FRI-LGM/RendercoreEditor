@@ -5,6 +5,7 @@ import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
 import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
 import { AttributeLocationDescriptor } from "../core/data layouts/AttributeLocationDescriptor.js";
 import { MeshGeometry } from "./MeshGeometry.js";
+import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 
 
 export class CubeGeometry extends MeshGeometry {
@@ -125,13 +126,14 @@ export class CubeGeometry extends MeshGeometry {
 			const verticesArrayBuffer = new Float32Array(verticesArray);
 			const verticesAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
+					itemSize: 3,
+					arrayBuffer: verticesArrayBuffer,
 					bufferDescriptor: new BufferDescriptor(
 						{
 							label: "cube vertices buffer",
 							size: verticesArrayBuffer.length,
-							itemSize: 3,
-		
-							arrayBuffer: verticesArrayBuffer,
+							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
 						}
 					),
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
@@ -228,19 +230,18 @@ export class CubeGeometry extends MeshGeometry {
 			}
 
 			const normalsArrayBuffer = new Float32Array(normalsArray);
-			const normalsBufferDescriptor = new BufferDescriptor(
-                {
-					label: "cube normals buffer",
-					size: normalsArrayBuffer.length,
-                    itemSize: 3,
-
-					arrayBuffer: normalsArrayBuffer,
-                }
-            );
-			// normalsBufferDescriptor.normalize(); // no need to normalize for this configuration
 			const normalAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
-					bufferDescriptor: normalsBufferDescriptor,
+					itemSize: 3,
+					arrayBuffer: normalsArrayBuffer,
+					bufferDescriptor: new BufferDescriptor(
+						{
+							label: "cube normals buffer",
+							size: normalsArrayBuffer.length,
+							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
+						}
+					),
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 3 * 4,
@@ -258,6 +259,7 @@ export class CubeGeometry extends MeshGeometry {
 					)
 				}
 			);
+			// normalAttributeLocationDescriptor.normalize(); // no need to normalize for this configuration
 
 
 			return normalAttributeLocationDescriptor;
@@ -335,18 +337,18 @@ export class CubeGeometry extends MeshGeometry {
 			}
 
 			const uvsArrayBuffer = new Float32Array(uvsArray);
-			const uvsBufferDescriptor = new BufferDescriptor(
-                {
-					label: "cube uvs buffer",
-					size: uvsArrayBuffer.length,
-                    itemSize: 2, //TODO out one level
-
-					arrayBuffer: uvsArrayBuffer,
-                }
-            );
 			const normalAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
-					bufferDescriptor: uvsBufferDescriptor,
+					itemSize: 2,
+					arrayBuffer: uvsArrayBuffer,
+					bufferDescriptor: new BufferDescriptor(
+						{
+							label: "cube uvs buffer",
+							size: uvsArrayBuffer.length,
+							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
+						}
+					),
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 2 * 4,

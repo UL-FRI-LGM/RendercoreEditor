@@ -9,6 +9,7 @@ import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
 import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
 import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
 import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
+import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 
 
 export class MeshGeometry extends Geometry { //mesh custom geometry
@@ -156,7 +157,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		const indicesArray = [];
 
 		if (this.indices !== null) {
-			const indices = this.indices.bufferDescriptor;
+			const indices = this.indices;
 			const vertexMap = new Map();
 
 			for (let i = 0; i < indices.arrayBuffer.length; i += 3) {
@@ -171,7 +172,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				this.#sanitize(vertexMap, c, a, indicesArray);
 			}
 		} else {
-			const vertices = this.vertices.bufferDescriptor;
+			const vertices = this.vertices;
 
 			for (let i = 0; i < vertices.count(); i += 3) {
 				const a = i;
@@ -185,18 +186,18 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 
 		// Create new buffer geometry for the wireframe
 		const wireframeIndicesArrayBuffer = new Uint32Array(indicesArray);
-		const wireframeIndicesBufferDescriptor = new BufferDescriptor(
-			{
-				label: "mesh geometry wireframe indices buffer",
-				size: wireframeIndicesArrayBuffer.length,
-				itemSize: 1,
-
-				arrayBuffer: wireframeIndicesArrayBuffer,
-			}
-		);
 		const wireframeIndicesAttributeLocationDescriptor = new AttributeLocationDescriptor(
 			{
-				bufferDescriptor: wireframeIndicesBufferDescriptor,
+				itemSize: 1,
+				arrayBuffer: wireframeIndicesArrayBuffer,
+				bufferDescriptor: new BufferDescriptor(
+					{
+						label: "mesh geometry wireframe indices buffer",
+						size: wireframeIndicesArrayBuffer.length,
+						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+						mappedAtCreation: false
+					}
+				),
 				vertexBufferLayoutDescriptor: new VertexBufferLayout(
 					{
 						arrayStride: 1 * 4,
@@ -271,7 +272,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 	}
 
 	computeVertexNormals() {
-		const positions = this.vertices.bufferDescriptor.arrayBuffer;
+		const positions = this.vertices.arrayBuffer;
 		const normals = new Float32Array(positions.length);
 
 		const pA = new Vector3();
@@ -281,7 +282,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		const ab = new Vector3();
 
 		if (this.indices && this.vertices) {
-			const indices = this.indices.bufferDescriptor.arrayBuffer;
+			const indices = this.indices.arrayBuffer;
 
 			for (let i = 0; i < indices.length; i += 3) {
 				const vA = indices[i    ] * 3;
@@ -332,21 +333,19 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 			}
 		}
 
-
 		const normalsArrayBuffer = new Float32Array(normals);
-		const normalsBufferDescriptor = new BufferDescriptor(
-			{
-				label: "mesh geometry normals buffer",
-				size: normalsArrayBuffer.length,
-				itemSize: 3,
-
-				arrayBuffer: normalsArrayBuffer,
-			}
-		);
-		normalsBufferDescriptor.normalize();
 		const normalsAttributeLocationDescriptor = new AttributeLocationDescriptor(
 			{
-				bufferDescriptor: normalsBufferDescriptor,
+				itemSize: 3,
+				arrayBuffer: normalsArrayBuffer,
+				bufferDescriptor: new BufferDescriptor(
+					{
+						label: "mesh geometry normals buffer",
+						size: normalsArrayBuffer.length,
+						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+						mappedAtCreation: false
+					}
+				),
 				vertexBufferLayoutDescriptor: new VertexBufferLayout(
 					{
 						arrayStride: 3 * 4,
@@ -364,6 +363,8 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				)
 			}
 		);
+		normalsAttributeLocationDescriptor.normalize();
+
 
 		this.normals = normalsAttributeLocationDescriptor;
 		this.normals.needsUpdate = true;
@@ -371,9 +372,12 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 	}
 	computeVertexTangents(){
 		if (this.indices) {
-			const indices = this.indices.bufferDescriptor;
-			const vertices = this.vertices.bufferDescriptor;
-			const UVs = this.uvs.bufferDescriptor;
+			const indices = this.indices;
+			const vertices = this.vertices;
+			const uvs = this.uvs;
+
+			const verticesItemSize = vertices.itemSize;
+			const uvsItemSize = uvs.itemSize;
 
 			const v1 = new Vector3();
 			const v2 = new Vector3();
@@ -389,33 +393,33 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 
 			const tangent = new Vector3();
 
-			const tangents = new Array(vertices.count() * vertices.itemSize);
+			const tangents = new Array(vertices.count() * verticesItemSize);
 
 			//for each tringle
 			for (let i = 0; i < indices.count(); i+=3) {
 
 				//vertices
-				v1.x = vertices.arrayBuffer[indices.arrayBuffer[i + 0]*vertices.itemSize + 0];
-				v1.y = vertices.arrayBuffer[indices.arrayBuffer[i + 0]*vertices.itemSize + 1];
-				v1.z = vertices.arrayBuffer[indices.arrayBuffer[i + 0]*vertices.itemSize + 2];
+				v1.x = vertices.arrayBuffer[indices.arrayBuffer[i + 0]*verticesItemSize + 0];
+				v1.y = vertices.arrayBuffer[indices.arrayBuffer[i + 0]*verticesItemSize + 1];
+				v1.z = vertices.arrayBuffer[indices.arrayBuffer[i + 0]*verticesItemSize + 2];
 
-				v2.x = vertices.arrayBuffer[indices.arrayBuffer[i + 1]*vertices.itemSize + 0];
-				v2.y = vertices.arrayBuffer[indices.arrayBuffer[i + 1]*vertices.itemSize + 1];
-				v2.z = vertices.arrayBuffer[indices.arrayBuffer[i + 1]*vertices.itemSize + 2];
+				v2.x = vertices.arrayBuffer[indices.arrayBuffer[i + 1]*verticesItemSize + 0];
+				v2.y = vertices.arrayBuffer[indices.arrayBuffer[i + 1]*verticesItemSize + 1];
+				v2.z = vertices.arrayBuffer[indices.arrayBuffer[i + 1]*verticesItemSize + 2];
 
-				v3.x = vertices.arrayBuffer[indices.arrayBuffer[i + 2]*vertices.itemSize + 0];
-				v3.y = vertices.arrayBuffer[indices.arrayBuffer[i + 2]*vertices.itemSize + 1];
-				v3.z = vertices.arrayBuffer[indices.arrayBuffer[i + 2]*vertices.itemSize + 2];
+				v3.x = vertices.arrayBuffer[indices.arrayBuffer[i + 2]*verticesItemSize + 0];
+				v3.y = vertices.arrayBuffer[indices.arrayBuffer[i + 2]*verticesItemSize + 1];
+				v3.z = vertices.arrayBuffer[indices.arrayBuffer[i + 2]*verticesItemSize + 2];
 
-				//UVs
-				uv1.x = UVs.arrayBuffer[indices.arrayBuffer[i + 0]*UVs.itemSize + 0];
-				uv1.y = UVs.arrayBuffer[indices.arrayBuffer[i + 0]*UVs.itemSize + 1];
+				//uvs
+				uv1.x = uvs.arrayBuffer[indices.arrayBuffer[i + 0]*uvsItemSize + 0];
+				uv1.y = uvs.arrayBuffer[indices.arrayBuffer[i + 0]*uvsItemSize + 1];
 
-				uv2.x = UVs.arrayBuffer[indices.arrayBuffer[i + 1]*UVs.itemSize + 0];
-				uv2.y = UVs.arrayBuffer[indices.arrayBuffer[i + 1]*UVs.itemSize + 1];
+				uv2.x = uvs.arrayBuffer[indices.arrayBuffer[i + 1]*uvsItemSize + 0];
+				uv2.y = uvs.arrayBuffer[indices.arrayBuffer[i + 1]*uvsItemSize + 1];
 
-				uv3.x = UVs.arrayBuffer[indices.arrayBuffer[i + 2]*UVs.itemSize + 0];
-				uv3.y = UVs.arrayBuffer[indices.arrayBuffer[i + 2]*UVs.itemSize + 1];
+				uv3.x = uvs.arrayBuffer[indices.arrayBuffer[i + 2]*uvsItemSize + 0];
+				uv3.y = uvs.arrayBuffer[indices.arrayBuffer[i + 2]*uvsItemSize + 1];
 
 
 				//position delta
@@ -433,33 +437,31 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				//same tangent for each vertex in traingle
 				//(possible rewrite of same vertex attributes because of indices)
 				//must align with correct vertex in sequence
-				tangents[indices.arrayBuffer[i + 0]*vertices.itemSize + 0] = tangent.x;
-				tangents[indices.arrayBuffer[i + 0]*vertices.itemSize + 1] = tangent.y;
-				tangents[indices.arrayBuffer[i + 0]*vertices.itemSize + 2] = tangent.z;
+				tangents[indices.arrayBuffer[i + 0]*verticesItemSize + 0] = tangent.x;
+				tangents[indices.arrayBuffer[i + 0]*verticesItemSize + 1] = tangent.y;
+				tangents[indices.arrayBuffer[i + 0]*verticesItemSize + 2] = tangent.z;
 
-				tangents[indices.arrayBuffer[i + 1]*vertices.itemSize + 0] = tangent.x;
-				tangents[indices.arrayBuffer[i + 1]*vertices.itemSize + 1] = tangent.y;
-				tangents[indices.arrayBuffer[i + 1]*vertices.itemSize + 2] = tangent.z;
+				tangents[indices.arrayBuffer[i + 1]*verticesItemSize + 0] = tangent.x;
+				tangents[indices.arrayBuffer[i + 1]*verticesItemSize + 1] = tangent.y;
+				tangents[indices.arrayBuffer[i + 1]*verticesItemSize + 2] = tangent.z;
 
-				tangents[indices.arrayBuffer[i + 2]*vertices.itemSize + 0] = tangent.x;
-				tangents[indices.arrayBuffer[i + 2]*vertices.itemSize + 1] = tangent.y;
-				tangents[indices.arrayBuffer[i + 2]*vertices.itemSize + 2] = tangent.z;
+				tangents[indices.arrayBuffer[i + 2]*verticesItemSize + 0] = tangent.x;
+				tangents[indices.arrayBuffer[i + 2]*verticesItemSize + 1] = tangent.y;
+				tangents[indices.arrayBuffer[i + 2]*verticesItemSize + 2] = tangent.z;
 			}
 
-
-			const tangentsBufferDescriptor = new BufferDescriptor(
-				{
-					label: "mesh geometry tangents buffer",
-					size: tangents.length,
-					itemSize: 3,
-
-					arrayBuffer: tangents,
-				}
-			);
-			// tangentsBufferDescriptor.normalize();
 			const tangentsAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
-					bufferDescriptor: tangentsBufferDescriptor,
+					itemSize: 3,
+					arrayBuffer: tangents,
+					bufferDescriptor: new BufferDescriptor(
+						{
+							label: "mesh geometry tangents buffer",
+							size: tangents.length,
+							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
+						}
+					),
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 3 * 4,
@@ -477,10 +479,16 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 					)
 				}
 			);
+			// tangentsAttributeLocationDescriptor.normalize();
+
+
 			this.tangents = tangentsAttributeLocationDescriptor;
 		} else {
-			const vertices = this.vertices.bufferDescriptor;
-			const UVs = this.uv.bufferDescriptor;
+			const vertices = this.vertices;
+			const uvs = this.uvs;
+
+			const verticesItemSize = vertices.itemSize;
+			const uvsItemSize = uvs.itemSize;
 
 			const v1 = new Vector3();
 			const v2 = new Vector3();
@@ -496,33 +504,33 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 
 			const tangent = new Vector3();
 
-			const tangents = new Array(vertices.count() * vertices.itemSize);
+			const tangents = new Array(vertices.count() * verticesItemSize);
 
 			//for each tringle
 			for (let i = 0; i < vertices.count(); i+=3) {
 
 				//vertices
-				v1.x = vertices.arrayBuffer[i*vertices.itemSize + 0];
-				v1.y = vertices.arrayBuffer[i*vertices.itemSize + 1];
-				v1.z = vertices.arrayBuffer[i*vertices.itemSize + 2];
+				v1.x = vertices.arrayBuffer[i*verticesItemSize + 0];
+				v1.y = vertices.arrayBuffer[i*verticesItemSize + 1];
+				v1.z = vertices.arrayBuffer[i*verticesItemSize + 2];
 
-				v2.x = vertices.arrayBuffer[i*vertices.itemSize + 3];
-				v2.y = vertices.arrayBuffer[i*vertices.itemSize + 4];
-				v2.z = vertices.arrayBuffer[i*vertices.itemSize + 5];
+				v2.x = vertices.arrayBuffer[i*verticesItemSize + 3];
+				v2.y = vertices.arrayBuffer[i*verticesItemSize + 4];
+				v2.z = vertices.arrayBuffer[i*verticesItemSize + 5];
 
-				v3.x = vertices.arrayBuffer[i*vertices.itemSize + 6];
-				v3.y = vertices.arrayBuffer[i*vertices.itemSize + 7];
-				v3.z = vertices.arrayBuffer[i*vertices.itemSize + 8];
+				v3.x = vertices.arrayBuffer[i*verticesItemSize + 6];
+				v3.y = vertices.arrayBuffer[i*verticesItemSize + 7];
+				v3.z = vertices.arrayBuffer[i*verticesItemSize + 8];
 
-				//UVs
-				uv1.x = UVs.arrayBuffer[i*UVs.itemSize + 0];
-				uv1.y = UVs.arrayBuffer[i*UVs.itemSize + 1];
+				//uvs
+				uv1.x = uvs.arrayBuffer[i*uvsItemSize + 0];
+				uv1.y = uvs.arrayBuffer[i*uvsItemSize + 1];
 
-				uv2.x = UVs.arrayBuffer[i*UVs.itemSize + 2];
-				uv2.y = UVs.arrayBuffer[i*UVs.itemSize + 3];
+				uv2.x = uvs.arrayBuffer[i*uvsItemSize + 2];
+				uv2.y = uvs.arrayBuffer[i*uvsItemSize + 3];
 
-				uv3.x = UVs.arrayBuffer[i*UVs.itemSize + 4];
-				uv3.y = UVs.arrayBuffer[i*UVs.itemSize + 5];
+				uv3.x = uvs.arrayBuffer[i*uvsItemSize + 4];
+				uv3.y = uvs.arrayBuffer[i*uvsItemSize + 5];
 
 				//position delta
 				deltaPos1.subVectors(v2, v1);
@@ -537,33 +545,31 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				tangent.normalize();
 
 				//same tangen for each vertex in traingle
-				tangents[i*vertices.itemSize + 0] = tangent.x;
-				tangents[i*vertices.itemSize + 1] = tangent.y;
-				tangents[i*vertices.itemSize + 2] = tangent.z;
+				tangents[i*verticesItemSize + 0] = tangent.x;
+				tangents[i*verticesItemSize + 1] = tangent.y;
+				tangents[i*verticesItemSize + 2] = tangent.z;
 
-				tangents[i*vertices.itemSize + 3] = tangent.x;
-				tangents[i*vertices.itemSize + 4] = tangent.y;
-				tangents[i*vertices.itemSize + 5] = tangent.z;
+				tangents[i*verticesItemSize + 3] = tangent.x;
+				tangents[i*verticesItemSize + 4] = tangent.y;
+				tangents[i*verticesItemSize + 5] = tangent.z;
 
-				tangents[i*vertices.itemSize + 6] = tangent.x;
-				tangents[i*vertices.itemSize + 7] = tangent.y;
-				tangents[i*vertices.itemSize + 8] = tangent.z;
+				tangents[i*verticesItemSize + 6] = tangent.x;
+				tangents[i*verticesItemSize + 7] = tangent.y;
+				tangents[i*verticesItemSize + 8] = tangent.z;
 			}
-	
 
-			const tangentsBufferDescriptor = new BufferDescriptor(
-				{
-					label: "mesh geometry tangents buffer",
-					size: tangents.length,
-					itemSize: 3,
-
-					arrayBuffer: tangents,
-				}
-			);
-			// tangentsBufferDescriptor.normalize();
 			const tangentsAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
-					bufferDescriptor: tangentsBufferDescriptor,
+					itemSize: 3,
+					arrayBuffer: tangents,
+					bufferDescriptor: new BufferDescriptor(
+						{
+							label: "mesh geometry tangents buffer",
+							size: tangents.length,
+							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
+						}
+					),
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 3 * 4,
@@ -581,14 +587,20 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 					)
 				}
 			);
+			// tangentsAttributeLocationDescriptor.normalize();
+
+
 			this.tangents = tangentsAttributeLocationDescriptor;
 		}
 	}
 	computeVertexBitangents(){
 		if (this.indices) {
-			const indices = this.indices.bufferDescriptor;
-			const vertices = this.vertices.bufferDescriptor;
-			const UVs = this.uv.bufferDescriptor;
+			const indices = this.indices;
+			const vertices = this.vertices;
+			const uvs = this.uvs;
+
+			const verticesItemSize = vertices.itemSize;
+			const uvsItemSize = uvs.itemSize;
 
 			const v1 = new Vector3();
 			const v2 = new Vector3();
@@ -604,32 +616,32 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 
 			const bitangent = new Vector3();
 
-			const bitangents = new Array(vertices.count() * vertices.itemSize);
+			const bitangents = new Array(vertices.count() * verticesItemSize);
 
 			//for each tringle
 			for (let i = 0; i < indices.count(); i+=3) {
 				//vertices
-				v1.x = vertices.arrayBuffer[indices.arrayBuffer[i + 0]*vertices.itemSize + 0];
-				v1.y = vertices.arrayBuffer[indices.arrayBuffer[i + 0]*vertices.itemSize + 1];
-				v1.z = vertices.arrayBuffer[indices.arrayBuffer[i + 0]*vertices.itemSize + 2];
+				v1.x = vertices.arrayBuffer[indices.arrayBuffer[i + 0]*verticesItemSize + 0];
+				v1.y = vertices.arrayBuffer[indices.arrayBuffer[i + 0]*verticesItemSize + 1];
+				v1.z = vertices.arrayBuffer[indices.arrayBuffer[i + 0]*verticesItemSize + 2];
 
-				v2.x = vertices.arrayBuffer[indices.arrayBuffer[i + 1]*vertices.itemSize + 0];
-				v2.y = vertices.arrayBuffer[indices.arrayBuffer[i + 1]*vertices.itemSize + 1];
-				v2.z = vertices.arrayBuffer[indices.arrayBuffer[i + 1]*vertices.itemSize + 2];
+				v2.x = vertices.arrayBuffer[indices.arrayBuffer[i + 1]*verticesItemSize + 0];
+				v2.y = vertices.arrayBuffer[indices.arrayBuffer[i + 1]*verticesItemSize + 1];
+				v2.z = vertices.arrayBuffer[indices.arrayBuffer[i + 1]*verticesItemSize + 2];
 
-				v3.x = vertices.arrayBuffer[indices.arrayBuffer[i + 2]*vertices.itemSize + 0];
-				v3.y = vertices.arrayBuffer[indices.arrayBuffer[i + 2]*vertices.itemSize + 1];
-				v3.z = vertices.arrayBuffer[indices.arrayBuffer[i + 2]*vertices.itemSize + 2];
+				v3.x = vertices.arrayBuffer[indices.arrayBuffer[i + 2]*verticesItemSize + 0];
+				v3.y = vertices.arrayBuffer[indices.arrayBuffer[i + 2]*verticesItemSize + 1];
+				v3.z = vertices.arrayBuffer[indices.arrayBuffer[i + 2]*verticesItemSize + 2];
 
-				//UVs
-				uv1.x = UVs.arrayBuffer[indices.arrayBuffer[i + 0]*UVs.itemSize + 0];
-				uv1.y = UVs.arrayBuffer[indices.arrayBuffer[i + 0]*UVs.itemSize + 1];
+				//uvs
+				uv1.x = uvs.arrayBuffer[indices.arrayBuffer[i + 0]*uvsItemSize + 0];
+				uv1.y = uvs.arrayBuffer[indices.arrayBuffer[i + 0]*uvsItemSize + 1];
 
-				uv2.x = UVs.arrayBuffer[indices.arrayBuffer[i + 1]*UVs.itemSize + 0];
-				uv2.y = UVs.arrayBuffer[indices.arrayBuffer[i + 1]*UVs.itemSize + 1];
+				uv2.x = uvs.arrayBuffer[indices.arrayBuffer[i + 1]*uvsItemSize + 0];
+				uv2.y = uvs.arrayBuffer[indices.arrayBuffer[i + 1]*uvsItemSize + 1];
 
-				uv3.x = UVs.arrayBuffer[indices.arrayBuffer[i + 2]*UVs.itemSize + 0];
-				uv3.y = UVs.arrayBuffer[indices.arrayBuffer[i + 2]*UVs.itemSize + 1];
+				uv3.x = uvs.arrayBuffer[indices.arrayBuffer[i + 2]*uvsItemSize + 0];
+				uv3.y = uvs.arrayBuffer[indices.arrayBuffer[i + 2]*uvsItemSize + 1];
 
 
 				//position delta
@@ -647,33 +659,31 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				//same tangent for each vertex in traingle
 				//(possible rewrite of same vertex attributes because of indices)
 				//must align with correct vertex in sequence
-				bitangents[indices.arrayBuffer[i + 0]*vertices.itemSize + 0] = bitangent.x;
-				bitangents[indices.arrayBuffer[i + 0]*vertices.itemSize + 1] = bitangent.y;
-				bitangents[indices.arrayBuffer[i + 0]*vertices.itemSize + 2] = bitangent.z;
+				bitangents[indices.arrayBuffer[i + 0]*verticesItemSize + 0] = bitangent.x;
+				bitangents[indices.arrayBuffer[i + 0]*verticesItemSize + 1] = bitangent.y;
+				bitangents[indices.arrayBuffer[i + 0]*verticesItemSize + 2] = bitangent.z;
 
-				bitangents[indices.arrayBuffer[i + 1]*vertices.itemSize + 0] = bitangent.x;
-				bitangents[indices.arrayBuffer[i + 1]*vertices.itemSize + 1] = bitangent.y;
-				bitangents[indices.arrayBuffer[i + 1]*vertices.itemSize + 2] = bitangent.z;
+				bitangents[indices.arrayBuffer[i + 1]*verticesItemSize + 0] = bitangent.x;
+				bitangents[indices.arrayBuffer[i + 1]*verticesItemSize + 1] = bitangent.y;
+				bitangents[indices.arrayBuffer[i + 1]*verticesItemSize + 2] = bitangent.z;
 
-				bitangents[indices.arrayBuffer[i + 2]*vertices.itemSize + 0] = bitangent.x;
-				bitangents[indices.arrayBuffer[i + 2]*vertices.itemSize + 1] = bitangent.y;
-				bitangents[indices.arrayBuffer[i + 2]*vertices.itemSize + 2] = bitangent.z;
+				bitangents[indices.arrayBuffer[i + 2]*verticesItemSize + 0] = bitangent.x;
+				bitangents[indices.arrayBuffer[i + 2]*verticesItemSize + 1] = bitangent.y;
+				bitangents[indices.arrayBuffer[i + 2]*verticesItemSize + 2] = bitangent.z;
 			}
 
-
-			const bitangentsBufferDescriptor = new BufferDescriptor(
-				{
-					label: "mesh geometry bitangents buffer",
-					size: bitangents.length,
-					itemSize: 3,
-
-					arrayBuffer: bitangents,
-				}
-			);
-			// bitangentsBufferDescriptor.normalize();
 			const bitangentsAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
-					bufferDescriptor: bitangentsBufferDescriptor,
+					itemSize: 3,
+					arrayBuffer: bitangents,
+					bufferDescriptor: new BufferDescriptor(
+						{
+							label: "mesh geometry bitangents buffer",
+							size: bitangents.length,
+							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
+						}
+					),
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 3 * 4,
@@ -691,10 +701,16 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 					)
 				}
 			);
+			// bitangentsAttributeLocationDescriptor.normalize();
+
+
 			this.bitangents = bitangentsAttributeLocationDescriptor;
 		} else {
-			const vertices = this.vertices.bufferDescriptor;
-			const UVs = this.uv.bufferDescriptor;
+			const vertices = this.vertices;
+			const uvs = this.uvs;
+
+			const verticesItemSize = vertices.itemSize;
+			const uvsItemSize = uvs.itemSize;
 
 			const v1 = new Vector3();
 			const v2 = new Vector3();
@@ -710,32 +726,32 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 
 			const bitangent = new Vector3();
 
-			const bitangents = new Array(vertices.count() * vertices.itemSize);
+			const bitangents = new Array(vertices.count() * verticesItemSize);
 
 			//for each tringle
 			for (let i = 0; i < vertices.count(); i+=3) {
 				//vertices
-				v1.x = vertices.arrayBuffer[i*vertices.itemSize + 0];
-				v1.y = vertices.arrayBuffer[i*vertices.itemSize + 1];
-				v1.z = vertices.arrayBuffer[i*vertices.itemSize + 2];
+				v1.x = vertices.arrayBuffer[i*verticesItemSize + 0];
+				v1.y = vertices.arrayBuffer[i*verticesItemSize + 1];
+				v1.z = vertices.arrayBuffer[i*verticesItemSize + 2];
 
-				v2.x = vertices.arrayBuffer[i*vertices.itemSize + 3];
-				v2.y = vertices.arrayBuffer[i*vertices.itemSize + 4];
-				v2.z = vertices.arrayBuffer[i*vertices.itemSize + 5];
+				v2.x = vertices.arrayBuffer[i*verticesItemSize + 3];
+				v2.y = vertices.arrayBuffer[i*verticesItemSize + 4];
+				v2.z = vertices.arrayBuffer[i*verticesItemSize + 5];
 
-				v3.x = vertices.arrayBuffer[i*vertices.itemSize + 6];
-				v3.y = vertices.arrayBuffer[i*vertices.itemSize + 7];
-				v3.z = vertices.arrayBuffer[i*vertices.itemSize + 8];
+				v3.x = vertices.arrayBuffer[i*verticesItemSize + 6];
+				v3.y = vertices.arrayBuffer[i*verticesItemSize + 7];
+				v3.z = vertices.arrayBuffer[i*verticesItemSize + 8];
 
-				//UVs
-				uv1.x = UVs.arrayBuffer[i*UVs.itemSize + 0];
-				uv1.y = UVs.arrayBuffer[i*UVs.itemSize + 1];
+				//uvs
+				uv1.x = uvs.arrayBuffer[i*uvsItemSize + 0];
+				uv1.y = uvs.arrayBuffer[i*uvsItemSize + 1];
 
-				uv2.x = UVs.arrayBuffer[i*UVs.itemSize + 2];
-				uv2.y = UVs.arrayBuffer[i*UVs.itemSize + 3];
+				uv2.x = uvs.arrayBuffer[i*uvsItemSize + 2];
+				uv2.y = uvs.arrayBuffer[i*uvsItemSize + 3];
 
-				uv3.x = UVs.arrayBuffer[i*UVs.itemSize + 4];
-				uv3.y = UVs.arrayBuffer[i*UVs.itemSize + 5];
+				uv3.x = uvs.arrayBuffer[i*uvsItemSize + 4];
+				uv3.y = uvs.arrayBuffer[i*uvsItemSize + 5];
 
 
 				//position delta
@@ -751,33 +767,31 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				bitangent.normalize();
 
 				//same tangen for each vertex in traingle
-				bitangents[i*vertices.itemSize + 0] = bitangent.x;
-				bitangents[i*vertices.itemSize + 1] = bitangent.y;
-				bitangents[i*vertices.itemSize + 2] = bitangent.z;
+				bitangents[i*verticesItemSize + 0] = bitangent.x;
+				bitangents[i*verticesItemSize + 1] = bitangent.y;
+				bitangents[i*verticesItemSize + 2] = bitangent.z;
 
-				bitangents[i*vertices.itemSize + 3] = bitangent.x;
-				bitangents[i*vertices.itemSize + 4] = bitangent.y;
-				bitangents[i*vertices.itemSize + 5] = bitangent.z;
+				bitangents[i*verticesItemSize + 3] = bitangent.x;
+				bitangents[i*verticesItemSize + 4] = bitangent.y;
+				bitangents[i*verticesItemSize + 5] = bitangent.z;
 
-				bitangents[i*vertices.itemSize + 6] = bitangent.x;
-				bitangents[i*vertices.itemSize + 7] = bitangent.y;
-				bitangents[i*vertices.itemSize + 8] = bitangent.z;
+				bitangents[i*verticesItemSize + 6] = bitangent.x;
+				bitangents[i*verticesItemSize + 7] = bitangent.y;
+				bitangents[i*verticesItemSize + 8] = bitangent.z;
 			}
 
-
-			const bitangentsBufferDescriptor = new BufferDescriptor(
-				{
-					label: "mesh geometry bitangents buffer",
-					size: bitangents.length,
-					itemSize: 3,
-
-					arrayBuffer: bitangents,
-				}
-			);
-			// bitangentsBufferDescriptor.normalize();
 			const bitangentsAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
-					bufferDescriptor: bitangentsBufferDescriptor,
+					itemSize: 3,
+					arrayBuffer: bitangents,
+					bufferDescriptor: new BufferDescriptor(
+						{
+							label: "mesh geometry bitangents buffer",
+							size: bitangents.length,
+							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
+						}
+					),
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 3 * 4,
@@ -795,6 +809,9 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 					)
 				}
 			);
+			// bitangentsAttributeLocationDescriptor.normalize();
+
+
 			this.bitangents = bitangentsAttributeLocationDescriptor;
 		}
 	}
@@ -811,7 +828,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 
 		// Create new bounding box using the vertices
 		if (this.vertices) {
-			this.boundingBox.setFromArray(this.vertices.bufferDescriptor.arrayBuffer);
+			this.boundingBox.setFromArray(this.vertices.arrayBuffer);
 		} else {
 			this.boundingBox.makeEmpty();
 		}
@@ -835,7 +852,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 
 		// Create new bounding sphere using the vertices
 		if (this.vertices) {
-			const arrayBuffer = this.vertices.bufferDescriptor.arrayBuffer;
+			const arrayBuffer = this.vertices.arrayBuffer;
 			const center = this.boundingSphere.center;
 
 			// Set initial bounding sphere based on the bounding box

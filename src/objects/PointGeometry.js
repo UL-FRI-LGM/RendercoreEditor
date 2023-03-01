@@ -5,6 +5,7 @@ import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBuffe
 import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
 import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
 import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
+import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 
 
 export class PointGeometry extends MeshGeometry {
@@ -72,18 +73,18 @@ export class PointGeometry extends MeshGeometry {
 			}
 
 			const verticesArrayBuffer = new Float32Array(verticesArray);
-			const verticesBufferDescriptor = new BufferDescriptor(
-                {
-					label: "point vertices buffer",
-					size: verticesArrayBuffer.length,
-                    itemSize: 3,
-
-					arrayBuffer: verticesArrayBuffer,
-                }
-            );
 			const verticesAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
-					bufferDescriptor: verticesBufferDescriptor,
+					itemSize: 3,
+					arrayBuffer: verticesArrayBuffer,
+					bufferDescriptor: new BufferDescriptor(
+						{
+							label: "point vertices buffer",
+							size: verticesArrayBuffer.length,
+							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
+						}
+					),
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 3 * 4,
@@ -127,19 +128,18 @@ export class PointGeometry extends MeshGeometry {
 			}
 
 			const normalsArrayBuffer = new Float32Array(normalsArray);
-			const normalsBufferDescriptor = new BufferDescriptor(
-                {
-					label: "point normals buffer",
-					size: normalsArrayBuffer.length,
-                    itemSize: 3,
-
-					arrayBuffer: normalsArrayBuffer,
-                }
-            );
-			// normalsBufferDescriptor.normalize(); // no need to normalize for this configuration
 			const normalsAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
-					bufferDescriptor: normalsBufferDescriptor,
+					itemSize: 3,
+					arrayBuffer: normalsArrayBuffer,
+					bufferDescriptor: new BufferDescriptor(
+						{
+							label: "point normals buffer",
+							size: normalsArrayBuffer.length,
+							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
+						}
+					),
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 3 * 4,
@@ -157,6 +157,7 @@ export class PointGeometry extends MeshGeometry {
 					)
 				}
 			);
+			// normalsAttributeLocationDescriptor.normalize(); // no need to normalize for this configuration
 
 
 			return normalsAttributeLocationDescriptor;
@@ -183,18 +184,18 @@ export class PointGeometry extends MeshGeometry {
 			}
 
 			const uvsArrayBuffer = new Float32Array(uvsArray);
-			const uvsBufferDescriptor = new BufferDescriptor(
-                {
-					label: "point uvs buffer",
-					size: uvsArrayBuffer.length,
-                    itemSize: 2,
-
-					arrayBuffer: uvsArrayBuffer,
-                }
-            );
 			const uvsAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
-					bufferDescriptor: uvsBufferDescriptor,
+					itemSize: 2,
+					arrayBuffer: uvsArrayBuffer,
+					bufferDescriptor: new BufferDescriptor(
+						{
+							label: "point uvs buffer",
+							size: uvsArrayBuffer.length,
+							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
+						}
+					),
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 2 * 4,

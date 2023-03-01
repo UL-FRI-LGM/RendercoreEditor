@@ -6,6 +6,7 @@ import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.
 import { AttributeLocationDescriptor } from "../core/data layouts/AttributeLocationDescriptor.js";
 import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
 import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
+import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 
 
 export class TriangleGeometry extends MeshGeometry {
@@ -74,18 +75,18 @@ export class TriangleGeometry extends MeshGeometry {
 			}
 
 			const verticesArrayBuffer = new Float32Array(verticesArray);
-			const verticesBufferDescriptor = new BufferDescriptor(
-                {
-					label: "triangle vertices buffer",
-					size: verticesArrayBuffer.length,
-                    itemSize: 3,
-
-					arrayBuffer: verticesArrayBuffer,
-                }
-            );
 			const verticesAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
-					bufferDescriptor: verticesBufferDescriptor,
+					itemSize: 3,
+					arrayBuffer: verticesArrayBuffer,
+					bufferDescriptor: new BufferDescriptor(
+						{
+							label: "triangle vertices buffer",
+							size: verticesArrayBuffer.length,
+							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
+						}
+					),
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 3 * 4,
@@ -141,19 +142,18 @@ export class TriangleGeometry extends MeshGeometry {
 			}
 
 			const normalsArrayBuffer = new Float32Array(normalsArray);
-			const normalsBufferDescriptor = new BufferDescriptor(
-                {
-					label: "triangle normals buffer",
-					size: normalsArrayBuffer.length,
-                    itemSize: 3,
-
-					arrayBuffer: normalsArrayBuffer,
-                }
-            );
-			normalsBufferDescriptor.normalize();
 			const normalsAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
-					bufferDescriptor: normalsBufferDescriptor,
+					itemSize: 3,
+					arrayBuffer: normalsArrayBuffer,
+					bufferDescriptor: new BufferDescriptor(
+						{
+							label: "triangle normals buffer",
+							size: normalsArrayBuffer.length,
+							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
+						}
+					),
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 3 * 4,
@@ -171,6 +171,7 @@ export class TriangleGeometry extends MeshGeometry {
 					)
 				}
 			);
+			normalsAttributeLocationDescriptor.normalize();
 
 
 			return normalsAttributeLocationDescriptor;
@@ -199,18 +200,18 @@ export class TriangleGeometry extends MeshGeometry {
 			}
 
 			const uvsArrayBuffer = new Float32Array(uvsArray);
-			const uvsBufferDescriptor = new BufferDescriptor(
-                {
-					label: "triangle uvs buffer",
-					size: uvsArrayBuffer.length,
-                    itemSize: 2,
-
-					arrayBuffer: uvsArrayBuffer,
-                }
-            );
 			const uvsAttributeLocationDescriptor = new AttributeLocationDescriptor(
 				{
-					bufferDescriptor: uvsBufferDescriptor,
+					itemSize: 2,
+					arrayBuffer: uvsArrayBuffer,
+					bufferDescriptor: new BufferDescriptor(
+						{
+							label: "triangle uvs buffer",
+							size: uvsArrayBuffer.length,
+							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
+						}
+					),
 					vertexBufferLayoutDescriptor: new VertexBufferLayout(
 						{
 							arrayStride: 2 * 4,
