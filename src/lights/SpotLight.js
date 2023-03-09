@@ -6,6 +6,8 @@ import { PointLight } from "./PointLight.js";
 
 
 export class SpotLight extends PointLight {
+
+
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "SpotLight",
@@ -36,7 +38,8 @@ export class SpotLight extends PointLight {
     constructor(args = {}) {
 		super(
 			{
-				...args, 
+				...args,
+				
 				name: (args.name !== undefined) ? args.name : SpotLight.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : SpotLight.DEFAULT.TYPE,
 

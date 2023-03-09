@@ -6,6 +6,8 @@ import { Light } from "./Light.js";
 
 
 export class DirectionalLight extends Light {
+
+
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "DirectionalLight",
@@ -15,10 +17,6 @@ export class DirectionalLight extends Light {
 		INTENSITY: 1.0,
 
 		FRUSTUM_CULLED: false,
-
-		DECAY_DISTANCE: new Vector4(1.0, 0.0, 0.0, 0.0),
-		DECAY: new Vector3(1.0, 0.0, 0.0),
-		DISTANCE: 0.0,
 
 		DIRECTION: new Vector3(0.0, 0.0, -1.0),
 	};
@@ -30,19 +28,16 @@ export class DirectionalLight extends Light {
 	constructor(args = {}) {
 		super(
 			{
-				...args, 
+				...args,
+
 				name: (args.name !== undefined) ? args.name : DirectionalLight.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : DirectionalLight.DEFAULT.TYPE,
 
 				frustumCulled: (args.frustumCulled !== undefined) ? args.frustumCulled : DirectionalLight.DEFAULT.FRUSTUM_CULLED,
 
 				colorIntensity: (args.colorIntensity !== undefined) ? args.colorIntensity : DirectionalLight.DEFAULT.COLOR_INTENSITY,
-				color: (args.color !== undefined) ? args.color : DirectionalLight.DEFAULT.COLOR,
-				intensity: (args.intensity !== undefined) ? args.intensity : DirectionalLight.DEFAULT.INTENSITY,
-
-				decayDistance: (args.decayDistance !== undefined) ? args.decayDistance : DirectionalLight.DEFAULT.DECAY_DISTANCE,
-				decay: (args.decay !== undefined) ? args.decay : DirectionalLight.DEFAULT.DECAY,
-				distance: (args.distance !== undefined) ? args.distance : DirectionalLight.DEFAULT.DISTANCE,
+				// color: (args.color !== undefined) ? args.color : DirectionalLight.DEFAULT.COLOR,
+				// intensity: (args.intensity !== undefined) ? args.intensity : DirectionalLight.DEFAULT.INTENSITY,
 			}
 		);
 

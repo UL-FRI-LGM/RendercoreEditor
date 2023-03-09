@@ -22,6 +22,7 @@ import { BindGroupLayoutEntry } from "../core/RC/resource binding/BindGroupLayou
 import { BindGroupLayoutDescriptor } from "../core/RC/resource binding/BindGroupLayoutDescriptor.js";
 import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
 import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
+import { BindingDescriptor } from "../core/data layouts/BindingDescriptor.js";
 
 
 export class MeshBasicMaterial extends MeshMaterial {
@@ -56,99 +57,139 @@ export class MeshBasicMaterial extends MeshMaterial {
 			},
 		);
 
-		this.emissive = (args.emissive !== undefined) ? args.emissive : new Color4(0, 0, 0, 0);
-		this.diffuse = (args.diffuse !== undefined) ? args.diffuse : new Color4(Math.random(), Math.random(), Math.random(), Math.random());
-	
 		this.uniformGroupDescriptor = new UniformGroupDescriptor(
 			{
-				resourceDescriptors: [
-					new BufferDescriptor(
+				bindingDescriptors: [
+					new BindingDescriptor(
 						{
-							label: "mesh basic material buffer",
-							// size: (2*4) * 4,
-							size: (2*4),
-							usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
-							mappedAtCreation: false,
-			
+							binding: 0,
 							arrayBuffer: new Float32Array(2*4),
+							resourceDescriptor: new BufferDescriptor(
+								{
+									label: "mesh basic material buffer",
+									size: (2*4),
+									usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
+									mappedAtCreation: false,					
+								}
+							)
 						}
 					),
-					new TextureDescriptor(
+					new BindingDescriptor(
 						{
-							label: "mesh basic material texture 0",
-							size: new GPUExtent3D({ width: 1, height: 1, depthOrArrayLayers: 1 }),
-							// format: GPUTextureFormat.RGBA_8_UNORM_SRGB,
-							format: GPUTextureFormat.RGBA_8_UNORM,
-							usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
-				
+							binding: 10,
 							arrayBuffer: new Uint8ClampedArray([255, 0, 255, 255]),
+							resourceDescriptor: new TextureDescriptor(
+								{
+									label: "mesh basic material texture 0",
+									size: new GPUExtent3D({ width: 1, height: 1, depthOrArrayLayers: 1 }),
+									// format: GPUTextureFormat.RGBA_8_UNORM_SRGB,
+									format: GPUTextureFormat.RGBA_8_UNORM,
+									usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,				
+								}
+							)
 						}
 					),
-					new TextureDescriptor(
+					new BindingDescriptor(
 						{
-							label: "mesh basic material texture 1",
-							size: new GPUExtent3D({ width: 1, height: 1, depthOrArrayLayers: 1 }),
-							// format: GPUTextureFormat.RGBA_8_UNORM_SRGB,
-							format: GPUTextureFormat.RGBA_8_UNORM,
-							usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
-				
+							binding: 11,
 							arrayBuffer: new Uint8ClampedArray([255, 0, 255, 255]),
+							resourceDescriptor: new TextureDescriptor(
+								{
+									label: "mesh basic material texture 1",
+									size: new GPUExtent3D({ width: 1, height: 1, depthOrArrayLayers: 1 }),
+									// format: GPUTextureFormat.RGBA_8_UNORM_SRGB,
+									format: GPUTextureFormat.RGBA_8_UNORM,
+									usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,				
+								}
+							)
 						}
 					),
-					new TextureDescriptor(
+					new BindingDescriptor(
 						{
-							label: "mesh basic material texture 2",
-							size: new GPUExtent3D({ width: 1, height: 1, depthOrArrayLayers: 1 }),
-							// format: GPUTextureFormat.RGBA_8_UNORM_SRGB,
-							format: GPUTextureFormat.RGBA_8_UNORM,
-							usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
-				
+							binding: 12,
 							arrayBuffer: new Uint8ClampedArray([255, 0, 255, 255]),
+							resourceDescriptor: new TextureDescriptor(
+								{
+									label: "mesh basic material texture 2",
+									size: new GPUExtent3D({ width: 1, height: 1, depthOrArrayLayers: 1 }),
+									// format: GPUTextureFormat.RGBA_8_UNORM_SRGB,
+									format: GPUTextureFormat.RGBA_8_UNORM,
+									usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
+								}
+							)
 						}
 					),
-					new TextureDescriptor(
+					new BindingDescriptor(
 						{
-							label: "mesh basic material texture 3",
-							size: new GPUExtent3D({ width: 1, height: 1, depthOrArrayLayers: 1 }),
-							// format: GPUTextureFormat.RGBA_8_UNORM_SRGB,
-							format: GPUTextureFormat.RGBA_8_UNORM,
-							usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
-				
+							binding: 13,
 							arrayBuffer: new Uint8ClampedArray([255, 0, 255, 255]),
+							resourceDescriptor: new TextureDescriptor(
+								{
+									label: "mesh basic material texture 3",
+									size: new GPUExtent3D({ width: 1, height: 1, depthOrArrayLayers: 1 }),
+									// format: GPUTextureFormat.RGBA_8_UNORM_SRGB,
+									format: GPUTextureFormat.RGBA_8_UNORM,
+									usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
+								}
+							)
 						}
 					),
-					new SamplerDescriptor(
+					new BindingDescriptor(
 						{
-							label: "mesh basic material sampler 0",
-							magFilter: FilterMode.LINEAR,
-							minFilter: FilterMode.LINEAR,
-							mipmapFilter: FilterMode.LINEAR,
+							binding: 20,
+							arrayBuffer: null,
+							resourceDescriptor: new SamplerDescriptor(
+								{
+									label: "mesh basic material sampler 0",
+									magFilter: FilterMode.LINEAR,
+									minFilter: FilterMode.LINEAR,
+									mipmapFilter: FilterMode.LINEAR,
+								}
+							)
 						}
 					),
-					new SamplerDescriptor(
+					new BindingDescriptor(
 						{
-							label: "mesh basic material sampler 1",
-							magFilter: FilterMode.LINEAR,
-							minFilter: FilterMode.LINEAR,
-							mipmapFilter: FilterMode.LINEAR,
+							binding: 21,
+							arrayBuffer: null,
+							resourceDescriptor: new SamplerDescriptor(
+								{
+									label: "mesh basic material sampler 1",
+									magFilter: FilterMode.LINEAR,
+									minFilter: FilterMode.LINEAR,
+									mipmapFilter: FilterMode.LINEAR,
+								}
+							)
 						}
 					),
-					new SamplerDescriptor(
+					new BindingDescriptor(
 						{
-							label: "mesh basic material sampler 2",
-							magFilter: FilterMode.LINEAR,
-							minFilter: FilterMode.LINEAR,
-							mipmapFilter: FilterMode.LINEAR,
+							binding: 22,
+							arrayBuffer: null,
+							resourceDescriptor: new SamplerDescriptor(
+								{
+									label: "mesh basic material sampler 2",
+									magFilter: FilterMode.LINEAR,
+									minFilter: FilterMode.LINEAR,
+									mipmapFilter: FilterMode.LINEAR,
+								}
+							)
 						}
 					),
-					new SamplerDescriptor(
+					new BindingDescriptor(
 						{
-							label: "mesh basic material sampler 3",
-							magFilter: FilterMode.LINEAR,
-							minFilter: FilterMode.LINEAR,
-							mipmapFilter: FilterMode.LINEAR,
+							binding: 23,
+							arrayBuffer: null,
+							resourceDescriptor: new SamplerDescriptor(
+								{
+									label: "mesh basic material sampler 3",
+									magFilter: FilterMode.LINEAR,
+									minFilter: FilterMode.LINEAR,
+									mipmapFilter: FilterMode.LINEAR,
+								}
+							)
 						}
-					)
+					),
 				],
 				bindGroupLayoutDescriptor: new BindGroupLayoutDescriptor(
 					{
@@ -336,17 +377,40 @@ export class MeshBasicMaterial extends MeshMaterial {
 				)
 			}
 		);
+
+		this.emissive = (args.emissive !== undefined) ? args.emissive : new Color4(0, 0, 0, 0);
+		this.diffuse = (args.diffuse !== undefined) ? args.diffuse : new Color4(Math.random(), Math.random(), Math.random(), Math.random());
 	}
 
 
 	get emissive() { return this.#emissive; }
 	set emissive(emissive) { 
 		this.#emissive = emissive;
-		this.setUniform("emissive", {bufferOffset: 0*4*4, data: emissive.arrayBuffer.buffer, dataOffset: 0, size: 4*4});
+		this.setUniform(
+			"emissive",
+			{
+				binding: 0,
+
+				bufferOffset: (0*4) * 4,
+				data: emissive.arrayBuffer.buffer,
+				dataOffset: 0,
+				size: (4) * 4
+			}
+		);
 	}
 	get diffuse() { return this.#diffuse; }
 	set diffuse(diffuse) { 
 		this.#diffuse = diffuse;
-		this.setUniform("diffuse",  {bufferOffset: 1*4*4, data: diffuse.arrayBuffer.buffer, dataOffset: 0, size: 4*4});
+		this.setUniform(
+			"diffuse",
+			{
+				binding: 0,
+
+				bufferOffset: (1*4) * 4,
+				data: diffuse.arrayBuffer.buffer,
+				dataOffset: 0,
+				size: (4) * 4
+			}
+		);
 	}
 };

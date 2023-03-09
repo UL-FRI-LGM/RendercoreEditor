@@ -13,6 +13,7 @@ import { BindGroupLayoutEntry } from "../core/RC/resource binding/BindGroupLayou
 import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
 import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
 import { BindGroupDescriptor } from "../core/RC/resource binding/BindGroupDescriptor.js";
+import { BindingDescriptor } from "../core/data layouts/BindingDescriptor.js";
 
 
 export class Mesh extends Group {
@@ -76,16 +77,19 @@ export class Mesh extends Group {
 
 		this.uniformGroupDescriptor = new UniformGroupDescriptor(
 			{
-				resourceDescriptors: [
-					new BufferDescriptor(
+				bindingDescriptors: [
+					new BindingDescriptor(
 						{
-							label: "mesh buffer",
-							// size: (16 + (9 + 7)) * 4,
-							size: (16 + (9 + 7)),
-							usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
-							mappedAtCreation: false,
-			
+							binding: 0,
 							arrayBuffer: new Float32Array(16 + (9 + 7)),
+							resourceDescriptor: new BufferDescriptor(
+								{
+									label: "mesh buffer",
+									size: (16 + (9 + 7)),
+									usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
+									mappedAtCreation: false,
+								}
+							)
 						}
 					)
 				],
@@ -158,6 +162,10 @@ export class Mesh extends Group {
 	get firstInstance() { return this.#firstInstance; }
 	set firstInstance(firstInstance) { this.#firstInstance = firstInstance; }
 
+	get transform() { return super.transform; }
+	set transform(transform) {
+		super.transform = transform;
+	}
 
 	setup(context, camera) {
 		super.setup();
@@ -187,5 +195,32 @@ export class Mesh extends Group {
 
 
 		// this.updateContext(context, camera);
+
+
+		//set resource / set binding / update resource / update binding
+		//binding update
+		this.uniformGroupDescriptor.dirtyCache.set(
+			"MMat",
+			{
+				binding: 0,
+
+				bufferOffset: (0*16) * 4,
+				data: new Float32Array(this.g_MMat.elements).buffer,
+				dataOffset: 0,
+				size: (16) * 4
+			}
+		);
+
+		this.uniformGroupDescriptor.dirtyCache.set(
+			"NMat",
+			{
+				binding: 0,
+
+				bufferOffset: (1*16) * 4,
+				data: new Float32Array(this.NMat4.elements).buffer,
+				dataOffset: 0,
+				size: (16) * 4
+			}
+		);
 	}
 };

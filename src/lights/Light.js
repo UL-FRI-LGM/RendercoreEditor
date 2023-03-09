@@ -4,6 +4,8 @@ import { Group } from "../objects/Group.js";
 
 
 export class Light extends Group {
+
+
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "Light",
@@ -26,6 +28,7 @@ export class Light extends Group {
 		super(
 			{
 				...args,
+				
 				name: (args.name !== undefined) ? args.name : Light.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : Light.DEFAULT.TYPE,
 
@@ -41,12 +44,24 @@ export class Light extends Group {
 
 
 	get colorIntensity() { return this.#colorIntensity; }
-	set colorIntensity(colorIntensity) { 
+	set colorIntensity(colorIntensity) {
 		this.#colorIntensity.copy(colorIntensity);
 		this.#color.r = colorIntensity.r;
 		this.#color.g = colorIntensity.g;
 		this.#color.b = colorIntensity.b;
 		this.#intensity = colorIntensity.a;
+
+		this.dirtyCache.set(
+			"COLOR_INTENSITY",
+			{
+				binding: 0,
+
+				bufferOffset: (2*4) * 4,
+				data: this.colorIntensity.arrayBuffer.buffer,
+				dataOffset: 0,
+				size: (4) * 4
+			}
+		);
 	}
 	get color() { return this.#color; }
 	set color(color) {
@@ -54,10 +69,51 @@ export class Light extends Group {
 		this.#colorIntensity.g = color.g;
 		this.#colorIntensity.b = color.b;
 		this.#color.copy(color);
+
+		this.dirtyCache.set(
+			"COLOR_INTENSITY",
+			{
+				binding: 0,
+
+				bufferOffset: (2*4) * 4,
+				data: this.colorIntensity.arrayBuffer.buffer,
+				dataOffset: 0,
+				size: (4) * 4
+			}
+		);
 	}
 	get intensity() { return this.#intensity; }
 	set intensity(intensity) {
 		this.#colorIntensity.a = intensity;
 		this.#intensity = intensity;
+
+		this.dirtyCache.set(
+			"COLOR_INTENSITY",
+			{
+				binding: 0,
+
+				bufferOffset: (2*4) * 4,
+				data: this.colorIntensity.arrayBuffer.buffer,
+				dataOffset: 0,
+				size: (4) * 4
+			}
+		);
+	}
+
+	get position() { return super.position; }
+	set position(position) {
+		super.position = position;
+
+		this.dirtyCache.set(
+			"POSITION",
+			{
+				binding: 0,
+
+				bufferOffset: (0*4) * 4,
+				data: new Float32Array(this.position.toArray()).buffer,
+				dataOffset: 0,
+				size: (4) * 4
+			}
+		);
 	}
 };

@@ -6,6 +6,8 @@ import { Light } from "./Light.js";
 
 
 export class PointLight extends Light {
+
+
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "PointLight",
@@ -30,7 +32,8 @@ export class PointLight extends Light {
 	constructor (args = {}) {
 		super(
 			{
-				...args, 
+				...args,
+
 				name: (args.name !== undefined) ? args.name : PointLight.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : PointLight.DEFAULT.TYPE,
 
@@ -48,6 +51,23 @@ export class PointLight extends Light {
 	}
 
 
+	get position() { return super.position; }
+	set position(position) {
+		super.position = position;
+
+		this.dirtyCache.set(
+			"DIRECTION",
+			{
+				binding: 0,
+
+				bufferOffset: (0*4) * 4,
+				data: new Float32Array(this.position.toArray()).buffer,
+				dataOffset: 0,
+				size: (4) * 4
+			}
+		);
+	}
+	
 	get decayDistance() { return this.#decayDistance; }
 	set decayDistance(decayDistance) {
 		this.#decayDistance.copy(decayDistance);
@@ -55,6 +75,18 @@ export class PointLight extends Light {
 		this.#decay.y = decayDistance.y;
 		this.#decay.z = decayDistance.z;
 		this.#distance = decayDistance.w;
+
+		this.dirtyCache.set(
+			"DECAY_DISTANCE", 
+			{
+				binding: 0,
+
+				bufferOffset: (3*4) * 4,
+				data: new Float32Array(this.decayDistance.toArray()).buffer,
+				dataOffset: 0,
+				size: (4) * 4
+			}
+		);
 	}
 	get decay() { return this.#decay; }
 	set decay(decay) {
@@ -62,11 +94,35 @@ export class PointLight extends Light {
 		this.#decayDistance.y = decay.y;
 		this.#decayDistance.z = decay.z;
 		this.#decay.copy(decay);
+
+		this.dirtyCache.set(
+			"DECAY_DISTANCE", 
+			{
+				binding: 0,
+
+				bufferOffset: (3*4) * 4,
+				data: new Float32Array(this.decayDistance.toArray()).buffer,
+				dataOffset: 0,
+				size: (4) * 4
+			}
+		);
 	}
 	get distance() { return this.#distance; }
 	set distance(distance) { 
 		this.#decayDistance.w = distance;
 		this.#distance = distance;
+
+		this.dirtyCache.set(
+			"DECAY_DISTANCE", 
+			{
+				binding: 0,
+
+				bufferOffset: (3*4) * 4,
+				data: new Float32Array(this.decayDistance.toArray()).buffer,
+				dataOffset: 0,
+				size: (4) * 4
+			}
+		);
 	}
 	// get constant() { return this.#decay.x; }
 	// set constant(constant) { 

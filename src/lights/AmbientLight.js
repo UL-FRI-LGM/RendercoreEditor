@@ -4,6 +4,8 @@ import { Light } from "./Light.js";
 
 
 export class AmbientLight extends Light {
+
+
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "AmbientLight",
@@ -19,7 +21,8 @@ export class AmbientLight extends Light {
 	constructor (args = {}) {
 		super(
 			{
-				...args, 
+				...args,
+				 
 				name: (args.name !== undefined) ? args.name : AmbientLight.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : AmbientLight.DEFAULT.TYPE,
 

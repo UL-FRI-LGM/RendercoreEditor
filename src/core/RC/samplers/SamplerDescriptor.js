@@ -1,7 +1,6 @@
-import { ObjectBase } from "../../ObjectBase.js";
-import { GPUAddressMode } from "../../ENUM/GPUAddressMode.js";
-import { GPUFilterMode } from "../../ENUM/GPUFilterMode.js";
 import { DescriptorBase } from "../DescriptorBase.js";
+import { AddressMode } from "./AddressMode.js";
+import { FilterMode } from "./FilterMode.js";
 
 
 export class SamplerDescriptor extends DescriptorBase { //RC sampler descriptor (WebGL / WebGPU)
@@ -15,15 +14,15 @@ export class SamplerDescriptor extends DescriptorBase { //RC sampler descriptor 
         DIRTY_CACHE: new Map(),
 
         ADDRESS: {
-            U: GPUAddressMode.CLAMP_TO_EDGE,
-            V: GPUAddressMode.CLAMP_TO_EDGE,
-            W: GPUAddressMode.CLAMP_TO_EDGE,
+            U: AddressMode.CLAMP_TO_EDGE,
+            V: AddressMode.CLAMP_TO_EDGE,
+            W: AddressMode.CLAMP_TO_EDGE,
         },
 
         FILTER: {
-            MAG: GPUFilterMode.NEAREST,
-            MIN: GPUFilterMode.NEAREST,
-            MIPMAP: GPUFilterMode.NEAREST,
+            MAG: FilterMode.NEAREST,
+            MIN: FilterMode.NEAREST,
+            MIPMAP: FilterMode.NEAREST,
         },
 
         LOD: {
@@ -78,8 +77,6 @@ export class SamplerDescriptor extends DescriptorBase { //RC sampler descriptor 
         this.lodMaxClamp = (args.lodMaxClamp !== undefined) ? args.lodMaxClamp : SamplerDescriptor.DEFAULT.LOD.CLAMP.MAX;
         this.compare = (args.compare !== undefined) ? args.compare : SamplerDescriptor.DEFAULT.COMPARE;
         this.maxAnisotropy = (args.maxAnisotropy !== undefined) ? args.maxAnisotropy : SamplerDescriptor.DEFAULT.ANISOTROPY.MAX;
-
-        this.samplerBinding = (args.samplerBinding !== undefined) ? args.samplerBinding : 10;
     }
 
 

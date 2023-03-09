@@ -1,19 +1,7 @@
-import { ObjectBase } from "../../ObjectBase.js";
-import { GPUVertexBufferLayout } from "../../DICTS/GPUVertexBufferLayout.js";
-import { GPUVertexAttribute } from "../../DICTS/GPUVertexAttribute.js";
-import { GPUVertexStepMode } from "../../ENUM/GPUVertexStepMode.js";
-import { GPUTextureDescriptor } from "../../DICTS/GPUTextureDescriptor.js";
 import { GPUExtent3D } from "../../DICTS/GPUExtent3D.js";
 import { GPUTextureDimension } from "../../ENUM/GPUTextureDimension.js";
 import { GPUTextureFormat } from "../../ENUM/GPUTextureFormat.js";
 import { GPUTextureUsage } from "../../NAMESPACE/GPUTextureUsage.js";
-import { GPUTextureAspect } from "../../ENUM/GPUTextureAspect.js";
-import { GPUImageDataLayout } from "../../DICTS/GPUImageDataLayout.js";
-import { GPUImageCopyTexture } from "../../DICTS/GPUImageCopyTexture.js";
-import { GPUOrigin3D } from "../../DICTS/GPUOrigin3D.js";
-import { GPUSamplerDescriptor } from "../../DICTS/GPUSamplerDescriptor.js";
-import { GPUAddressMode } from "../../ENUM/GPUAddressMode.js";
-import { GPUFilterMode } from "../../ENUM/GPUFilterMode.js";
 import { DescriptorBase } from "../DescriptorBase.js";
 
 
@@ -40,14 +28,6 @@ export class TextureDescriptor extends DescriptorBase { //RC texture descriptor 
         FORMAT: GPUTextureFormat.RGBA_8_UINT,
         USAGE: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
         VIEW_FORMATS: new Array(),
-
-        FILTER: {
-            MAG: GPUFilterMode.NEAREST,
-            MIN: GPUFilterMode.NEAREST,
-            MIPMAP: GPUFilterMode.NEAREST,
-        },
-
-        ARRAY_BUFFER: new Uint8ClampedArray(),
     };
 
     
@@ -58,8 +38,6 @@ export class TextureDescriptor extends DescriptorBase { //RC texture descriptor 
     #format;
     #usage;
     #viewFormats;
-
-    #arrayBuffer;
 
 
     constructor(args = {}) {
@@ -82,58 +60,8 @@ export class TextureDescriptor extends DescriptorBase { //RC texture descriptor 
         this.format = args.format !== undefined ? args.format : TextureDescriptor.DEFAULT.FORMAT;
         this.usage = args.usage !== undefined ? args.usage : TextureDescriptor.DEFAULT.USAGE;
         this.viewFormats = args.viewFormats !== undefined ? args.viewFormats : TextureDescriptor.DEFAULT.VIEW_FORMATS;
-
-        this.arrayBuffer = (args.arrayBuffer !== undefined) ? args.arrayBuffer : TextureDescriptor.DEFAULT.ARRAY_BUFFER;
-
-        this.textureBinding = (args.textureBinding !== undefined) ? args.textureBinding : 20;
     }
 
-
-    get arrayBuffer() { return this.#arrayBuffer; }
-    set arrayBuffer(arrayBuffer) { 
-        this.#arrayBuffer = arrayBuffer; 
-
-        this.dirtyCache.set(
-            "ArrayBuffer", 
-            {
-                destination: (texture) => { 
-                    return new GPUImageCopyTexture(
-                        {
-                            texture: texture ? texture : this.texture,
-                            mipLevel: 0,
-                            origin: new GPUOrigin3D(
-                                {
-                                    x: 0,
-                                    y: 0,
-                                    z: 0,
-                                }
-                            ),
-                            aspect: GPUTextureAspect.ALL,
-                        }
-                    ); 
-                }, 
-                data: this.arrayBuffer, 
-                dataLayout: () => { 
-                    return new GPUImageDataLayout(
-                        {
-                            offset: 0,
-                            bytesPerRow: this.size.width * 4,
-                            rowsPerImage: this.size.height,
-                        }
-                    ); 
-                }, 
-                size: () => {
-                    return new GPUExtent3D(
-                        {
-                            width: this.size.width,
-                            height: this.size.height,
-                            depthOrArrayLayers: 1,
-                        }
-                    );
-                }
-            }
-        );
-    }
 
     get size() { return this.#size; }
     set size(size) { this.#size = size; }

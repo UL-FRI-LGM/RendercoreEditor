@@ -1,10 +1,5 @@
-import { GPUBindGroupDescriptor } from "../core/DICTS/resource binding/GPUBindGroupDescriptor.js";
-import { GPUBindGroupEntry } from "../core/DICTS/resource binding/GPUBindGroupEntry.js";
-import { GPUBindGroupLayoutDescriptor } from "../core/DICTS/resource binding/GPUBindGroupLayoutDescriptor.js";
-import { GPUBindGroupLayoutEntry } from "../core/DICTS/resource binding/GPUBindGroupLayoutEntry.js";
 import { GPUBufferBindingLayout } from "../core/DICTS/GPUBufferBindingLayout.js";
 import { GPUBufferBindingType } from "../core/ENUM/GPUBufferBindingType.js";
-import { GPUShaderStage } from "../core/NAMESPACE/resource binding/GPUShaderStage.js";
 import { ObjectBase } from "../core/ObjectBase.js";
 import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
@@ -19,6 +14,7 @@ import { BindGroupLayoutDescriptor } from "../core/RC/resource binding/BindGroup
 import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
 import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
 import { BindGroupDescriptor } from "../core/RC/resource binding/BindGroupDescriptor.js";
+import { BindingDescriptor } from "../core/data layouts/BindingDescriptor.js";
 
 
 export class LightManager extends ObjectBase {
@@ -46,6 +42,8 @@ export class LightManager extends ObjectBase {
 			}
 		);
 
+		this.dirtyCache = new Map();
+
 		this.lights = new Map([
 			[AmbientLight.DEFAULT.TYPE, new Set()],
 			[DirectionalLight.DEFAULT.TYPE, new Set()],
@@ -56,13 +54,19 @@ export class LightManager extends ObjectBase {
 
 		this.uniformGroupDescriptor = new UniformGroupDescriptor(
 			{
-				resourceDescriptors: [
-					new BufferDescriptor(
+				bindingDescriptors: [
+					new BindingDescriptor(
 						{
-							label: "light manager buffer",
-							size: (4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights,
-							usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
-							mappedAtCreation: false,
+							binding: 10,
+							arrayBuffer: new Float32Array((4+4+4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights),
+							resourceDescriptor: 					new BufferDescriptor(
+								{
+									label: "light manager buffer",
+									size: (4+4+4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights,
+									usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
+									mappedAtCreation: false,
+								}
+							)
 						}
 					)
 				],
@@ -98,7 +102,7 @@ export class LightManager extends ObjectBase {
 										{
 											buffer: null,
 											offset: 0,
-											size: ((4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights) * 4,
+											size: ((4+4+4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights) * 4,
 										}
 									),
 								}
@@ -178,11 +182,72 @@ export class LightManager extends ObjectBase {
 
 
 		// }
-
-
 	}
 	update(scene, renderer) {
 		const lights = this.lights;
 
+
+		// const L_UGD = lightManager.uniformGroupDescriptor;
+		// const L_B = bufferManager.getBuffer(L_UGD.bindingDescriptors[0].resourceDescriptor);
+		
+		// let offset = (0) * 4;
+		
+		// for(const aLight of lightManager.lights.get(AmbientLight.DEFAULT.TYPE)) {
+		// 	this.context.queue.writeBuffer(L_B, offset, aLight.colorIntensity.arrayBuffer);
+			
+		// 	offset += (4) * 4;
+		// }
+		
+		// for(const pLight of lightManager.lights.get(PointLight.DEFAULT.TYPE)) {
+		// 	this.context.queue.writeBuffer(L_B, offset + (0*4) * 4, new Float32Array(pLight.position.toArray()));
+		// 	this.context.queue.writeBuffer(L_B, offset + (1*4) * 4, new Float32Array(pLight.position.toArray()));
+		// 	this.context.queue.writeBuffer(L_B, offset + (2*4) * 4, pLight.colorIntensity.arrayBuffer);
+		// 	this.context.queue.writeBuffer(L_B, offset + (3*4) * 4, new Float32Array(pLight.decayDistance.toArray()));
+		
+		// 	offset += (4 + 4 + 4 + 4) * 4;
+		// }
+
+		let offset = (0) * 4;
+		let i = 0;
+
+		for (const aLight of this.lights.get(AmbientLight.DEFAULT.TYPE)) {
+			for (const [key, value] of aLight.dirtyCache) {
+				this.uniformGroupDescriptor.dirtyCache.set(
+					i + "|aLight|" + key,
+					{
+						binding: value.binding,
+				
+						bufferOffset: offset + value.bufferOffset,
+						data: value.data,
+						dataOffset: value.dataOffset,
+						size: value.size
+					}
+				);
+			}
+			aLight.dirtyCache.clear();
+
+			offset += (4 + 4 + 4) * 4;
+			i++;
+		}
+
+		for(const pLight of this.lights.get(PointLight.DEFAULT.TYPE)) {
+			for (const [key, value] of pLight.dirtyCache) {
+				this.uniformGroupDescriptor.dirtyCache.set(
+					i + "|pLight|" + key,
+					{
+						binding: value.binding,
+				
+						bufferOffset: offset + value.bufferOffset,
+						data: value.data,
+						dataOffset: value.dataOffset,
+						size: value.size
+					}
+				);
+			}
+			pLight.dirtyCache.clear();
+		
+			offset += (4 + 4 + 4 + 4) * 4;
+			i++;
+		}
 	}
 };

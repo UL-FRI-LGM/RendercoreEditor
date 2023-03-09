@@ -1,4 +1,9 @@
 import {FRONT_SIDE, BACK_SIDE, FRONT_AND_BACK_SIDE, FUNC_LEQUAL} from "../constants.js";
+import { GPUExtent3D } from "../core/DICTS/GPUExtent3D.js";
+import { GPUImageCopyTexture } from "../core/DICTS/GPUImageCopyTexture.js";
+import { GPUImageDataLayout } from "../core/DICTS/GPUImageDataLayout.js";
+import { GPUOrigin3D } from "../core/DICTS/GPUOrigin3D.js";
+import { GPUTextureAspect } from "../core/ENUM/GPUTextureAspect.js";
 import { ShaderLoader } from "../loaders/ShaderLoader.js";
 import { ShaderBuilder } from "../program_management/ShaderBuilder.js";
 import { LoadingManager, Material } from "../RenderCore.js";
@@ -281,10 +286,14 @@ export class MeshMaterial extends Material { //mesh custom material
 	setUniform(name, value) {
 		this.uniforms.set(name, value);
 		this.dirtyCache.set(name, value);
+
+		this.uniformGroupDescriptor.dirtyCache.set(name, value);
 	}
 	removeUniform(name) {
 		this.uniforms.delete(name);
 		this.dirtyCache.delete(name);
+
+		this.uniformGroupDescriptor.dirtyCache.delete(name);
 	}
 
 	getAttribute(name) {
@@ -308,6 +317,53 @@ export class MeshMaterial extends Material { //mesh custom material
 
 		this.addSBFlag("TEXTURES"); //TODO rename to MAPS?
 		this.addSBValue("NUM_TEXTURES", this.maps.size);
+
+		this.uniformGroupDescriptor.bindingDescriptors[1 + map.mapSlot].resourceDescriptor = map.textureDescriptor;
+		this.uniformGroupDescriptor.bindingDescriptors[5 + map.mapSlot].resourceDescriptor = map.samplerDescriptor;
+	
+		this.uniformGroupDescriptor.dirtyCache.set(
+			"TEXTURE" + map.mapSlot,
+			{
+				binding: 1 + map.mapSlot,
+
+				data: map.data,
+
+				destination: (texture) => {
+					return new GPUImageCopyTexture(
+						{
+							texture: texture,
+							mipLevel: 0,
+							origin: new GPUOrigin3D(
+								{
+									x: 0,
+									y: 0,
+									z: 0,
+								}
+							),
+							aspect: GPUTextureAspect.ALL,
+						}
+					); 
+				},
+				dataLayout: () => {
+					return new GPUImageDataLayout(
+						{
+							offset: 0,
+							bytesPerRow: map.size.width * 4,
+							rowsPerImage: map.size.height,
+						}
+					); 
+				},
+				size: () => {
+					return new GPUExtent3D(
+						{
+							width: map.size.width,
+							height: map.size.height,
+							depthOrArrayLayers: 1,
+						}
+					);
+				}
+			}
+		);
 	}
 	removeMap(name) {
 		this.requiredProgramTemplate = null;

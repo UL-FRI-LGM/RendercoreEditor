@@ -12,6 +12,7 @@ import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
 import { BindGroupLayoutDescriptor } from "../core/RC/resource binding/BindGroupLayoutDescriptor.js";
 import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
 import { BindGroupDescriptor } from "../core/RC/resource binding/BindGroupDescriptor.js";
+import { BindingDescriptor } from "../core/data layouts/BindingDescriptor.js";
 
 
 export class Camera extends Group {
@@ -25,8 +26,6 @@ export class Camera extends Group {
 		FRUSTUM_CULLED: false,
 	};
 
-
-	// #dirtyCache = new Map();
 
 	#viewMatrix = new Matrix4();
 	#projectionMatrix = new Matrix4();
@@ -52,25 +51,21 @@ export class Camera extends Group {
 			}
 		);
 
-		// this.dirtyCache = new Map();
-
-		this.viewMatrix = new Matrix4(); 				//VMat
-		this.projectionMatrix = new Matrix4(); 			//PMat
-        this.projectionMatrixInverse = new Matrix4(); 	//PMatInv
-		this.viewProjectionMatrix = new Matrix4();		//VPMat
-
-		this.frustum = new Frustum();
-
 		this.uniformGroupDescriptor = new UniformGroupDescriptor(
 			{
-				resourceDescriptors: [
-					new BufferDescriptor(
+				bindingDescriptors: [
+					new BindingDescriptor(
 						{
-							label: "camera buffer",
-							// size: (16*2) * 4,
-							size: 16*2,
-							usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
-							mappedAtCreation: false,
+							binding: 0,
+							arrayBuffer: new Float32Array(16*2),
+							resourceDescriptor: new BufferDescriptor(
+								{
+									label: "camera buffer",
+									size: 16*2,
+									usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
+									mappedAtCreation: false,
+								}
+							)
 						}
 					)
 				],
@@ -116,11 +111,15 @@ export class Camera extends Group {
 				)
 			}
 		);
+
+		this.viewMatrix = new Matrix4(); 				//VMat
+		this.projectionMatrix = new Matrix4(); 			//PMat
+        this.projectionMatrixInverse = new Matrix4(); 	//PMatInv
+		this.viewProjectionMatrix = new Matrix4();		//VPMat
+
+		this.frustum = new Frustum();
 	}
 
-
-	// get dirtyCache() { return this.#dirtyCache; }
-	// set dirtyCache(dirtyCache) { this.#dirtyCache = dirtyCache; }
 
 	get localModelMatrix() { return super.localModelMatrix; }
 	set localModelMatrix(modelMatrix) { super.localModelMatrix = modelMatrix; }
@@ -137,7 +136,17 @@ export class Camera extends Group {
 
 		this.VPMat = this.VPMat.multiplyMatrices(this.PMat, this.VMat);
 
-		this.dirtyCache.set("VMat", {bufferOffset: 0*4*16, data: new Float32Array(viewMatrix.elements).buffer, dataOffset: 0, size: 4*16});
+		this.uniformGroupDescriptor.dirtyCache.set(
+			"VMat",
+			{
+				binding: 0,
+
+				bufferOffset: (0*16) * 4,
+				data: new Float32Array(viewMatrix.elements).buffer,
+				dataOffset: 0,
+				size: (16) * 4
+			}
+		);
 	}
     get projectionMatrix() { return this.#projectionMatrix; }
 	set projectionMatrix(projectionMatrix) { 
@@ -146,7 +155,17 @@ export class Camera extends Group {
 		this.projectionMatrixInverse.getInverse(projectionMatrix);
 		this.VPMat = this.VPMat.multiplyMatrices(this.PMat, this.VMat);
 
-		this.dirtyCache.set("PMat", {bufferOffset: 1*4*16, data: new Float32Array(projectionMatrix.elements).buffer, dataOffset: 0, size: 4*16});
+		this.uniformGroupDescriptor.dirtyCache.set(
+			"PMat",
+			{
+				binding: 0,
+
+				bufferOffset: (1*16) * 4,
+				data: new Float32Array(projectionMatrix.elements).buffer,
+				dataOffset: 0,
+				size: (16) * 4
+			}
+		);
 	}
     get projectionMatrixInverse() { return this.#projectionMatrixInverse; }
 	set projectionMatrixInverse(projectionMatrixInverse) { 
