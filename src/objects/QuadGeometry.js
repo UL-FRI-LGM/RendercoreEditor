@@ -1,0 +1,246 @@
+import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
+import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
+import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
+import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
+import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
+import { AttributeLocationDescriptor } from "../core/data layouts/AttributeLocationDescriptor.js";
+import { MeshGeometry } from "./MeshGeometry.js";
+import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
+
+
+export class QuadGeometry extends MeshGeometry {
+
+
+	static DEFAULT = {
+		NAME: "",
+		TYPE: "QuadGeometry",
+	};
+	
+
+	constructor(args = {}) {
+		super(
+			{
+				...args,
+
+				name: (args.name !== undefined) ? args.name : QuadGeometry.DEFAULT.NAME,
+				type: (args.type !== undefined) ? args.type : QuadGeometry.DEFAULT.TYPE,
+
+				indices: (args.indices !== undefined) ? args.indices : QuadGeometry.assembleIndices(args),
+				vertices: (args.vertices !== undefined) ? args.vertices : QuadGeometry.assembleVertices(args),
+				normals: (args.normals !== undefined) ? args.normals : QuadGeometry.assembleNormals(args),
+				tangents: (args.tangents !== undefined) ? args.tangents : null,
+				bitangents: (args.bitangents !== undefined) ? args.bitangents : null,
+				colors: (args.colors !== undefined) ? args.colors : null,
+				uvs: (args.uvs !== undefined) ? args.uvs : QuadGeometry.assembleUVs(args),
+				MMats: (args.MMats !== undefined) ? args.MMats : null,
+				translations: (args.translations !== undefined) ? args.translations : null,
+			}
+		);
+	}
+
+
+	static assembleIndices(args = {}) {
+		const baseGeometry = args.baseGeometry;
+		const indexed = args.indexed;
+		const positions = baseGeometry.positions;
+
+		if (indexed) {
+			//TODO
+		} else {
+			return null;
+		}
+	}
+	static assembleVertices(args = {}) {
+		const baseGeometry = args.baseGeometry;
+		const indexed = args.indexed;
+		const positions = baseGeometry.positions;
+		const sizes = baseGeometry.sizes;
+
+		if (indexed) {
+			//TODO
+		} else {
+			let verticesArray = new Array();
+
+			for (let p = 0; p < positions.length; p++) {
+				const array = new Array(2 * 3 * 3);
+				const position = positions[p];
+				const px = position.x;
+				const py = position.y;
+				const pz = position.z;
+				const size = sizes[p];
+				const sx = 1 * size.x;
+				const sy = 1 * size.y;
+				const sz = 0;
+
+
+				array[0  ] = px-sx; array[1  ] = py-sy; array[2  ] = pz+sz; //vertex 0
+				array[3  ] = px+sx; array[4  ] = py-sy; array[5  ] = pz+sz; //vertex 1
+				array[6  ] = px-sx; array[7  ] = py+sy; array[8  ] = pz+sz; //vertex 2
+		
+				array[9  ] = px-sx; array[10 ] = py+sy; array[11 ] = pz+sz; //vertex 2
+				array[12 ] = px+sx; array[13 ] = py-sy; array[14 ] = pz+sz; //vertex 1
+				array[15 ] = px+sx; array[16 ] = py+sy; array[17 ] = pz+sz; //vertex 3
+		
+		
+				verticesArray = verticesArray.concat(array);
+			}
+
+			const verticesArrayBuffer = new Float32Array(verticesArray);
+			const verticesAttributeLocationDescriptor = new AttributeLocationDescriptor(
+				{
+					itemSize: 3,
+					arrayBuffer: verticesArrayBuffer,
+					bufferDescriptor: new BufferDescriptor(
+						{
+							label: "quad vertices buffer",
+							size: verticesArrayBuffer.length,
+							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
+						}
+					),
+					vertexBufferLayoutDescriptor: new VertexBufferLayout(
+						{
+							arrayStride: 3 * 4,
+							stepMode: VertexStepMode.VERTEX,
+							attributes: [
+								new VertexAttribute(
+									{
+										format: VertexFormat.FLOAT_32x3,
+										offset: 0,
+										shaderLocation: 0,
+									}
+								)
+							],						
+						}
+					)
+				}
+			);
+
+
+			return verticesAttributeLocationDescriptor;
+		}
+	}
+	static assembleNormals(args = {}) {
+		const baseGeometry = args.baseGeometry;
+		const indexed = args.indexed;
+		const positions = baseGeometry.positions;
+
+		if (indexed) {
+			//TODO
+		} else {
+			let normalsArray = new Array();
+
+			for (let p = 0; p < positions.length; p++) {
+				const array = new Array(2 * 3 * 3);
+
+
+				array[0  ] = +0; array[1  ] = +0; array[2  ] = +1; //vertex 0
+				array[3  ] = +0; array[4  ] = +0; array[5  ] = +1; //vertex 1
+				array[6  ] = +0; array[7  ] = +0; array[8  ] = +1; //vertex 2
+		
+				array[9  ] = +0; array[10 ] = +0; array[11 ] = +1; //vertex 2
+				array[12 ] = +0; array[13 ] = +0; array[14 ] = +1; //vertex 1
+				array[15 ] = +0; array[16 ] = +0; array[17 ] = +1; //vertex 3
+		
+		
+				normalsArray = normalsArray.concat(array);
+			}
+
+			const normalsArrayBuffer = new Float32Array(normalsArray);
+			const normalAttributeLocationDescriptor = new AttributeLocationDescriptor(
+				{
+					itemSize: 3,
+					arrayBuffer: normalsArrayBuffer,
+					bufferDescriptor: new BufferDescriptor(
+						{
+							label: "quad normals buffer",
+							size: normalsArrayBuffer.length,
+							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
+						}
+					),
+					vertexBufferLayoutDescriptor: new VertexBufferLayout(
+						{
+							arrayStride: 3 * 4,
+							stepMode: VertexStepMode.VERTEX,
+							attributes: [
+								new VertexAttribute(
+									{
+										format: VertexFormat.FLOAT_32x3,
+										offset: 0,
+										shaderLocation: 1,
+									}
+								)
+							],						
+						}
+					)
+				}
+			);
+			// normalAttributeLocationDescriptor.normalize(); // no need to normalize for this configuration
+
+
+			return normalAttributeLocationDescriptor;
+		}
+	}
+	static assembleUVs(args = {}) {
+		const baseGeometry = args.baseGeometry;
+		const indexed = args.indexed;
+		const positions = baseGeometry.positions;
+
+		if (indexed) {
+			//TODO
+		} else {
+			let uvsArray = new Array();
+
+			for (let p = 0; p < positions.length; p++) {
+				const array = new Array(2 * 3 * 2);
+
+
+				array[0  ] = +0; array[1  ] = +0; //vertex 0
+				array[2  ] = +1; array[3  ] = +0; //vertex 1
+				array[4  ] = +0; array[5  ] = +1; //vertex 2
+		
+				array[6  ] = +0; array[7  ] = +1; //vertex 2
+				array[8  ] = +1; array[9  ] = +0; //vertex 1
+				array[10 ] = +1; array[11 ] = +1; //vertex 3
+		
+		
+				uvsArray = uvsArray.concat(array);
+			}
+
+			const uvsArrayBuffer = new Float32Array(uvsArray);
+			const normalAttributeLocationDescriptor = new AttributeLocationDescriptor(
+				{
+					itemSize: 2,
+					arrayBuffer: uvsArrayBuffer,
+					bufferDescriptor: new BufferDescriptor(
+						{
+							label: "quad uvs buffer",
+							size: uvsArrayBuffer.length,
+							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
+						}
+					),
+					vertexBufferLayoutDescriptor: new VertexBufferLayout(
+						{
+							arrayStride: 2 * 4,
+							stepMode: VertexStepMode.VERTEX,
+							attributes: [
+								new VertexAttribute(
+									{
+										format: VertexFormat.FLOAT_32x2,
+										offset: 0,
+										shaderLocation: 2,
+									}
+								)
+							],						
+						}
+					)
+				}
+			);
+
+
+			return normalAttributeLocationDescriptor;
+		}
+	}
+};
