@@ -15,7 +15,7 @@ export class FragmentState extends ProgrammableStage {
     constructor(args = {}) {
         super(args);
         
-        this.targets = (args.targets !== undefined) ? args.targets : new Array(FragmentState.DEFAULT.TARGETS); //copy
+        this.targets = (args.targets !== undefined) ? args.targets : new Array(...FragmentState.DEFAULT.TARGETS); //copy
     }
 
 

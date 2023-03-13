@@ -19,7 +19,7 @@ export class VertexBufferLayout { //RC vertex buffer layout
     constructor(args = {}) {
         this.arrayStride = args.arrayStride !== undefined ? args.arrayStride : VertexBufferLayout.DEFAULT.ARRAY_STRIDE;
         this.stepMode = args.stepMode !== undefined ? args.stepMode : VertexBufferLayout.DEFAULT.STEP_MODE;
-        this.attributes = args.attributes !== undefined ? args.attributes : new Array(VertexBufferLayout.DEFAULT.ATTRIBUTES); //copy
+        this.attributes = args.attributes !== undefined ? args.attributes : new Array(...VertexBufferLayout.DEFAULT.ATTRIBUTES); //copy
     }
 
 
