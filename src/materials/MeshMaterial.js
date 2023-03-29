@@ -1,9 +1,4 @@
 import {FRONT_SIDE, BACK_SIDE, FRONT_AND_BACK_SIDE, FUNC_LEQUAL} from "../constants.js";
-import { GPUExtent3D } from "../core/DICTS/GPUExtent3D.js";
-import { GPUImageCopyTexture } from "../core/DICTS/GPUImageCopyTexture.js";
-import { GPUImageDataLayout } from "../core/DICTS/GPUImageDataLayout.js";
-import { GPUOrigin3D } from "../core/DICTS/GPUOrigin3D.js";
-import { GPUTextureAspect } from "../core/ENUM/GPUTextureAspect.js";
 import { ShaderLoader } from "../loaders/ShaderLoader.js";
 import { ShaderBuilder } from "../program_management/ShaderBuilder.js";
 import { LoadingManager, Material } from "../RenderCore.js";
@@ -59,8 +54,7 @@ export class MeshMaterial extends Material { //mesh custom material
 	#uniforms;
 	#attributes;
 	#maps;
-
-	#dirtyCache;
+	#resources;
 
 
 	constructor(args = {}) {
@@ -97,8 +91,7 @@ export class MeshMaterial extends Material { //mesh custom material
 		this.uniforms = (args.uniforms !== undefined) ? args.uniforms : new Map();
 		this.attributes = (args.attributes !== undefined) ? args.attributes : new Map();
 		this.maps = new Map();
-		
-		this.dirtyCache = new Map();
+		this.resources = (args.resources !== undefined) ? args.resources : new Map();
 	}
 
 
@@ -249,9 +242,8 @@ export class MeshMaterial extends Material { //mesh custom material
 	get maps() { return this.#maps; }
 	set maps(maps) { this.#maps = maps; }
 	//TODO textures, samplers
-	
-	get dirtyCache() { return this.#dirtyCache; }
-	set dirtyCache(dirtyCache) { this.#dirtyCache = dirtyCache; }
+	get resources() { return this.#resources; }
+	set resources(resources) { this.#resources = resources; }
 
 
 	addSBFlag(flag) {
@@ -285,13 +277,11 @@ export class MeshMaterial extends Material { //mesh custom material
 	}
 	setUniform(name, value) {
 		this.uniforms.set(name, value);
-		this.dirtyCache.set(name, value);
 
 		this.uniformGroupDescriptor.dirtyCache.set(name, value);
 	}
 	removeUniform(name) {
 		this.uniforms.delete(name);
-		this.dirtyCache.delete(name);
 
 		this.uniformGroupDescriptor.dirtyCache.delete(name);
 	}
@@ -301,11 +291,19 @@ export class MeshMaterial extends Material { //mesh custom material
 	}
 	setAttribute(name, value) {
 		this.attributes.set(name, value);
-		this.dirtyCache.set(name, value);
 	}
 	removeAttribute(name) {
 		this.attributes.delete(name);
-		this.dirtyCache.delete(name);
+	}
+
+	getResource(name) {
+
+	}
+	setResource(name, value) { //set/update
+
+	}
+	removeResource(name) {
+
 	}
 
 	getMap(name) {
@@ -318,52 +316,16 @@ export class MeshMaterial extends Material { //mesh custom material
 		this.addSBFlag("TEXTURES"); //TODO rename to MAPS?
 		this.addSBValue("NUM_TEXTURES", this.maps.size);
 
-		this.uniformGroupDescriptor.bindingDescriptors[1 + map.mapSlot].resourceDescriptor = map.textureDescriptor;
-		this.uniformGroupDescriptor.bindingDescriptors[5 + map.mapSlot].resourceDescriptor = map.samplerDescriptor;
-	
-		this.uniformGroupDescriptor.dirtyCache.set(
-			"TEXTURE" + map.mapSlot,
-			{
-				binding: 1 + map.mapSlot,
+		this.uniformGroupDescriptor.setMap(name, map);
+	}
+	addMap(name, mapAdd, mapSet = undefined) {
+		this.requiredProgramTemplate = null;
+		this.maps.set(name, mapAdd);
 
-				data: map.data,
+		this.addSBFlag("TEXTURES"); //TODO rename to MAPS?
+		this.addSBValue("NUM_TEXTURES", this.maps.size);
 
-				destination: (texture) => {
-					return new GPUImageCopyTexture(
-						{
-							texture: texture,
-							mipLevel: 0,
-							origin: new GPUOrigin3D(
-								{
-									x: 0,
-									y: 0,
-									z: 0,
-								}
-							),
-							aspect: GPUTextureAspect.ALL,
-						}
-					); 
-				},
-				dataLayout: () => {
-					return new GPUImageDataLayout(
-						{
-							offset: 0,
-							bytesPerRow: map.size.width * 4,
-							rowsPerImage: map.size.height,
-						}
-					); 
-				},
-				size: () => {
-					return new GPUExtent3D(
-						{
-							width: map.size.width,
-							height: map.size.height,
-							depthOrArrayLayers: 1,
-						}
-					);
-				}
-			}
-		);
+		this.uniformGroupDescriptor.addMap(name, mapAdd, mapSet);
 	}
 	removeMap(name) {
 		this.requiredProgramTemplate = null;

@@ -1,6 +1,7 @@
+import { Group } from "../objects/Group.js";
+import { ResourceBinding } from "../core/data layouts/ResourceBinding.js";
 import { Color3 } from "../math/Color3.js";
 import { Color4 } from "../math/Color4.js";
-import { Group } from "../objects/Group.js";
 
 
 export class Light extends Group {
@@ -54,7 +55,8 @@ export class Light extends Group {
 		this.dirtyCache.set(
 			"COLOR_INTENSITY",
 			{
-				binding: 0,
+				bindingNumber: 10,
+				target: ResourceBinding.TARGET.INTERNAL,
 
 				bufferOffset: (2*4) * 4,
 				data: this.colorIntensity.arrayBuffer.buffer,
@@ -73,7 +75,8 @@ export class Light extends Group {
 		this.dirtyCache.set(
 			"COLOR_INTENSITY",
 			{
-				binding: 0,
+				bindingNumber: 10,
+				target: ResourceBinding.TARGET.INTERNAL,
 
 				bufferOffset: (2*4) * 4,
 				data: this.colorIntensity.arrayBuffer.buffer,
@@ -90,7 +93,8 @@ export class Light extends Group {
 		this.dirtyCache.set(
 			"COLOR_INTENSITY",
 			{
-				binding: 0,
+				bindingNumber: 10,
+				target: ResourceBinding.TARGET.INTERNAL,
 
 				bufferOffset: (2*4) * 4,
 				data: this.colorIntensity.arrayBuffer.buffer,
@@ -107,7 +111,8 @@ export class Light extends Group {
 		this.dirtyCache.set(
 			"POSITION",
 			{
-				binding: 0,
+				bindingNumber: 10,
+				target: ResourceBinding.TARGET.INTERNAL,
 
 				bufferOffset: (0*4) * 4,
 				data: new Float32Array(this.position.toArray()).buffer,

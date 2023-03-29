@@ -14,7 +14,7 @@ import { BindGroupLayoutDescriptor } from "../core/RC/resource binding/BindGroup
 import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
 import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
 import { BindGroupDescriptor } from "../core/RC/resource binding/BindGroupDescriptor.js";
-import { BindingDescriptor } from "../core/data layouts/BindingDescriptor.js";
+import { ResourceBinding } from "../core/data layouts/ResourceBinding.js";
 
 
 export class LightManager extends ObjectBase {
@@ -54,39 +54,62 @@ export class LightManager extends ObjectBase {
 
 		this.uniformGroupDescriptor = new UniformGroupDescriptor(
 			{
-				bindingDescriptors: [
-					new BindingDescriptor(
-						{
-							binding: 10,
-							arrayBuffer: new Float32Array((4+4+4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights),
-							resourceDescriptor: 					new BufferDescriptor(
+				label: "light manager resource group",
+				number: 1,
+				resourceBindings: new Map(
+					[
+						[
+							10,
+							new ResourceBinding(
 								{
-									label: "light manager buffer",
-									size: (4+4+4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights,
-									usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
-									mappedAtCreation: false,
+									number: 10,
+									arrayBuffer: new Float32Array((4+4+4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights),
+									
+									resourceDescriptor: new BufferDescriptor(
+										{
+											label: "light manager buffer",
+											size: (4+4+4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights,
+											usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
+											mappedAtCreation: false,
+										}
+									),
+									bindGroupLayoutEntry: new BindGroupLayoutEntry(
+										{
+											binding: 10,
+											visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
+											buffer: new GPUBufferBindingLayout(
+												{
+													type: GPUBufferBindingType.UNIFORM,
+													hasDynamicOffset: false,
+													minBindingSize: 0,
+												}
+											),
+										}
+									),
+									bindGroupEntry: new BindGroupEntry(
+										{
+											binding: 10,
+											resource: new RCBufferBindingResource(
+												{
+													buffer: null,
+													offset: 0,
+													size: ((4+4+4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights) * 4,
+												}
+											),
+										}
+									),
 								}
 							)
-						}
-					)
-				],
+						]
+					]
+				),
+				resourceBindingsExteral: new Map(),
+
 				bindGroupLayoutDescriptor: new BindGroupLayoutDescriptor(
 					{
 						label: "light manager bing group layout",
 						entries: [
-							new BindGroupLayoutEntry(
-								{
-									binding: 10,
-									visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-									buffer: new GPUBufferBindingLayout(
-										{
-											type: GPUBufferBindingType.UNIFORM,
-											hasDynamicOffset: false,
-											minBindingSize: 0,
-										}
-									),
-								}
-							),
+
 						],
 					}
 				),
@@ -95,18 +118,7 @@ export class LightManager extends ObjectBase {
 						label: "light manager bind group",
 						layout: null,
 						entries: [
-							new BindGroupEntry(
-								{
-									binding: 10,
-									resource: new RCBufferBindingResource(
-										{
-											buffer: null,
-											offset: 0,
-											size: ((4+4+4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights) * 4,
-										}
-									),
-								}
-							),
+
 						],
 					}
 				)
@@ -161,7 +173,7 @@ export class LightManager extends ObjectBase {
 		this.lights.get(SpotLight.DEFAULT.TYPE).clear();
 	}
 
-	setup(scene, renderer) {
+	setup(scene) {
 		const lights = this.lights;
 
 
@@ -183,7 +195,7 @@ export class LightManager extends ObjectBase {
 
 		// }
 	}
-	update(scene, renderer) {
+	update(scene) {
 		const lights = this.lights;
 
 
@@ -215,7 +227,8 @@ export class LightManager extends ObjectBase {
 				this.uniformGroupDescriptor.dirtyCache.set(
 					i + "|aLight|" + key,
 					{
-						binding: value.binding,
+						bindingNumber: value.bindingNumber,
+						target: value.target,
 				
 						bufferOffset: offset + value.bufferOffset,
 						data: value.data,
@@ -235,7 +248,8 @@ export class LightManager extends ObjectBase {
 				this.uniformGroupDescriptor.dirtyCache.set(
 					i + "|pLight|" + key,
 					{
-						binding: value.binding,
+						bindingNumber: value.bindingNumber,
+						target: value.target,
 				
 						bufferOffset: offset + value.bufferOffset,
 						data: value.data,

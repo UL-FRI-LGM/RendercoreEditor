@@ -1,4 +1,4 @@
-import { DescriptorBase } from '../RC/DescriptorBase.js';
+import { DescriptorBase } from "../RC/DescriptorBase.js";
 
 
 export class UniformGroupDescriptor extends DescriptorBase { //Uniform group descriptor
@@ -11,15 +11,33 @@ export class UniformGroupDescriptor extends DescriptorBase { //Uniform group des
 		LABEL: "",
         DIRTY_CACHE: new Map(),
 
-		BINDING_DESCRIPTORS: new Array(),
+		NUMBER: null,
+		RESOURCE_BINDINGS: new Map(),
+		RESOURCE_BINDINGS_EXTERNAL: new Map(),
+
+		// BINDING_DESCRIPTORS: new Array(),
 		BIND_GROUP_LAYOUT_DESCRIPTOR: undefined,
 		BIND_GROUP_DESCRIPTOR: undefined,
+
+		MAX: {
+			BUFFERS: 10,
+			TEXTURES: 10,
+			SAMPLERS: 10
+		},
 	};
 
 
-	#bindingDescriptors;
+	#number;
+	#resourceBindings;
+	#resourceBindingsExternal;
+
+	// #bindingDescriptors;
 	#bindGroupLayoutDescriptor;
 	#bindGroupDescriptor;
+
+	#maxBuffers;
+	#maxTextures;
+	#maxSamplers;
 
 
 	constructor(args = {}) {
@@ -35,16 +53,38 @@ export class UniformGroupDescriptor extends DescriptorBase { //Uniform group des
             }
 		);
 
-		this.bindingDescriptors = (args.bindingDescriptors !== undefined) ? args.bindingDescriptors : new Map(UniformGroupDescriptor.DEFAULT.BINDING_DESCRIPTORS); //copy
+		this.number = (args.number !== undefined) ? args.number : UniformGroupDescriptor.DEFAULT.NUMBER;
+		this.resourceBindings = (args.resourceBindings !== undefined) ? args.resourceBindings : new Map(UniformGroupDescriptor.DEFAULT.RESOURCE_BINDINGS); //copy
+		this.resourceBindingsExternal = (args.resourceBindingsExternal !== undefined) ? args.resourceBindingsExternal : new Map(UniformGroupDescriptor.DEFAULT.RESOURCE_BINDINGS_EXTERNAL); //copy
+
+		// this.bindingDescriptors = (args.bindingDescriptors !== undefined) ? args.bindingDescriptors : new Array(UniformGroupDescriptor.DEFAULT.BINDING_DESCRIPTORS); //copy
 		this.bindGroupLayoutDescriptor = (args.bindGroupLayoutDescriptor !== undefined) ? args.bindGroupLayoutDescriptor : UniformGroupDescriptor.DEFAULT.BIND_GROUP_LAYOUT_DESCRIPTOR;
-		this.bindGroupDescriptor = (args.bindGroupDescriptor !== undefined) ? args.bindGroupDescriptor : UniformGroupDescriptor.DEFAULT.BIND_GROUP_DESCRIPTOR;
+		this.bindGroupDescriptor = (args.bindGroupDescriptor !== undefined) ? args.bindGroupDescriptor : UniformGroupDescriptor.DEFAULT.BIND_GROUP_DESCRIPTOR;	
+	
+		this.maxBuffers = (args.maxBuffers !== undefined) ? args.maxBuffers : UniformGroupDescriptor.DEFAULT.MAX.BUFFERS;
+		this.maxTextures = (args.maxTextures !== undefined) ? args.maxTextures : UniformGroupDescriptor.DEFAULT.MAX.TEXTURES;
+		this.maxSamplers = (args.maxSamplers !== undefined) ? args.maxSamplers : UniformGroupDescriptor.DEFAULT.MAX.SAMPLERS;
 	}
 
 
-	get bindingDescriptors() { return this.#bindingDescriptors; }
-    set bindingDescriptors(bindingDescriptors) { this.#bindingDescriptors = bindingDescriptors; }
+	get number() { return this.#number; }
+	set number(number) { this.#number = number; }
+	get resourceBindings() { return this.#resourceBindings; }
+    set resourceBindings(resourceBindings) { this.#resourceBindings = resourceBindings; }
+	get resourceBindingsExternal() { return this.#resourceBindingsExternal; }
+    set resourceBindingsExternal(resourceBindingsExternal) { this.#resourceBindingsExternal = resourceBindingsExternal; }
+	
+	// get bindingDescriptors() { return this.#bindingDescriptors; }
+    // set bindingDescriptors(bindingDescriptors) { this.#bindingDescriptors = bindingDescriptors; }
 	get bindGroupLayoutDescriptor() { return this.#bindGroupLayoutDescriptor; }
 	set bindGroupLayoutDescriptor(bindGroupLayoutDescriptor) { this.#bindGroupLayoutDescriptor = bindGroupLayoutDescriptor; }
 	get bindGroupDescriptor() { return this.#bindGroupDescriptor; }
 	set bindGroupDescriptor(bindGroupDescriptor) { this.#bindGroupDescriptor = bindGroupDescriptor; }
+
+	get maxBuffers() { return this.#maxBuffers; }
+    set maxBuffers(maxBuffers) { this.#maxBuffers = maxBuffers; }
+	get maxTextures() { return this.#maxTextures; }
+	set maxTextures(maxTextures) { this.#maxTextures = maxTextures; }
+	get maxSamplers() { return this.#maxSamplers; }
+	set maxSamplers(maxSamplers) { this.#maxSamplers = maxSamplers; }
 };

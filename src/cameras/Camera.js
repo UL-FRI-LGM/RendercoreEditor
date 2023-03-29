@@ -12,7 +12,7 @@ import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
 import { BindGroupLayoutDescriptor } from "../core/RC/resource binding/BindGroupLayoutDescriptor.js";
 import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
 import { BindGroupDescriptor } from "../core/RC/resource binding/BindGroupDescriptor.js";
-import { BindingDescriptor } from "../core/data layouts/BindingDescriptor.js";
+import { ResourceBinding } from "../core/data layouts/ResourceBinding.js";
 
 
 export class Camera extends Group {
@@ -53,39 +53,62 @@ export class Camera extends Group {
 
 		this.uniformGroupDescriptor = new UniformGroupDescriptor(
 			{
-				bindingDescriptors: [
-					new BindingDescriptor(
-						{
-							binding: 0,
-							arrayBuffer: new Float32Array(16*2),
-							resourceDescriptor: new BufferDescriptor(
+				label: "camera resource group",
+				number: 0,
+				resourceBindings: new Map(
+					[
+						[
+							0,
+							new ResourceBinding(
 								{
-									label: "camera buffer",
-									size: 16*2,
-									usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
-									mappedAtCreation: false,
+									number: 0,
+									arrayBuffer: new Float32Array(16*2),
+
+									resourceDescriptor: new BufferDescriptor(
+										{
+											label: "camera buffer",
+											size: 16*2,
+											usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
+											mappedAtCreation: false,					
+										}
+									),
+									bindGroupLayoutEntry: new BindGroupLayoutEntry(
+										{
+											binding: 0,
+											visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
+											buffer: new GPUBufferBindingLayout(
+												{
+													type: GPUBufferBindingType.UNIFORM,
+													hasDynamicOffset: false,
+													minBindingSize: 0,
+												}
+											),
+										}
+									),
+									bindGroupEntry: new BindGroupEntry(
+										{
+											binding: 0,
+											resource: new RCBufferBindingResource(
+												{
+													buffer: null,
+													offset: 0,
+													size: (16*2) * 4,
+												}
+											),
+										}
+									),
 								}
 							)
-						}
-					)
-				],
+						]
+					]
+				),
+				resourceBindingsExteral: new Map(),
+
 				bindGroupLayoutDescriptor: new BindGroupLayoutDescriptor(
 					{
 						label: "camera bind group layout",
 						entries: [
-							new BindGroupLayoutEntry(
-								{
-									binding: 0,
-									visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-									buffer: new GPUBufferBindingLayout(
-										{
-											type: GPUBufferBindingType.UNIFORM,
-											hasDynamicOffset: false,
-											minBindingSize: 0,
-										}
-									),
-								}
-							),
+		
 						],
 					}
 				),
@@ -94,18 +117,7 @@ export class Camera extends Group {
 						label: "camera bind group",
 						layout: null,
 						entries: [
-							new BindGroupEntry(
-								{
-									binding: 0,
-									resource: new RCBufferBindingResource(
-										{
-											buffer: null,
-											offset: 0,
-											size: (16*2) * 4,
-										}
-									),
-								}
-							),
+
 						],
 					}
 				)
@@ -139,12 +151,55 @@ export class Camera extends Group {
 		this.uniformGroupDescriptor.dirtyCache.set(
 			"VMat",
 			{
-				binding: 0,
+				bindingNumber: 0,
+				target: ResourceBinding.TARGET.INTERNAL,
 
 				bufferOffset: (0*16) * 4,
 				data: new Float32Array(viewMatrix.elements).buffer,
 				dataOffset: 0,
-				size: (16) * 4
+				size: (16) * 4,
+
+
+				bufferBinding: new ResourceBinding(
+					{
+						number: 0,
+						arrayBuffer: new Float32Array(16*2),
+						
+						resourceDescriptor: new BufferDescriptor(
+							{
+								label: "camera buffer",
+								size: 16*2,
+								usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
+								mappedAtCreation: false,					
+							}
+						),
+						bindGroupLayoutEntry: new BindGroupLayoutEntry(
+							{
+								binding: 0,
+								visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
+								buffer: new GPUBufferBindingLayout(
+									{
+										type: GPUBufferBindingType.UNIFORM,
+										hasDynamicOffset: false,
+										minBindingSize: 0,
+									}
+								),
+							}
+						),
+						bindGroupEntry: new BindGroupEntry(
+							{
+								binding: 0,
+								resource: new RCBufferBindingResource(
+									{
+										buffer: null,
+										offset: 0,
+										size: (16*2) * 4,
+									}
+								),
+							}
+						),
+					}
+				)
 			}
 		);
 	}
@@ -158,7 +213,8 @@ export class Camera extends Group {
 		this.uniformGroupDescriptor.dirtyCache.set(
 			"PMat",
 			{
-				binding: 0,
+				bindingNumber: 0,
+				target: ResourceBinding.TARGET.INTERNAL,
 
 				bufferOffset: (1*16) * 4,
 				data: new Float32Array(projectionMatrix.elements).buffer,

@@ -13,7 +13,8 @@ export class Material extends ObjectBase {
 	constructor(args = {}) {
 		super(
 			{
-				...args, 
+				...args,
+				
 				name: (args.name !== undefined) ? args.name : Material.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : Material.DEFAULT.TYPE,
 			}

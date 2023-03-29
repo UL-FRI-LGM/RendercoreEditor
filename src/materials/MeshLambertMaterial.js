@@ -22,7 +22,7 @@ import { BindGroupLayoutEntry } from "../core/RC/resource binding/BindGroupLayou
 import { BindGroupDescriptor } from "../core/RC/resource binding/BindGroupDescriptor.js";
 import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
 import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
-import { BindingDescriptor } from "../core/data layouts/BindingDescriptor.js";
+import { ResourceBinding } from "../core/data layouts/ResourceBinding.js";
 
 
 export class MeshLambertMaterial extends MeshMaterial {
@@ -59,251 +59,138 @@ export class MeshLambertMaterial extends MeshMaterial {
 
 		this.uniformGroupDescriptor = new UniformGroupDescriptor(
 			{
-				bindingDescriptors: [
-					new BindingDescriptor(
-						{
-							binding: 0,
-							arrayBuffer: new Float32Array(2*4),
-							resourceDescriptor: new BufferDescriptor(
+				label: "mesh lambert material resource group",
+				number: 3,
+				resourceBindings: new Map(
+					[
+						[
+							0,
+							new ResourceBinding(
 								{
-									label: "mesh lambert material buffer",
-									size: (2*4),
-									usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
-									mappedAtCreation: false,					
+									number: 0,
+									arrayBuffer: new Float32Array(2*4),
+									resourceDescriptor: new BufferDescriptor(
+										{
+											label: "mesh lambert material buffer",
+											size: (2*4),
+											usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
+											mappedAtCreation: false,					
+										}
+									),
+									bindGroupLayoutEntry: new BindGroupLayoutEntry(
+										{
+											binding: 0,
+											visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
+											buffer: new GPUBufferBindingLayout(
+												{
+													type: GPUBufferBindingType.UNIFORM,
+													hasDynamicOffset: false,
+													minBindingSize: 0,
+												}
+											),
+										}
+									),
+									bindGroupEntry: new BindGroupEntry(
+										{
+											binding: 0,
+											resource: new RCBufferBindingResource(
+												{
+													buffer: null,
+													offset: 0,
+													size: (2*4) * 4,
+												}
+											),
+										}
+									),
 								}
 							)
-						}
-					),
-					new BindingDescriptor(
-						{
-							binding: 10,
-							arrayBuffer: new Uint8ClampedArray([255, 0, 255, 255]),
-							resourceDescriptor: new TextureDescriptor(
+						],
+						[
+							10,
+							new ResourceBinding(
 								{
-									label: "mesh lambert material texture 0",
-									size: new GPUExtent3D({ width: 1, height: 1, depthOrArrayLayers: 1 }),
-									// format: GPUTextureFormat.RGBA_8_UNORM_SRGB,
-									format: GPUTextureFormat.RGBA_8_UNORM,
-									usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,				
+									number: 10,
+									arrayBuffer: new Uint8ClampedArray([255, 0, 255, 255]),
+									
+									resourceDescriptor: new TextureDescriptor(
+										{
+											label: "mesh lambert material texture 0",
+											size: new GPUExtent3D({ width: 1, height: 1, depthOrArrayLayers: 1 }),
+											format: GPUTextureFormat.RGBA_8_UNORM,
+											usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,				
+										}
+									),
+									bindGroupLayoutEntry: new BindGroupLayoutEntry(
+										{
+											binding: 10,
+											visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
+											texture: new GPUTextureBindingLayout(
+												{
+													sampleType: GPUTextureSamplingType.FLOAT,
+													viewDimension: GPUTextureViewDimension.D2,
+													multisampled: false
+												}
+											),
+										}
+									),
+									bindGroupEntry: new BindGroupEntry(
+										{
+											binding: 10,
+											resource: null,
+										}
+									),
 								}
 							)
-						}
-					),
-					new BindingDescriptor(
-						{
-							binding: 11,
-							arrayBuffer: new Uint8ClampedArray([255, 0, 255, 255]),
-							resourceDescriptor: new TextureDescriptor(
+						],
+						[
+							20,
+							new ResourceBinding(
 								{
-									label: "mesh lambert material texture 1",
-									size: new GPUExtent3D({ width: 1, height: 1, depthOrArrayLayers: 1 }),
-									// format: GPUTextureFormat.RGBA_8_UNORM_SRGB,
-									format: GPUTextureFormat.RGBA_8_UNORM,
-									usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,				
+									number: 20,
+									arrayBuffer: null,
+									
+									resourceDescriptor: new SamplerDescriptor(
+										{
+											label: "mesh lambert material sampler 0",
+											magFilter: FilterMode.LINEAR,
+											minFilter: FilterMode.LINEAR,
+											mipmapFilter: FilterMode.LINEAR,
+										}
+									),
+									bindGroupLayoutEntry: new BindGroupLayoutEntry(
+										{
+											binding: 20,
+											visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
+											sampler: new GPUSamplerBindingLayout(
+												{
+													type: GPUSamplerBindingType.FILTERING
+												}
+											),
+										}
+									),
+									bindGroupEntry: new BindGroupEntry(
+										{
+											binding: 20,
+											resource: null,
+										}
+									),
 								}
 							)
-						}
-					),
-					new BindingDescriptor(
-						{
-							binding: 12,
-							arrayBuffer: new Uint8ClampedArray([255, 0, 255, 255]),
-							resourceDescriptor: new TextureDescriptor(
-								{
-									label: "mesh lambert material texture 2",
-									size: new GPUExtent3D({ width: 1, height: 1, depthOrArrayLayers: 1 }),
-									// format: GPUTextureFormat.RGBA_8_UNORM_SRGB,
-									format: GPUTextureFormat.RGBA_8_UNORM,
-									usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
-								}
-							)
-						}
-					),
-					new BindingDescriptor(
-						{
-							binding: 13,
-							arrayBuffer: new Uint8ClampedArray([255, 0, 255, 255]),
-							resourceDescriptor: new TextureDescriptor(
-								{
-									label: "mesh lambert material texture 3",
-									size: new GPUExtent3D({ width: 1, height: 1, depthOrArrayLayers: 1 }),
-									// format: GPUTextureFormat.RGBA_8_UNORM_SRGB,
-									format: GPUTextureFormat.RGBA_8_UNORM,
-									usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
-								}
-							)
-						}
-					),
-					new BindingDescriptor(
-						{
-							binding: 20,
-							arrayBuffer: null,
-							resourceDescriptor: new SamplerDescriptor(
-								{
-									label: "mesh lambert material sampler 0",
-									magFilter: FilterMode.LINEAR,
-									minFilter: FilterMode.LINEAR,
-									mipmapFilter: FilterMode.LINEAR,
-								}
-							)
-						}
-					),
-					new BindingDescriptor(
-						{
-							binding: 21,
-							arrayBuffer: null,
-							resourceDescriptor: new SamplerDescriptor(
-								{
-									label: "mesh lambert material sampler 1",
-									magFilter: FilterMode.LINEAR,
-									minFilter: FilterMode.LINEAR,
-									mipmapFilter: FilterMode.LINEAR,
-								}
-							)
-						}
-					),
-					new BindingDescriptor(
-						{
-							binding: 22,
-							arrayBuffer: null,
-							resourceDescriptor: new SamplerDescriptor(
-								{
-									label: "mesh lambert material sampler 2",
-									magFilter: FilterMode.LINEAR,
-									minFilter: FilterMode.LINEAR,
-									mipmapFilter: FilterMode.LINEAR,
-								}
-							)
-						}
-					),
-					new BindingDescriptor(
-						{
-							binding: 23,
-							arrayBuffer: null,
-							resourceDescriptor: new SamplerDescriptor(
-								{
-									label: "mesh lambert material sampler 3",
-									magFilter: FilterMode.LINEAR,
-									minFilter: FilterMode.LINEAR,
-									mipmapFilter: FilterMode.LINEAR,
-								}
-							)
-						}
-					),
-				],
+						],
+					]
+				),
+				resourceBindingsExteral: new Map(),
+
+				// bindingDescriptors: [
+					
+					
+				// ],
 				bindGroupLayoutDescriptor: new BindGroupLayoutDescriptor(
 					{
 						lable: "mesh lambert material bind group layout",
 						entries: [
-							new BindGroupLayoutEntry(
-								{
-									binding: 0,
-									visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-									buffer: new GPUBufferBindingLayout(
-										{
-											type: GPUBufferBindingType.UNIFORM,
-											hasDynamicOffset: false,
-											minBindingSize: 0,
-										}
-									),
-								}
-							),
-							new BindGroupLayoutEntry(
-								{
-									binding: 10,
-									visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-									texture: new GPUTextureBindingLayout(
-										{
-											sampleType: GPUTextureSamplingType.FLOAT,
-											viewDimension: GPUTextureViewDimension.D2,
-											multisampled: false
-										}
-									),
-								}
-							),
-							new BindGroupLayoutEntry(
-								{
-									binding: 11,
-									visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-									texture: new GPUTextureBindingLayout(
-										{
-											sampleType: GPUTextureSamplingType.FLOAT,
-											viewDimension: GPUTextureViewDimension.D2,
-											multisampled: false
-										}
-									),
-								}
-							),
-							new BindGroupLayoutEntry(
-								{
-									binding: 12,
-									visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-									texture: new GPUTextureBindingLayout(
-										{
-											sampleType: GPUTextureSamplingType.FLOAT,
-											viewDimension: GPUTextureViewDimension.D2,
-											multisampled: false
-										}
-									),
-								}
-							),
-							new BindGroupLayoutEntry(
-								{
-									binding: 13,
-									visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-									texture: new GPUTextureBindingLayout(
-										{
-											sampleType: GPUTextureSamplingType.FLOAT,
-											viewDimension: GPUTextureViewDimension.D2,
-											multisampled: false
-										}
-									),
-								}
-							),
-							new BindGroupLayoutEntry(
-								{
-									binding: 20,
-									visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-									sampler: new GPUSamplerBindingLayout(
-										{
-											type: GPUSamplerBindingType.FILTERING
-										}
-									),
-								}
-							),
-							new BindGroupLayoutEntry(
-								{
-									binding: 21,
-									visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-									sampler: new GPUSamplerBindingLayout(
-										{
-											type: GPUSamplerBindingType.FILTERING
-										}
-									),
-								}
-							),
-							new BindGroupLayoutEntry(
-								{
-									binding: 22,
-									visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-									sampler: new GPUSamplerBindingLayout(
-										{
-											type: GPUSamplerBindingType.FILTERING
-										}
-									),
-								}
-							),
-							new BindGroupLayoutEntry(
-								{
-									binding: 23,
-									visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-									sampler: new GPUSamplerBindingLayout(
-										{
-											type: GPUSamplerBindingType.FILTERING
-										}
-									),
-								}
-							),
+							
+							
 						],
 					}
 				),
@@ -312,66 +199,7 @@ export class MeshLambertMaterial extends MeshMaterial {
 						label: "mesh lambert material bind group",
 						layout: null,
 						entries: [
-							new BindGroupEntry(
-								{
-									binding: 0,
-									resource: new RCBufferBindingResource(
-										{
-											buffer: null,
-											offset: 0,
-											size: (2*4) * 4,
-										}
-									),
-								}
-							),
-							new BindGroupEntry(
-								{
-									binding: 10,
-									resource: null,
-								}
-							),
-							new BindGroupEntry(
-								{
-									binding: 11,
-									resource: null,
-								}
-							),
-							new BindGroupEntry(
-								{
-									binding: 12,
-									resource: null,
-								}
-							),
-							new BindGroupEntry(
-								{
-									binding: 13,
-									resource: null,
-								}
-							),
-							new BindGroupEntry(
-								{
-									binding: 20,
-									resource: null,
-								}
-							),
-							new BindGroupEntry(
-								{
-									binding: 21,
-									resource: null,
-								}
-							),
-							new BindGroupEntry(
-								{
-									binding: 22,
-									resource: null,
-								}
-							),
-							new BindGroupEntry(
-								{
-									binding: 23,
-									resource: null,
-								}
-							),
+							
 						],
 					}
 				)
@@ -389,7 +217,8 @@ export class MeshLambertMaterial extends MeshMaterial {
 		this.setUniform(
 			"emissive",
 			{
-				binding: 0,
+				bindingNumber: 0,
+				target: ResourceBinding.TARGET.INTERNAL,
 
 				bufferOffset: (0*4) * 4,
 				data: emissive.arrayBuffer.buffer,
@@ -404,7 +233,8 @@ export class MeshLambertMaterial extends MeshMaterial {
 		this.setUniform(
 			"diffuse",
 			{
-				binding: 0,
+				bindingNumber: 0,
+				target: ResourceBinding.TARGET.INTERNAL,
 
 				bufferOffset: (1*4) * 4,
 				data: diffuse.arrayBuffer.buffer,
