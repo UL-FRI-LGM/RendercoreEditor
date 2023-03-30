@@ -14,6 +14,7 @@ import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
 import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
 import { BindGroupDescriptor } from "../core/RC/resource binding/BindGroupDescriptor.js";
 import { ResourceBinding } from "../core/data layouts/ResourceBinding.js";
+import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 
 
 export class Mesh extends Group {
@@ -252,28 +253,54 @@ export class Mesh extends Group {
 		//binding update
 		this.uniformGroupDescriptor.dirtyCache.set(
 			"MMat",
-			{
-				bindingNumber: 0,
-				target: ResourceBinding.TARGET.INTERNAL,
+			new BufferSetInstruction(
+				{
+					label: "MMat",
 
-				bufferOffset: (0*16) * 4,
-				data: new Float32Array(this.g_MMat.elements).buffer,
-				dataOffset: 0,
-				size: (16) * 4
-			}
+					number: 0,
+					target: ResourceBinding.TARGET.INTERNAL,
+
+					source: {
+						arrayBuffer: new Float32Array(this.g_MMat.elements),
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0*16)
+						}
+					},
+					size: (16)
+				}
+			)
 		);
 
 		this.uniformGroupDescriptor.dirtyCache.set(
 			"NMat",
-			{
-				bindingNumber: 0,
-				target: ResourceBinding.TARGET.INTERNAL,
+			new BufferSetInstruction(
+				{
+					label: "NMat",
 
-				bufferOffset: (1*16) * 4,
-				data: new Float32Array(this.NMat4.elements).buffer,
-				dataOffset: 0,
-				size: (16) * 4
-			}
+					number: 0,
+					target: ResourceBinding.TARGET.INTERNAL,
+
+					source: {
+						arrayBuffer: new Float32Array(this.NMat4.elements),
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (1*16)
+						}
+					},
+					size: (16)
+				}
+			)
 		);
 	}
 };

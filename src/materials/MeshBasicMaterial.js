@@ -23,6 +23,7 @@ import { BindGroupLayoutDescriptor } from "../core/RC/resource binding/BindGroup
 import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
 import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
 import { ResourceBinding } from "../core/data layouts/ResourceBinding.js";
+import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 
 
 export class MeshBasicMaterial extends MeshMaterial {
@@ -215,24 +216,28 @@ export class MeshBasicMaterial extends MeshMaterial {
 		this.#emissive = emissive;
 		this.setUniform(
 			"emissive",
-			{
-				bindingNumber: 0,
-				target: ResourceBinding.TARGET.INTERNAL,
+			new BufferSetInstruction(
+				{
+					label: "emissive",
 
-				bufferOffset: (0*4) * 4,
-				data: emissive.arrayBuffer.buffer,
-				dataOffset: 0,
-				size: (4) * 4,
+					number: 0,
+					target: ResourceBinding.TARGET.INTERNAL,
 
-				source: {
-
-				},
-				destination: {
-					buffer: null,
-
-					bufferOffset: (0*4) * 4,
+					source: {
+						arrayBuffer: emissive.arrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0*4)
+						}
+					},
+					size: (4)
 				}
-			}
+			)
 		);
 	}
 	get diffuse() { return this.#diffuse; }
@@ -240,15 +245,28 @@ export class MeshBasicMaterial extends MeshMaterial {
 		this.#diffuse = diffuse;
 		this.setUniform(
 			"diffuse",
-			{
-				bindingNumber: 0,
-				target: ResourceBinding.TARGET.INTERNAL,
+			new BufferSetInstruction(
+				{
+					label: "diffuse",
 
-				bufferOffset: (1*4) * 4,
-				data: diffuse.arrayBuffer.buffer,
-				dataOffset: 0,
-				size: (4) * 4
-			}
+					number: 0,
+					target: ResourceBinding.TARGET.INTERNAL,
+
+					source: {
+						arrayBuffer: diffuse.arrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (1*4)
+						}
+					},
+					size: (4)
+				}
+			)
 		);
 	}
 };

@@ -1,3 +1,5 @@
+import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
+import { ResourceBinding } from "../core/data layouts/ResourceBinding.js";
 import { Color3 } from "../math/Color3.js";
 import { Color4 } from "../math/Color4.js";
 import { Vector3 } from "../math/Vector3.js";
@@ -57,14 +59,28 @@ export class PointLight extends Light {
 
 		this.dirtyCache.set(
 			"DIRECTION",
-			{
-				binding: 0,
+			new BufferSetInstruction(
+				{
+					label: "DIRECTION",
 
-				bufferOffset: (0*4) * 4,
-				data: new Float32Array(this.position.toArray()).buffer,
-				dataOffset: 0,
-				size: (4) * 4
-			}
+					number: 10,
+					target: ResourceBinding.TARGET.INTERNAL,
+
+					source: {
+						arrayBuffer: new Float32Array(this.position.toArray()),
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0*4)
+						}
+					},
+					size: (4)
+				}
+			)
 		);
 	}
 	
@@ -78,14 +94,28 @@ export class PointLight extends Light {
 
 		this.dirtyCache.set(
 			"DECAY_DISTANCE", 
-			{
-				binding: 0,
+			new BufferSetInstruction(
+				{
+					label: "DECAY_DISTANCE",
 
-				bufferOffset: (3*4) * 4,
-				data: new Float32Array(this.decayDistance.toArray()).buffer,
-				dataOffset: 0,
-				size: (4) * 4
-			}
+					number: 10,
+					target: ResourceBinding.TARGET.INTERNAL,
+
+					source: {
+						arrayBuffer: new Float32Array(this.decayDistance.toArray()),
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (3*4)
+						}
+					},
+					size: (4)
+				}
+			)
 		);
 	}
 	get decay() { return this.#decay; }
@@ -97,14 +127,28 @@ export class PointLight extends Light {
 
 		this.dirtyCache.set(
 			"DECAY_DISTANCE", 
-			{
-				binding: 0,
+			new BufferSetInstruction(
+				{
+					label: "DECAY_DISTANCE",
 
-				bufferOffset: (3*4) * 4,
-				data: new Float32Array(this.decayDistance.toArray()).buffer,
-				dataOffset: 0,
-				size: (4) * 4
-			}
+					number: 10,
+					target: ResourceBinding.TARGET.INTERNAL,
+
+					source: {
+						arrayBuffer: new Float32Array(this.decayDistance.toArray()),
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (3*4)
+						}
+					},
+					size: (4)
+				}
+			)
 		);
 	}
 	get distance() { return this.#distance; }
@@ -114,14 +158,28 @@ export class PointLight extends Light {
 
 		this.dirtyCache.set(
 			"DECAY_DISTANCE", 
-			{
-				binding: 0,
+			new BufferSetInstruction(
+				{
+					label: "DECAY_DISTANCE",
 
-				bufferOffset: (3*4) * 4,
-				data: new Float32Array(this.decayDistance.toArray()).buffer,
-				dataOffset: 0,
-				size: (4) * 4
-			}
+					number: 10,
+					target: ResourceBinding.TARGET.INTERNAL,
+
+					source: {
+						arrayBuffer: new Float32Array(this.decayDistance.toArray()),
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (3*4)
+						}
+					},
+					size: (4)
+				}
+			)
 		);
 	}
 	// get constant() { return this.#decay.x; }

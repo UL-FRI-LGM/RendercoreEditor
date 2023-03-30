@@ -13,6 +13,7 @@ import { BindGroupLayoutDescriptor } from "../core/RC/resource binding/BindGroup
 import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
 import { BindGroupDescriptor } from "../core/RC/resource binding/BindGroupDescriptor.js";
 import { ResourceBinding } from "../core/data layouts/ResourceBinding.js";
+import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 
 
 export class Camera extends Group {
@@ -150,57 +151,28 @@ export class Camera extends Group {
 
 		this.uniformGroupDescriptor.dirtyCache.set(
 			"VMat",
-			{
-				bindingNumber: 0,
-				target: ResourceBinding.TARGET.INTERNAL,
+			new BufferSetInstruction(
+				{
+					label: "VMat",
 
-				bufferOffset: (0*16) * 4,
-				data: new Float32Array(viewMatrix.elements).buffer,
-				dataOffset: 0,
-				size: (16) * 4,
+					number: 0,
+					target: ResourceBinding.TARGET.INTERNAL,
 
-
-				bufferBinding: new ResourceBinding(
-					{
-						number: 0,
-						arrayBuffer: new Float32Array(16*2),
-						
-						resourceDescriptor: new BufferDescriptor(
-							{
-								label: "camera buffer",
-								size: 16*2,
-								usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
-								mappedAtCreation: false,					
-							}
-						),
-						bindGroupLayoutEntry: new BindGroupLayoutEntry(
-							{
-								binding: 0,
-								visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-								buffer: new GPUBufferBindingLayout(
-									{
-										type: GPUBufferBindingType.UNIFORM,
-										hasDynamicOffset: false,
-										minBindingSize: 0,
-									}
-								),
-							}
-						),
-						bindGroupEntry: new BindGroupEntry(
-							{
-								binding: 0,
-								resource: new RCBufferBindingResource(
-									{
-										buffer: null,
-										offset: 0,
-										size: (16*2) * 4,
-									}
-								),
-							}
-						),
-					}
-				)
-			}
+					source: {
+						arrayBuffer: new Float32Array(viewMatrix.elements),
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0*16)
+						}
+					},
+					size: (16)
+				}
+			)
 		);
 	}
     get projectionMatrix() { return this.#projectionMatrix; }
@@ -212,15 +184,28 @@ export class Camera extends Group {
 
 		this.uniformGroupDescriptor.dirtyCache.set(
 			"PMat",
-			{
-				bindingNumber: 0,
-				target: ResourceBinding.TARGET.INTERNAL,
+			new BufferSetInstruction(
+				{
+					label: "PMat",
 
-				bufferOffset: (1*16) * 4,
-				data: new Float32Array(projectionMatrix.elements).buffer,
-				dataOffset: 0,
-				size: (16) * 4
-			}
+					number: 0,
+					target: ResourceBinding.TARGET.INTERNAL,
+
+					source: {
+						arrayBuffer: new Float32Array(projectionMatrix.elements),
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (1*16)
+						}
+					},
+					size: (16)
+				}
+			)
 		);
 	}
     get projectionMatrixInverse() { return this.#projectionMatrixInverse; }

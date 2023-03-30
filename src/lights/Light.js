@@ -2,6 +2,7 @@ import { Group } from "../objects/Group.js";
 import { ResourceBinding } from "../core/data layouts/ResourceBinding.js";
 import { Color3 } from "../math/Color3.js";
 import { Color4 } from "../math/Color4.js";
+import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 
 
 export class Light extends Group {
@@ -54,15 +55,28 @@ export class Light extends Group {
 
 		this.dirtyCache.set(
 			"COLOR_INTENSITY",
-			{
-				bindingNumber: 10,
-				target: ResourceBinding.TARGET.INTERNAL,
+			new BufferSetInstruction(
+				{
+					label: "COLOR_INTENSITY",
 
-				bufferOffset: (2*4) * 4,
-				data: this.colorIntensity.arrayBuffer.buffer,
-				dataOffset: 0,
-				size: (4) * 4
-			}
+					number: 10,
+					target: ResourceBinding.TARGET.INTERNAL,
+
+					source: {
+						arrayBuffer: this.colorIntensity.arrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (2*4)
+						}
+					},
+					size: (4)
+				}
+			)
 		);
 	}
 	get color() { return this.#color; }
@@ -74,15 +88,28 @@ export class Light extends Group {
 
 		this.dirtyCache.set(
 			"COLOR_INTENSITY",
-			{
-				bindingNumber: 10,
-				target: ResourceBinding.TARGET.INTERNAL,
+			new BufferSetInstruction(
+				{
+					label: "COLOR_INTENSITY",
 
-				bufferOffset: (2*4) * 4,
-				data: this.colorIntensity.arrayBuffer.buffer,
-				dataOffset: 0,
-				size: (4) * 4
-			}
+					number: 10,
+					target: ResourceBinding.TARGET.INTERNAL,
+
+					source: {
+						arrayBuffer: this.colorIntensity.arrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (2*4)
+						}
+					},
+					size: (4)
+				}
+			)
 		);
 	}
 	get intensity() { return this.#intensity; }
@@ -92,15 +119,28 @@ export class Light extends Group {
 
 		this.dirtyCache.set(
 			"COLOR_INTENSITY",
-			{
-				bindingNumber: 10,
-				target: ResourceBinding.TARGET.INTERNAL,
+			new BufferSetInstruction(
+				{
+					label: "COLOR_INTENSITY",
 
-				bufferOffset: (2*4) * 4,
-				data: this.colorIntensity.arrayBuffer.buffer,
-				dataOffset: 0,
-				size: (4) * 4
-			}
+					number: 10,
+					target: ResourceBinding.TARGET.INTERNAL,
+
+					source: {
+						arrayBuffer: this.colorIntensity.arrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (2*4)
+						}
+					},
+					size: (4)
+				}
+			)
 		);
 	}
 
@@ -110,15 +150,28 @@ export class Light extends Group {
 
 		this.dirtyCache.set(
 			"POSITION",
-			{
-				bindingNumber: 10,
-				target: ResourceBinding.TARGET.INTERNAL,
+			new BufferSetInstruction(
+				{
+					label: "POSITION",
 
-				bufferOffset: (0*4) * 4,
-				data: new Float32Array(this.position.toArray()).buffer,
-				dataOffset: 0,
-				size: (4) * 4
-			}
+					number: 10,
+					target: ResourceBinding.TARGET.INTERNAL,
+
+					source: {
+						arrayBuffer: new Float32Array(this.position.toArray()),
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0*4)
+						}
+					},
+					size: (4)
+				}
+			)
 		);
 	}
 };

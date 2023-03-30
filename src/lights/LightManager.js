@@ -15,6 +15,7 @@ import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
 import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
 import { BindGroupDescriptor } from "../core/RC/resource binding/BindGroupDescriptor.js";
 import { ResourceBinding } from "../core/data layouts/ResourceBinding.js";
+import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 
 
 export class LightManager extends ObjectBase {
@@ -226,20 +227,33 @@ export class LightManager extends ObjectBase {
 			for (const [key, value] of aLight.dirtyCache) {
 				this.uniformGroupDescriptor.dirtyCache.set(
 					i + "|aLight|" + key,
-					{
-						bindingNumber: value.bindingNumber,
-						target: value.target,
-				
-						bufferOffset: offset + value.bufferOffset,
-						data: value.data,
-						dataOffset: value.dataOffset,
-						size: value.size
-					}
+					new BufferSetInstruction(
+						{
+							label: i + "|aLight|" + key,
+		
+							number: value.number,
+							target: value.target,
+		
+							source: {
+								arrayBuffer: value.source.arrayBuffer,
+								layout: {
+									offset: value.source.layout.offset,
+								}
+							},
+							destination: {
+								buffer: value.destination.buffer,
+								layout: {
+									offset: offset + value.destination.layout.offset
+								}
+							},
+							size: value.size
+						}
+					)
 				);
 			}
 			aLight.dirtyCache.clear();
 
-			offset += (4 + 4 + 4) * 4;
+			offset += (4 + 4 + 4);
 			i++;
 		}
 
@@ -247,15 +261,28 @@ export class LightManager extends ObjectBase {
 			for (const [key, value] of pLight.dirtyCache) {
 				this.uniformGroupDescriptor.dirtyCache.set(
 					i + "|pLight|" + key,
-					{
-						bindingNumber: value.bindingNumber,
-						target: value.target,
-				
-						bufferOffset: offset + value.bufferOffset,
-						data: value.data,
-						dataOffset: value.dataOffset,
-						size: value.size
-					}
+					new BufferSetInstruction(
+						{
+							label: i + "|pLight|" + key,
+		
+							number: value.number,
+							target: value.target,
+		
+							source: {
+								arrayBuffer: value.source.arrayBuffer,
+								layout: {
+									offset: value.source.layout.offset,
+								}
+							},
+							destination: {
+								buffer: value.destination.buffer,
+								layout: {
+									offset: offset + value.destination.layout.offset
+								}
+							},
+							size: value.size
+						}
+					)
 				);
 			}
 			pLight.dirtyCache.clear();
