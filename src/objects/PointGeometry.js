@@ -6,6 +6,7 @@ import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.
 import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
 import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
+import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 
 
 export class PointGeometry extends MeshGeometry {
@@ -102,6 +103,30 @@ export class PointGeometry extends MeshGeometry {
 					)
 				}
 			);
+			verticesAttributeLocation.set(
+				"point vertices",
+				new BufferSetInstruction(
+					{
+						label: "point vertices",
+	
+						number: 0,
+	
+						source: {
+							arrayBuffer: verticesArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: verticesArrayBuffer.length
+					}
+				)
+			);
 
 
 			return verticesAttributeLocation;
@@ -158,6 +183,30 @@ export class PointGeometry extends MeshGeometry {
 				}
 			);
 			// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
+			normalsAttributeLocation.set(
+				"point normals",
+				new BufferSetInstruction(
+					{
+						label: "point normals",
+	
+						number: 1,
+	
+						source: {
+							arrayBuffer: normalsArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: normalsArrayBuffer.length
+					}
+				)
+			);
 
 
 			return normalsAttributeLocation;
@@ -212,6 +261,30 @@ export class PointGeometry extends MeshGeometry {
 						}
 					)
 				}
+			);
+			uvsAttributeLocation.set(
+				"point uvs",
+				new BufferSetInstruction(
+					{
+						label: "point uvs",
+	
+						number: 2,
+	
+						source: {
+							arrayBuffer: uvsArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: uvsArrayBuffer.length
+					}
+				)
 			);
 
 

@@ -11,15 +11,21 @@ export class ResourceLocation extends Resource { //custom resource location (att
 		LABEL: "",
         DIRTY_CACHE: new Map(),
 
+		NUMBER: null,
 		ITEM_SIZE: 4,
 		ARRAY_BUFFER: new Float32Array(),
+		SET_INSTRUCTION: null,
+
 		BUFFER_DESCRIPTOR: undefined,
 		VERTEX_BUFFER_LAYOUT_DESCRIPTOR: undefined,
 	};
 
 
+	#number;
 	#itemSize;
 	#arrayBuffer;
+	#setInstruction;
+
 	#bufferDescriptor;
 	#vertexBufferLayoutDescriptor;
 
@@ -34,17 +40,25 @@ export class ResourceLocation extends Resource { //custom resource location (att
             }
 		);
 
+		this.number = (args.number !== undefined) ? args.number : ResourceLocation.DEFAULT.NUMBER;
 		this.itemSize = (args.itemSize !== undefined) ? args.itemSize : ResourceLocation.DEFAULT.ITEM_SIZE;
 		this.arrayBuffer = (args.arrayBuffer !== undefined) ? args.arrayBuffer : new Float32Array(ResourceLocation.DEFAULT.ARRAY_BUFFER); //copy
+		this.setInstruction = (args.setInstruction !== undefined) ? args.setInstruction : ResourceLocation.DEFAULT.SET_INSTRUCTION;
+
 		this.bufferDescriptor = (args.bufferDescriptor !== undefined) ? args.bufferDescriptor : ResourceLocation.DEFAULT.BUFFER_DESCRIPTOR;
 		this.vertexBufferLayoutDescriptor = (args.vertexBufferLayoutDescriptor !== undefined) ? args.vertexBufferLayoutDescriptor : ResourceLocation.DEFAULT.VERTEX_BUFFER_LAYOUT_DESCRIPTOR;
 	}
 
 
+	get number() { return this.#number; }
+	set number(number) { this.#number = number; }
 	get itemSize() { return this.#itemSize }
 	set itemSize(itemSize){ this.#itemSize = itemSize; }
 	get arrayBuffer() { return this.#arrayBuffer; }
     set arrayBuffer(arrayBuffer) { this.#arrayBuffer = arrayBuffer; }
+	get setInstruction() { return this.#setInstruction; }
+	set setInstruction(setInstruction) { this.#setInstruction = setInstruction; }
+
 	get bufferDescriptor() { return this.#bufferDescriptor }
 	set bufferDescriptor(bufferDescriptor){ this.#bufferDescriptor = bufferDescriptor; }
 	get vertexBufferLayoutDescriptor() { return this.#vertexBufferLayoutDescriptor; }

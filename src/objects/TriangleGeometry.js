@@ -7,6 +7,7 @@ import { AttributeLocation } from "../core/data layouts/AttributeLocation.js";
 import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
 import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
+import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 
 
 export class TriangleGeometry extends MeshGeometry {
@@ -104,6 +105,30 @@ export class TriangleGeometry extends MeshGeometry {
 					)
 				}
 			);
+			verticesAttributeLocation.set(
+				"triangle vertices",
+				new BufferSetInstruction(
+					{
+						label: "triangle vertices",
+	
+						number: 0,
+	
+						source: {
+							arrayBuffer: verticesArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: verticesArrayBuffer.length
+					}
+				)
+			);
 
 
 			return verticesAttributeLocation;
@@ -172,6 +197,30 @@ export class TriangleGeometry extends MeshGeometry {
 				}
 			);
 			normalsAttributeLocation.normalize();
+			normalsAttributeLocation.set(
+				"triangle normals",
+				new BufferSetInstruction(
+					{
+						label: "triangle normals",
+	
+						number: 1,
+	
+						source: {
+							arrayBuffer: normalsArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: normalsArrayBuffer.length
+					}
+				)
+			);
 
 
 			return normalsAttributeLocation;
@@ -228,6 +277,30 @@ export class TriangleGeometry extends MeshGeometry {
 						}
 					)
 				}
+			);
+			uvsAttributeLocation.set(
+				"triangle uvs",
+				new BufferSetInstruction(
+					{
+						label: "triangle uvs",
+	
+						number: 2,
+	
+						source: {
+							arrayBuffer: uvsArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: uvsArrayBuffer.length
+					}
+				)
 			);
 
 

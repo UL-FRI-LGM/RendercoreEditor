@@ -10,6 +10,7 @@ import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribut
 import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
 import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
+import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 
 
 export class MeshGeometry extends Geometry { //mesh custom geometry
@@ -215,6 +216,32 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				)
 			}
 		);
+		wireframeIndicesAttributeLocation.set(
+			"mesh wireframe indices",
+			new BufferSetInstruction(
+				{
+					label: "mesh wireframe indices",
+
+					number: -1,
+
+					source: {
+						arrayBuffer: wireframeIndicesArrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0)
+						}
+					},
+					size: wireframeIndicesArrayBuffer.length
+				}
+			)
+		);
+
+
 		this.wireframeIndices = wireframeIndicesAttributeLocation;
 	}
 	#sanitize(vertexMap, x, y, indicesArray){
@@ -364,6 +391,30 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 			}
 		);
 		normalsAttributeLocation.normalize();
+		normalsAttributeLocation.set(
+			"mesh normals",
+			new BufferSetInstruction(
+				{
+					label: "mesh normals",
+
+					number: 1,
+
+					source: {
+						arrayBuffer: normalsArrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0)
+						}
+					},
+					size: normalsArrayBuffer.length
+				}
+			)
+		);
 
 
 		this.normals = normalsAttributeLocation;
@@ -450,14 +501,15 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				tangents[indices.arrayBuffer[i + 2]*verticesItemSize + 2] = tangent.z;
 			}
 
+			const tangentsArrayBuffer = new Float32Array(tangents);
 			const tangentsAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 3,
-					arrayBuffer: tangents,
+					arrayBuffer: tangentsArrayBuffer,
 					bufferDescriptor: new BufferDescriptor(
 						{
 							label: "mesh geometry tangents buffer",
-							size: tangents.length,
+							size: tangentsArrayBuffer.length,
 							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
 							mappedAtCreation: false
 						}
@@ -480,6 +532,30 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				}
 			);
 			// tangentsAttributeLocation.normalize();
+			tangentsAttributeLocation.set(
+				"mesh tangents",
+				new BufferSetInstruction(
+					{
+						label: "mesh tangents",
+	
+						number: -1,
+	
+						source: {
+							arrayBuffer: tangentsArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: tangentsArrayBuffer.length
+					}
+				)
+			);
 
 
 			this.tangents = tangentsAttributeLocation;
@@ -558,14 +634,15 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				tangents[i*verticesItemSize + 8] = tangent.z;
 			}
 
+			const tangentsArrayBuffer = new Float32Array(tangents);
 			const tangentsAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 3,
-					arrayBuffer: tangents,
+					arrayBuffer: tangentsArrayBuffer,
 					bufferDescriptor: new BufferDescriptor(
 						{
 							label: "mesh geometry tangents buffer",
-							size: tangents.length,
+							size: tangentsArrayBuffer.length,
 							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
 							mappedAtCreation: false
 						}
@@ -588,6 +665,30 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				}
 			);
 			// tangentsAttributeLocation.normalize();
+			tangentsAttributeLocation.set(
+				"mesh tangents",
+				new BufferSetInstruction(
+					{
+						label: "mesh tangents",
+	
+						number: -1,
+	
+						source: {
+							arrayBuffer: tangentsArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: tangentsArrayBuffer.length
+					}
+				)
+			);
 
 
 			this.tangents = tangentsAttributeLocation;
@@ -672,14 +773,15 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				bitangents[indices.arrayBuffer[i + 2]*verticesItemSize + 2] = bitangent.z;
 			}
 
+			const bitangentsArrayBuffer = new Float32Array(tangents);
 			const bitangentsAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 3,
-					arrayBuffer: bitangents,
+					arrayBuffer: bitangentsArrayBuffer,
 					bufferDescriptor: new BufferDescriptor(
 						{
 							label: "mesh geometry bitangents buffer",
-							size: bitangents.length,
+							size: bitangentsArrayBuffer.length,
 							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
 							mappedAtCreation: false
 						}
@@ -702,6 +804,30 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				}
 			);
 			// bitangentsAttributeLocation.normalize();
+			bitangentsAttributeLocation.set(
+				"mesh bitangents",
+				new BufferSetInstruction(
+					{
+						label: "mesh bitangents",
+	
+						number: -1,
+	
+						source: {
+							arrayBuffer: bitangentsArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: bitangentsArrayBuffer.length
+					}
+				)
+			);
 
 
 			this.bitangents = bitangentsAttributeLocation;
@@ -780,14 +906,15 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				bitangents[i*verticesItemSize + 8] = bitangent.z;
 			}
 
+			const bitangentsArrayBuffer = new Float32Array(tangents);
 			const bitangentsAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 3,
-					arrayBuffer: bitangents,
+					arrayBuffer: bitangentsArrayBuffer,
 					bufferDescriptor: new BufferDescriptor(
 						{
 							label: "mesh geometry bitangents buffer",
-							size: bitangents.length,
+							size: bitangentsArrayBuffer.length,
 							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
 							mappedAtCreation: false
 						}
@@ -810,6 +937,30 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				}
 			);
 			// bitangentsAttributeLocation.normalize();
+			bitangentsAttributeLocation.set(
+				"mesh bitangents",
+				new BufferSetInstruction(
+					{
+						label: "mesh bitangents",
+	
+						number: -1,
+	
+						source: {
+							arrayBuffer: bitangentsArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: bitangentsArrayBuffer.length
+					}
+				)
+			);
 
 
 			this.bitangents = bitangentsAttributeLocation;

@@ -3,9 +3,10 @@ import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribut
 import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
 import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
 import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
-import { ResourceLocation } from "../core/data layouts/ResourceLocation.js";
+import { AttributeLocation } from "../core/data layouts/AttributeLocation.js";
 import { MeshGeometry } from "./MeshGeometry.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
+import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 
 
 export class QuadGeometry extends MeshGeometry {
@@ -86,7 +87,7 @@ export class QuadGeometry extends MeshGeometry {
 			}
 
 			const verticesArrayBuffer = new Float32Array(verticesArray);
-			const verticesAttributeLocation = new ResourceLocation(
+			const verticesAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 3,
 					arrayBuffer: verticesArrayBuffer,
@@ -114,6 +115,30 @@ export class QuadGeometry extends MeshGeometry {
 						}
 					)
 				}
+			);
+			verticesAttributeLocation.set(
+				"quad vertices",
+				new BufferSetInstruction(
+					{
+						label: "quad vertices",
+	
+						number: 0,
+	
+						source: {
+							arrayBuffer: verticesArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: verticesArrayBuffer.length
+					}
+				)
 			);
 
 
@@ -147,7 +172,7 @@ export class QuadGeometry extends MeshGeometry {
 			}
 
 			const normalsArrayBuffer = new Float32Array(normalsArray);
-			const normalAttributeLocation = new ResourceLocation(
+			const normalsAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 3,
 					arrayBuffer: normalsArrayBuffer,
@@ -176,10 +201,34 @@ export class QuadGeometry extends MeshGeometry {
 					)
 				}
 			);
-			// normalAttributeLocation.normalize(); // no need to normalize for this configuration
+			// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
+			normalsAttributeLocation.set(
+				"quad normals",
+				new BufferSetInstruction(
+					{
+						label: "quad normals",
+	
+						number: 1,
+	
+						source: {
+							arrayBuffer: normalsArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: normalsArrayBuffer.length
+					}
+				)
+			);
 
 
-			return normalAttributeLocation;
+			return normalsAttributeLocation;
 		}
 	}
 	static assembleUVs(args = {}) {
@@ -209,7 +258,7 @@ export class QuadGeometry extends MeshGeometry {
 			}
 
 			const uvsArrayBuffer = new Float32Array(uvsArray);
-			const normalAttributeLocation = new ResourceLocation(
+			const uvsAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 2,
 					arrayBuffer: uvsArrayBuffer,
@@ -238,9 +287,33 @@ export class QuadGeometry extends MeshGeometry {
 					)
 				}
 			);
+			uvsAttributeLocation.set(
+				"quad uvs",
+				new BufferSetInstruction(
+					{
+						label: "quad uvs",
+	
+						number: 2,
+	
+						source: {
+							arrayBuffer: uvsArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: uvsArrayBuffer.length
+					}
+				)
+			);
 
 
-			return normalAttributeLocation;
+			return uvsAttributeLocation;
 		}
 	}
 };

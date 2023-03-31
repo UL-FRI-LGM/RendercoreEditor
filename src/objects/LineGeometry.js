@@ -1,11 +1,12 @@
 import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
 import { MeshGeometry } from "./MeshGeometry.js";
-import { ResourceLocation } from "../core/data layouts/ResourceLocation.js";
+import { AttributeLocation } from "../core/data layouts/AttributeLocation.js";
 import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
 import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
 import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
 import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
+import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 
 
 export class LineGeometry extends MeshGeometry {
@@ -78,7 +79,7 @@ export class LineGeometry extends MeshGeometry {
 			}
 
 			const verticesArrayBuffer = new Float32Array(verticesArray);
-			const verticesAttributeLocation = new ResourceLocation(
+			const verticesAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 3,
 					arrayBuffer: verticesArrayBuffer,
@@ -107,6 +108,30 @@ export class LineGeometry extends MeshGeometry {
 					)
 				}
 			);
+			verticesAttributeLocation.set(
+				"line vertices",
+				new BufferSetInstruction(
+					{
+						label: "line vertices",
+	
+						number: 0,
+	
+						source: {
+							arrayBuffer: verticesArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: verticesArrayBuffer.length
+					}
+				)
+			);
 
 
 			return verticesAttributeLocation;
@@ -134,7 +159,7 @@ export class LineGeometry extends MeshGeometry {
 			}
 
 			const normalsArrayBuffer = new Float32Array(normalsArray);
-			const normalsAttributeLocation = new ResourceLocation(
+			const normalsAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 3,
 					arrayBuffer: normalsArrayBuffer,
@@ -164,6 +189,30 @@ export class LineGeometry extends MeshGeometry {
 				}
 			);
 			// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
+			normalsAttributeLocation.set(
+				"line normals",
+				new BufferSetInstruction(
+					{
+						label: "line normals",
+	
+						number: 1,
+	
+						source: {
+							arrayBuffer: normalsArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: normalsArrayBuffer.length
+					}
+				)
+			);
 
 
 			return normalsAttributeLocation;
@@ -191,7 +240,7 @@ export class LineGeometry extends MeshGeometry {
 			}
 
 			const uvsArrayBuffer = new Float32Array(uvsArray);
-			const uvsAttributeLocation = new ResourceLocation(
+			const uvsAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 2,
 					arrayBuffer: uvsArrayBuffer,
@@ -219,6 +268,30 @@ export class LineGeometry extends MeshGeometry {
 						}
 					)
 				}
+			);
+			uvsAttributeLocation.set(
+				"line uvs",
+				new BufferSetInstruction(
+					{
+						label: "line uvs",
+	
+						number: 2,
+	
+						source: {
+							arrayBuffer: uvsArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: uvsArrayBuffer.length
+					}
+				)
 			);
 
 

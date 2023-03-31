@@ -10,8 +10,9 @@ import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBuffe
 import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
 import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
 import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
-import { ResourceLocation } from "../core/data layouts/ResourceLocation.js";
+import { AttributeLocation } from "../core/data layouts/AttributeLocation.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
+import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 
 
 export class OBJLoader extends XHRLoader {
@@ -326,7 +327,7 @@ export class OBJLoader extends XHRLoader {
 
 			// Add position of vertices
 			const verticesArrayBuffer = new Float32Array(geometry.vertices);
-			meshGeometry.vertices = new ResourceLocation(
+			meshGeometry.vertices = new AttributeLocation(
 				{
 					itemSize: 3,
 					arrayBuffer: verticesArrayBuffer,
@@ -355,11 +356,35 @@ export class OBJLoader extends XHRLoader {
 					)
 				}
 			);
+			meshGeometry.vertices.set(
+				"OBJ vertices",
+				new BufferSetInstruction(
+					{
+						label: "OBJ vertices",
+	
+						number: 0,
+	
+						source: {
+							arrayBuffer: verticesArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: verticesArrayBuffer.length
+					}
+				)
+			);
 
 			// Check if normals are specified. Otherwise calculate them
 			if (geometry.normals.length > 0) {
 				const normalsArrayBuffer = new Float32Array(geometry.normals);
-				meshGeometry.normals = new ResourceLocation(
+				meshGeometry.normals = new AttributeLocation(
 					{
 						itemSize: 3,
 						arrayBuffer: normalsArrayBuffer,
@@ -388,6 +413,30 @@ export class OBJLoader extends XHRLoader {
 						)
 					}
 				);
+				meshGeometry.normals.set(
+					"OBJ normals",
+					new BufferSetInstruction(
+						{
+							label: "OBJ normals",
+		
+							number: 1,
+		
+							source: {
+								arrayBuffer: normalsArrayBuffer,
+								layout: {
+									offset: (0),
+								}
+							},
+							destination: {
+								buffer: null,
+								layout: {
+									offset: (0)
+								}
+							},
+							size: normalsArrayBuffer.length
+						}
+					)
+				);
 			} else {
 				meshGeometry.computeVertexNormals();
 			}
@@ -395,7 +444,7 @@ export class OBJLoader extends XHRLoader {
 			// If specified add texture uv-s
 			if (geometry.uvs.length > 0) {
 				const uvsArrayBuffer =  new Float32Array(geometry.uvs);
-				meshGeometry.uvs = new ResourceLocation(
+				meshGeometry.uvs = new AttributeLocation(
 					{
 						itemSize: 2,
 						arrayBuffer: uvsArrayBuffer,
@@ -423,6 +472,30 @@ export class OBJLoader extends XHRLoader {
 							}
 						)
 					}
+				);
+				meshGeometry.uvs.set(
+					"OBJ uvs",
+					new BufferSetInstruction(
+						{
+							label: "OBJ uvs",
+		
+							number: 2,
+		
+							source: {
+								arrayBuffer: uvsArrayBuffer,
+								layout: {
+									offset: (0),
+								}
+							},
+							destination: {
+								buffer: null,
+								layout: {
+									offset: (0)
+								}
+							},
+							size: uvsArrayBuffer.length
+						}
+					)
 				);
 			}
 

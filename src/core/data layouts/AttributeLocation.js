@@ -33,4 +33,12 @@ export class AttributeLocation extends ResourceLocation { //attribute
 			}
 		);
 	}
+
+
+	set(name, setInstruction) {
+		this.dirtyCache.set(
+			name,
+			setInstruction
+		);
+	}
 };

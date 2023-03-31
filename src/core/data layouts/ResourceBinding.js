@@ -19,6 +19,7 @@ export class ResourceBinding extends Resource { //custom resource binding (unifo
 		NUMBER: null,
 		TARGET: ResourceBinding.TARGET.EXTERNAL,
 		ARRAY_BUFFER: new Float32Array(),
+		SET_INSTRUCTION: null,
 
 		// BINDING_DESCRIPTOR: new BindingDescriptor({}),
 		RESOURCE_DESCRIPTOR: undefined,
@@ -30,6 +31,7 @@ export class ResourceBinding extends Resource { //custom resource binding (unifo
 	#number;
 	#target;
 	#arrayBuffer;
+	#setInstruction;
 
 	// #bindingDescriptor;
 	#resourceDescriptor;
@@ -50,6 +52,7 @@ export class ResourceBinding extends Resource { //custom resource binding (unifo
 		this.number = (args.number !== undefined) ? args.number : ResourceBinding.DEFAULT.NUMBER;
 		this.target = (args.target !== undefined) ? args.target : ResourceBinding.DEFAULT.TARGET;
 		this.arrayBuffer = (args.arrayBuffer !== undefined) ? args.arrayBuffer : ResourceBinding.DEFAULT.TARGET;
+		this.setInstruction = (args.setInstruction !== undefined) ? args.setInstruction : ResourceBinding.DEFAULT.SET_INSTRUCTION;
 
 		// this.bindingDescriptor = (args.bindingDescriptor !== undefined) ? args.bindingDescriptor : ResourceBinding.DEFAULT.BINDING_DESCRIPTOR;
 		this.resourceDescriptor = (args.resourceDescriptor !== undefined) ? args.resourceDescriptor : ResourceBinding.DEFAULT.RESOURCE_DESCRIPTOR;
@@ -64,6 +67,8 @@ export class ResourceBinding extends Resource { //custom resource binding (unifo
 	set target(target) { this.#target = target; }
 	get arrayBuffer() { return this.#arrayBuffer; }
 	set arrayBuffer(arrayBuffer) { this.#arrayBuffer = arrayBuffer; }
+	get setInstruction() { return this.#setInstruction; }
+	set setInstruction(setInstruction) { this.#setInstruction = setInstruction; }
 
 	// get bindingDescriptor() { return this.#bindingDescriptor; }
 	// set bindingDescriptor(bindingDescriptor) { this.#bindingDescriptor = bindingDescriptor; }
