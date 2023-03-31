@@ -10,15 +10,15 @@ import { ResourceBinding } from "./ResourceBinding.js";
 
 
 export class UniformGroupManager extends ObjectBase { //RC uniform group manager (uniform setter)
-    
-    
+
+
     static DEFAULT = {
         NAME: "",
-		TYPE: "UniformGroupManager",
+        TYPE: "UniformGroupManager",
     };
 
 
-	#context;
+    #context;
 
     #descriptors = new Set();
     #uniformGroups = new Map();
@@ -135,11 +135,7 @@ export class UniformGroupManager extends ObjectBase { //RC uniform group manager
         return this.createUniformGroup(descriptor);
     }
     getUniformGroup(descriptor) {
-        const ug = (this.uniformGroups.has(descriptor)) ? ((descriptor.dirty) ? this.#updateUniformGroup(descriptor) : this.uniformGroups.get(descriptor)) : this.createUniformGroup(descriptor);
-        if(this.uniformGroups.has(descriptor)) {
-            this.#set(descriptor);
-        }
-        return ug;
+        return (this.uniformGroups.has(descriptor)) ? ((descriptor.dirty) ? this.#updateUniformGroup(descriptor) : this.uniformGroups.get(descriptor)) : this.createUniformGroup(descriptor);
     }
     #deleteUniformGroup(descriptor) {
         // this.uniformGroups.get(descriptor).delete();
@@ -149,22 +145,28 @@ export class UniformGroupManager extends ObjectBase { //RC uniform group manager
         return delted;
     }
     deleteUniformGroup(descriptor) {
-        return (this.uniformGroups.has(descriptor)) ? this.#deleteUniformGroup(uniformGroups) : false;
+        return (this.uniformGroups.has(descriptor)) ? this.#deleteUniformGroup(descriptor) : false;
     }
 
+    #setBufferBinding(bufferDescriptor, setInstruction) {
+        const buffer_dst = this.bufferManager.getBuffer(bufferDescriptor);
+        const offset_dst = setInstruction.destination.layout.offset;
+        const arrayBuffer_src = setInstruction.source.arrayBuffer;
+        const offset_src = setInstruction.source.layout.offset;
+        const size = setInstruction.size;
 
-    #setBuffer(bufferDescriptor, setInstruction) {
-        const buffer = this.bufferManager.getBuffer(bufferDescriptor);
+        const byteSize_dst = 4;
+        const byteSize_src = arrayBuffer_src.byteLength / arrayBuffer_src.length;
 
         this.context.queue.writeBuffer(
-            buffer,
-            setInstruction.bufferOffset,
-            setInstruction.data,
-            setInstruction.dataOffset,
-            setInstruction.size
+            buffer_dst,
+            offset_dst * byteSize_dst,
+            arrayBuffer_src.buffer,
+            offset_src * byteSize_src,
+            size * byteSize_src
         );
     }
-    #setTexture(textureDescriptor, setInstruction) {    
+    #setTextureBinding(textureDescriptor, setInstruction) {    
         const texture = this.textureManager.getTexture(textureDescriptor);
 
         this.context.queue.writeTexture(
@@ -200,27 +202,29 @@ export class UniformGroupManager extends ObjectBase { //RC uniform group manager
             )
         );
     }
-    #setBinding(resourceBinding, setInstruction) {
-
+    #setResourceBinding(resourceBinding, setInstruction) {
         const resourceDescriptor = resourceBinding.resourceDescriptor;
         const bindGroupLayoutEntry = resourceBinding.bindGroupLayoutEntry;
         const bindGroupEntry = resourceBinding.bindGroupEntry;
 
         switch (resourceDescriptor.type) {
             case BufferDescriptor.DEFAULT.TYPE:
-                this.#setBuffer(resourceDescriptor, setInstruction);
+                this.#setBufferBinding(resourceDescriptor, setInstruction);
                 break;
             case TextureDescriptor.DEFAULT.TYPE:
-                this.#setTexture(resourceDescriptor, setInstruction);
+                this.#setTextureBinding(resourceDescriptor, setInstruction);
                 break;
             case SamplerDescriptor.DEFAULT.TYPE:
-                // this.#setSampler();
+                // this.#setSamplerBinding();
                 break;
             default:
                 throw new Error(`Unknown resource type: [${resourceDescriptor.target}]!`);
         }
     }
-    #set(descriptor) {
+    #setUniformBinding(descriptor) {
+        //TODO add uniform binding manager
+    }
+    setUniformGroup(descriptor) {
         const uniformGroup = this.uniformGroups.get(descriptor);
 
         const resourceBindings = uniformGroup.resourceBindings;
@@ -228,25 +232,19 @@ export class UniformGroupManager extends ObjectBase { //RC uniform group manager
 		const bindGroupLayoutDescriptor = uniformGroup.bindGroupLayoutDescriptor;
 		const bindGroupDescriptor = uniformGroup.bindGroupDescriptor;
 
-
-        //update children
-        //TODO
-
-
-        //update self
-        for (const [name, setDescriptor] of uniformGroup.dirtyCache) {
+        for (const [name, setInstruction] of uniformGroup.dirtyCache) {
             
-            switch (setDescriptor.target) {
+            switch (setInstruction.target) {
 				case ResourceBinding.TARGET.INTERNAL:
-                    const resourceBindingInternal = resourceBindings.get(setDescriptor.bindingNumber);
-                    this.#setBinding(resourceBindingInternal, setDescriptor);
+                    const resourceBindingInternal = resourceBindings.get(setInstruction.number);
+                    this.#setResourceBinding(resourceBindingInternal, setInstruction);
 					break;
 				case ResourceBinding.TARGET.EXTERNAL:
-                    const resourceBindingExternal = resourceBindingsExternal.get(setDescriptor.bindingNumber);
-                    this.#setBinding(resourceBindingExternal, setDescriptor);
+                    const resourceBindingExternal = resourceBindingsExternal.get(setInstruction.number);
+                    this.#setResourceBinding(resourceBindingExternal, setInstruction);
 					break;
 				default:
-                    throw new Error(`Unknown set instruction target: [${setDescriptor.target}]!`);
+                    throw new Error(`Unknown set instruction target: [${setInstruction.target}]!`);
 			}
 
 

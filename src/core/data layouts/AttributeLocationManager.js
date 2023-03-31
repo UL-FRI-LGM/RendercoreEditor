@@ -1,7 +1,7 @@
 import { ObjectBase } from "../ObjectBase.js";
 
 
-export class AttributeLocationManager extends ObjectBase { // attribute setter
+export class AttributeLocationManager extends ObjectBase { //RC attribute location manager (attribute setter)
     
     
     static DEFAULT = {
@@ -48,48 +48,73 @@ export class AttributeLocationManager extends ObjectBase { // attribute setter
     set attributeLocations(attributeLocations) { this.#attributeLocations = attributeLocations; }
 
 
-    #writeBuffer(bufferDescriptor, arrayBuffer) {
-        const buffer = this.bufferManager.getBuffer(bufferDescriptor);
-
-        this.context.queue.writeBuffer(
-            buffer, 
-            0, 
-            arrayBuffer.buffer, 
-            0, 
-            bufferDescriptor.size * 4
-        );
-    }
     #createAttributeLocation(descriptor) {
         const attributeLocation = descriptor;
-        this.bufferManager.createBuffer(descriptor.bufferDescriptor); //create buffer
-        //NOOP //create vertex buffer layout
+        
+        this.bufferManager.getBuffer(descriptor.bufferDescriptor);
 
         this.attributeLocations.set(descriptor, attributeLocation);
+
+        descriptor.dirty = false;
 
 
         return attributeLocation;
     }
     createAttributeLocation(descriptor) {
-        return (this.attributeLocations.has(descriptor)) ? this.attributeLocations.get(descriptor) : this.#createAttributeLocation(descriptor);
-    }
-    updateAttributeLocation(descriptor) {
-        const attributeLocation = this.attributeLocations.get(descriptor);
-        this.bufferManager.updateBuffer(attributeLocation.bufferDescriptor); //update buffer
-        //NOOP //update vertex buffer layout
+        if (this.attributeLocations.has(descriptor)) this.#deleteAttributeLocation(descriptor);
+        const attributeLocation = this.#createAttributeLocation(descriptor);
 
-        // TODO update
-        this.#writeBuffer(attributeLocation.bufferDescriptor, attributeLocation.arrayBuffer);
+
+        return attributeLocation;    }
+    #updateAttributeLocation(descriptor) {
+        return this.createAttributeLocation(descriptor);
     }
     getAttributeLocation(descriptor) {
-        return (this.attributeLocations.has(descriptor)) ? this.attributeLocations.get(descriptor) : this.createAttributeLocation(descriptor);
+        return (this.attributeLocations.has(descriptor)) ? ((descriptor.dirty) ? this.#updateAttributeLocation(descriptor) : this.attributeLocations.get(descriptor)) : this.createAttributeLocation(descriptor);
+    }
+    #deleteAttributeLocation(descriptor) {
+        // this.attributeLocations.get(descriptor).delete();
+        const delted = this.attributeLocations.delete(descriptor);
+
+
+        return delted;
     }
     deleteAttributeLocation(descriptor) {
-        // return (this.attributeLocations.has(descriptor)) ? this.attributeLocations.get(descriptor).destroy() : false;
-        return this.attributeLocations.delete(descriptor);
+        return (this.attributeLocations.has(descriptor)) ? this.#deleteAttributeLocation(descriptor) : false;
     }
 
+    #setBufferLoaction(bufferDescriptor, setInstruction) {
+        const buffer_dst = this.bufferManager.getBuffer(bufferDescriptor);
+        const offset_dst = setInstruction.destination.layout.offset;
+        const arrayBuffer_src = setInstruction.source.arrayBuffer;
+        const offset_src = setInstruction.source.layout.offset;
+        const size = setInstruction.size;
 
-    #set() {
+        const byteSize_dst = 4;
+        const byteSize_src = arrayBuffer_src.byteLength / arrayBuffer_src.length;
 
+        this.context.queue.writeBuffer(
+            buffer_dst,
+            offset_dst * byteSize_dst,
+            arrayBuffer_src.buffer,
+            offset_src * byteSize_src,
+            size * byteSize_src
+        );
+    }
+    #setResourceLocation(resourceLocation, setInstruction) {
+        const resourceDescriptor = resourceLocation.bufferDescriptor;
+
+        this.#setBufferLoaction(resourceDescriptor, setInstruction);
+    }
+    setAttributeLocation(descriptor) {
+        const attributeLocation = this.attributeLocations.get(descriptor);
+
+        const bufferDescriptor = attributeLocation.bufferDescriptor;
+        const vertexBufferLayoutDescriptor = attributeLocation.vertexBufferLayoutDescriptor;
+
+        for (const [name, setInstruction] of attributeLocation.dirtyCache) {
+            this.#setResourceLocation(attributeLocation, setInstruction);
+        }
+        attributeLocation.dirtyCache.clear();
     }
 };
