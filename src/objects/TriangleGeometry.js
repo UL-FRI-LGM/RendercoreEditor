@@ -3,7 +3,7 @@ import { Vector3 } from "../math/Vector3.js";
 import { MeshGeometry } from "./MeshGeometry.js";
 import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
 import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
-import { AttributeLocationDescriptor } from "../core/data layouts/AttributeLocationDescriptor.js";
+import { AttributeLocation } from "../core/data layouts/AttributeLocation.js";
 import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
 import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
@@ -75,7 +75,7 @@ export class TriangleGeometry extends MeshGeometry {
 			}
 
 			const verticesArrayBuffer = new Float32Array(verticesArray);
-			const verticesAttributeLocationDescriptor = new AttributeLocationDescriptor(
+			const verticesAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 3,
 					arrayBuffer: verticesArrayBuffer,
@@ -106,7 +106,7 @@ export class TriangleGeometry extends MeshGeometry {
 			);
 
 
-			return verticesAttributeLocationDescriptor;
+			return verticesAttributeLocation;
 		}
 	}
 	static assembleNormals(args = {}) {
@@ -142,7 +142,7 @@ export class TriangleGeometry extends MeshGeometry {
 			}
 
 			const normalsArrayBuffer = new Float32Array(normalsArray);
-			const normalsAttributeLocationDescriptor = new AttributeLocationDescriptor(
+			const normalsAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 3,
 					arrayBuffer: normalsArrayBuffer,
@@ -171,10 +171,10 @@ export class TriangleGeometry extends MeshGeometry {
 					)
 				}
 			);
-			normalsAttributeLocationDescriptor.normalize();
+			normalsAttributeLocation.normalize();
 
 
-			return normalsAttributeLocationDescriptor;
+			return normalsAttributeLocation;
 		}
 	}
 	static assembleUVs(args = {}) {
@@ -200,7 +200,7 @@ export class TriangleGeometry extends MeshGeometry {
 			}
 
 			const uvsArrayBuffer = new Float32Array(uvsArray);
-			const uvsAttributeLocationDescriptor = new AttributeLocationDescriptor(
+			const uvsAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 2,
 					arrayBuffer: uvsArrayBuffer,
@@ -231,7 +231,7 @@ export class TriangleGeometry extends MeshGeometry {
 			);
 
 
-			return uvsAttributeLocationDescriptor;
+			return uvsAttributeLocation;
 		}
 	}
 };

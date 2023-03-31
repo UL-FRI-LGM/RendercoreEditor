@@ -251,7 +251,7 @@ export class Mesh extends Group {
 
 		//set resource / set binding / update resource / update binding
 		//binding update
-		this.uniformGroupDescriptor.dirtyCache.set(
+		this.setBufferBinding(
 			"MMat",
 			new BufferSetInstruction(
 				{
@@ -277,7 +277,7 @@ export class Mesh extends Group {
 			)
 		);
 
-		this.uniformGroupDescriptor.dirtyCache.set(
+		this.setBufferBinding(
 			"NMat",
 			new BufferSetInstruction(
 				{
@@ -302,5 +302,9 @@ export class Mesh extends Group {
 				}
 			)
 		);
+	}
+
+	setBufferBinding(name, setInstruction) {
+		this.uniformGroupDescriptor.setBufferBinding(name, setInstruction);
 	}
 };

@@ -87,4 +87,78 @@ export class UniformGroupDescriptor extends DescriptorBase { //Uniform group des
 	set maxTextures(maxTextures) { this.#maxTextures = maxTextures; }
 	get maxSamplers() { return this.#maxSamplers; }
 	set maxSamplers(maxSamplers) { this.#maxSamplers = maxSamplers; }
+
+
+	addResourceBinding() {
+		//add new (override external, if exists)
+		new Error("Not implemented!");
+	}
+	removeResourceBinding() {
+		new Error("Not implemented!");
+	}
+	getResourceBinding() {
+		new Error("Not implemented!");
+	}
+	setResourceBinding(name, setInstruction) {
+		//set (update) existing resource binding
+		this.dirtyCache.set(
+			name,
+			setInstruction
+		);
+	}
+
+	setBufferBinding(name, setInstruction) {
+		this.setResourceBinding(
+			`SET | BUFFER | ${name} | BINDING NUMBER: ${setInstruction.number}`,
+			setInstruction
+		);
+	}
+
+	setTextureBinding(name, setInstruction) {
+		this.setResourceBinding(
+			`SET | TEXTURE | ${name} | BINDING NUMBER: ${setInstruction.number}`,
+			setInstruction
+		);
+	}
+
+	setSamplerBinding(name, setInstruction) {
+		this.setResourceBinding(
+			`SET | SAMPLER | ${name} | BINDING NUMBER: ${setInstruction.number}`,
+			setInstruction
+		);
+	}
+
+	addMapBinding(name, map, setInstruction = undefined) {
+		const textureBinding = map.textureBinding;
+		this.resourceBindingsExternal.set(
+			textureBinding.number, //TODO add max + max here!!!!
+			textureBinding
+		);
+
+		const samplerBinding = map.samplerBinding;
+		this.resourceBindingsExternal.set(
+			samplerBinding.number,
+			samplerBinding
+		);
+
+
+		if (setInstruction) this.setMapBinding(name, setInstruction);
+	}
+	getMapBinding() {
+		new Error("Not implemented!");
+	}
+	setMapBinding(name, setInstruction) {		
+		// this.setResourceBinding(
+		// 	"SET | MAP | BINDING NUMBER: " + setInstruction.number,
+		// 	setInstruction
+		// );
+		this.setTextureBinding(
+			name,
+			setInstruction.textureSetInstruction
+		);
+		// this.setSamplerBinding(
+		// 	name,
+		// 	setInstruction.samplerSetInstruction
+		// );
+	}
 };

@@ -10,7 +10,7 @@ import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBuffe
 import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
 import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
 import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
-import { AttributeLocationDescriptor } from "../core/data layouts/AttributeLocationDescriptor.js";
+import { ResourceLocation } from "../core/data layouts/ResourceLocation.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 
 
@@ -326,7 +326,7 @@ export class OBJLoader extends XHRLoader {
 
 			// Add position of vertices
 			const verticesArrayBuffer = new Float32Array(geometry.vertices);
-			meshGeometry.vertices = new AttributeLocationDescriptor(
+			meshGeometry.vertices = new ResourceLocation(
 				{
 					itemSize: 3,
 					arrayBuffer: verticesArrayBuffer,
@@ -359,7 +359,7 @@ export class OBJLoader extends XHRLoader {
 			// Check if normals are specified. Otherwise calculate them
 			if (geometry.normals.length > 0) {
 				const normalsArrayBuffer = new Float32Array(geometry.normals);
-				meshGeometry.normals = new AttributeLocationDescriptor(
+				meshGeometry.normals = new ResourceLocation(
 					{
 						itemSize: 3,
 						arrayBuffer: normalsArrayBuffer,
@@ -395,7 +395,7 @@ export class OBJLoader extends XHRLoader {
 			// If specified add texture uv-s
 			if (geometry.uvs.length > 0) {
 				const uvsArrayBuffer =  new Float32Array(geometry.uvs);
-				meshGeometry.uvs = new AttributeLocationDescriptor(
+				meshGeometry.uvs = new ResourceLocation(
 					{
 						itemSize: 2,
 						arrayBuffer: uvsArrayBuffer,

@@ -4,7 +4,7 @@ import { Box3 } from "../math/Box3.js";
 import { Sphere } from "../math/Sphere.js";
 import { Geometry } from "./Geometry.js";
 import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
-import { AttributeLocationDescriptor } from "../core/data layouts/AttributeLocationDescriptor.js";
+import { AttributeLocation } from "../core/data layouts/AttributeLocation.js";
 import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
 import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
 import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
@@ -63,7 +63,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 			["wireframeIndices", null],
 		]);
 
-		// attribute location descriptors
+		// attribute locations
 		this.indices = (args.indices !== undefined) ? args.indices : null;
 		this.vertices = (args.vertices !== undefined) ? args.vertices : null;
 		this.normals = (args.normals !== undefined) ? args.normals : null;
@@ -186,7 +186,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 
 		// Create new buffer geometry for the wireframe
 		const wireframeIndicesArrayBuffer = new Uint32Array(indicesArray);
-		const wireframeIndicesAttributeLocationDescriptor = new AttributeLocationDescriptor(
+		const wireframeIndicesAttributeLocation = new AttributeLocation(
 			{
 				itemSize: 1,
 				arrayBuffer: wireframeIndicesArrayBuffer,
@@ -215,7 +215,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				)
 			}
 		);
-		this.wireframeIndices = wireframeIndicesAttributeLocationDescriptor;
+		this.wireframeIndices = wireframeIndicesAttributeLocation;
 	}
 	#sanitize(vertexMap, x, y, indicesArray){
 		let foundX = false, foundY = false, foundXY = false, foundYX = false;
@@ -334,7 +334,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		}
 
 		const normalsArrayBuffer = new Float32Array(normals);
-		const normalsAttributeLocationDescriptor = new AttributeLocationDescriptor(
+		const normalsAttributeLocation = new AttributeLocation(
 			{
 				itemSize: 3,
 				arrayBuffer: normalsArrayBuffer,
@@ -363,12 +363,12 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				)
 			}
 		);
-		normalsAttributeLocationDescriptor.normalize();
+		normalsAttributeLocation.normalize();
 
 
-		this.normals = normalsAttributeLocationDescriptor;
+		this.normals = normalsAttributeLocation;
 		this.normals.needsUpdate = true;
-		return normalsAttributeLocationDescriptor;
+		return normalsAttributeLocation;
 	}
 	computeVertexTangents(){
 		if (this.indices) {
@@ -450,7 +450,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				tangents[indices.arrayBuffer[i + 2]*verticesItemSize + 2] = tangent.z;
 			}
 
-			const tangentsAttributeLocationDescriptor = new AttributeLocationDescriptor(
+			const tangentsAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 3,
 					arrayBuffer: tangents,
@@ -479,10 +479,10 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 					)
 				}
 			);
-			// tangentsAttributeLocationDescriptor.normalize();
+			// tangentsAttributeLocation.normalize();
 
 
-			this.tangents = tangentsAttributeLocationDescriptor;
+			this.tangents = tangentsAttributeLocation;
 		} else {
 			const vertices = this.vertices;
 			const uvs = this.uvs;
@@ -558,7 +558,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				tangents[i*verticesItemSize + 8] = tangent.z;
 			}
 
-			const tangentsAttributeLocationDescriptor = new AttributeLocationDescriptor(
+			const tangentsAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 3,
 					arrayBuffer: tangents,
@@ -587,10 +587,10 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 					)
 				}
 			);
-			// tangentsAttributeLocationDescriptor.normalize();
+			// tangentsAttributeLocation.normalize();
 
 
-			this.tangents = tangentsAttributeLocationDescriptor;
+			this.tangents = tangentsAttributeLocation;
 		}
 	}
 	computeVertexBitangents(){
@@ -672,7 +672,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				bitangents[indices.arrayBuffer[i + 2]*verticesItemSize + 2] = bitangent.z;
 			}
 
-			const bitangentsAttributeLocationDescriptor = new AttributeLocationDescriptor(
+			const bitangentsAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 3,
 					arrayBuffer: bitangents,
@@ -701,10 +701,10 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 					)
 				}
 			);
-			// bitangentsAttributeLocationDescriptor.normalize();
+			// bitangentsAttributeLocation.normalize();
 
 
-			this.bitangents = bitangentsAttributeLocationDescriptor;
+			this.bitangents = bitangentsAttributeLocation;
 		} else {
 			const vertices = this.vertices;
 			const uvs = this.uvs;
@@ -780,7 +780,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				bitangents[i*verticesItemSize + 8] = bitangent.z;
 			}
 
-			const bitangentsAttributeLocationDescriptor = new AttributeLocationDescriptor(
+			const bitangentsAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 3,
 					arrayBuffer: bitangents,
@@ -809,10 +809,10 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 					)
 				}
 			);
-			// bitangentsAttributeLocationDescriptor.normalize();
+			// bitangentsAttributeLocation.normalize();
 
 
-			this.bitangents = bitangentsAttributeLocationDescriptor;
+			this.bitangents = bitangentsAttributeLocation;
 		}
 	}
 

@@ -225,7 +225,7 @@ export class LightManager extends ObjectBase {
 
 		for (const aLight of this.lights.get(AmbientLight.DEFAULT.TYPE)) {
 			for (const [key, value] of aLight.dirtyCache) {
-				this.uniformGroupDescriptor.dirtyCache.set(
+				this.setBufferBinding(
 					i + "|aLight|" + key,
 					new BufferSetInstruction(
 						{
@@ -259,7 +259,7 @@ export class LightManager extends ObjectBase {
 
 		for(const pLight of this.lights.get(PointLight.DEFAULT.TYPE)) {
 			for (const [key, value] of pLight.dirtyCache) {
-				this.uniformGroupDescriptor.dirtyCache.set(
+				this.setBufferBinding(
 					i + "|pLight|" + key,
 					new BufferSetInstruction(
 						{
@@ -290,5 +290,9 @@ export class LightManager extends ObjectBase {
 			offset += (4 + 4 + 4 + 4) * 4;
 			i++;
 		}
+	}
+
+	setBufferBinding(name, setInstruction) {
+		this.uniformGroupDescriptor.setBufferBinding(name, setInstruction);
 	}
 };

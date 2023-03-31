@@ -4,7 +4,7 @@ import { BindGroupLayoutEntry } from "../RC/resource binding/BindGroupLayoutEntr
 // import { BindingDescriptor } from "./BindingDescriptor.js";
 
 
-export class ResourceBinding extends Resource { //custom resource binding
+export class ResourceBinding extends Resource { //custom resource binding (uniform)
 
 
 	static TARGET = {

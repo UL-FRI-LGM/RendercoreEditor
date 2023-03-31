@@ -3,7 +3,7 @@ import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribut
 import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
 import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
 import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
-import { AttributeLocationDescriptor } from "../core/data layouts/AttributeLocationDescriptor.js";
+import { AttributeLocation } from "../core/data layouts/AttributeLocation.js";
 import { MeshGeometry } from "./MeshGeometry.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 
@@ -124,7 +124,7 @@ export class CubeGeometry extends MeshGeometry {
 			}
 
 			const verticesArrayBuffer = new Float32Array(verticesArray);
-			const verticesAttributeLocationDescriptor = new AttributeLocationDescriptor(
+			const verticesAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 3,
 					arrayBuffer: verticesArrayBuffer,
@@ -155,7 +155,7 @@ export class CubeGeometry extends MeshGeometry {
 			);
 
 
-			return verticesAttributeLocationDescriptor;
+			return verticesAttributeLocation;
 		}
 	}
 	static assembleNormals(args = {}) {
@@ -230,7 +230,7 @@ export class CubeGeometry extends MeshGeometry {
 			}
 
 			const normalsArrayBuffer = new Float32Array(normalsArray);
-			const normalAttributeLocationDescriptor = new AttributeLocationDescriptor(
+			const normalAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 3,
 					arrayBuffer: normalsArrayBuffer,
@@ -259,10 +259,10 @@ export class CubeGeometry extends MeshGeometry {
 					)
 				}
 			);
-			// normalAttributeLocationDescriptor.normalize(); // no need to normalize for this configuration
+			// normalAttributeLocation.normalize(); // no need to normalize for this configuration
 
 
-			return normalAttributeLocationDescriptor;
+			return normalAttributeLocation;
 		}
 	}
 	static assembleUVs(args = {}) {
@@ -337,7 +337,7 @@ export class CubeGeometry extends MeshGeometry {
 			}
 
 			const uvsArrayBuffer = new Float32Array(uvsArray);
-			const normalAttributeLocationDescriptor = new AttributeLocationDescriptor(
+			const normalAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 2,
 					arrayBuffer: uvsArrayBuffer,
@@ -368,7 +368,7 @@ export class CubeGeometry extends MeshGeometry {
 			);
 
 
-			return normalAttributeLocationDescriptor;
+			return normalAttributeLocation;
 		}
 	}
 };
