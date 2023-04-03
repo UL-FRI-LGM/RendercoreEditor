@@ -10,6 +10,8 @@ export class PipelineDescriptor extends DescriptorBase {
 
         LABEL: "",
         DIRTY_CACHE: new Map(),
+
+        LAYOUT: null,
     };
 
 
@@ -29,8 +31,7 @@ export class PipelineDescriptor extends DescriptorBase {
 			}
 		);
 
-
-        this.layout = (args.layout !== undefined) ? args.layout : undefined;
+        this.layout = (args.layout !== undefined) ? args.layout : PipelineDescriptor.DEFAULT.LAYOUT;
 	}
 
 

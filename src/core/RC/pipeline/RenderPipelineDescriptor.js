@@ -8,6 +8,11 @@ export class RenderPipelineDescriptor extends PipelineDescriptor {
         NAME: "",
 		TYPE: "RenderPipelineDescriptor",
 
+        LABEL: "",
+        DIRTY_CACHE: new Map(),
+
+        LAYOUT: null,
+
         VERTEX: undefined,
         PRIMITIVE: undefined,
         DEPTH_STENCIL: undefined,
@@ -30,7 +35,12 @@ export class RenderPipelineDescriptor extends PipelineDescriptor {
 
 				name: (args.name !== undefined) ? args.name : RenderPipelineDescriptor.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : RenderPipelineDescriptor.DEFAULT.TYPE,
-			}
+			
+                label: (args.label !== undefined) ? args.label : RenderPipelineDescriptor.DEFAULT.LABEL,
+                dirtyCache: (args.dirtyCache !== undefined) ? args.dirtyCache : new Map(RenderPipelineDescriptor.DEFAULT.DIRTY_CACHE), //copy
+
+                layout: (args.layout !== undefined) ? args.layout : RenderPipelineDescriptor.DEFAULT.LAYOUT,
+            }
 		);
 
         this.vertex = (args.vertex !== undefined) ? args.vertex : RenderPipelineDescriptor.DEFAULT.VERTEX;
