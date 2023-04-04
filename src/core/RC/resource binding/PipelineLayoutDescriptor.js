@@ -1,7 +1,7 @@
-import { GPUObjectDescriptorBase } from "../GPUObjectDescriptorBase.js";
+import { DescriptorBase } from "../DescriptorBase.js";
 
 
-export class PipelineLayoutDescriptor extends GPUObjectDescriptorBase {
+export class PipelineLayoutDescriptor extends DescriptorBase {
     #bindGroupLayouts;
 
 
