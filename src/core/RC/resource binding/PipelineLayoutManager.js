@@ -1,4 +1,5 @@
 import { ObjectBase } from "../../ObjectBase.js";
+import { BindGroupLayoutManager } from "./BindGroupLayoutManager.js";
 
 
 export class PipelineLayoutManager extends ObjectBase { //RC pipeline layout manager
@@ -30,6 +31,9 @@ export class PipelineLayoutManager extends ObjectBase { //RC pipeline layout man
 
         this.descriptors = (args.descriptors !== undefined) ? args.descriptors : new Set();
         this.pipelineLayouts = (args.pipelineLayouts !== undefined) ? args.pipelineLayouts : new Map();
+
+
+        this.bindGroupLayoutManager = new BindGroupLayoutManager(this.context, {});
 	}
 
 
@@ -42,7 +46,11 @@ export class PipelineLayoutManager extends ObjectBase { //RC pipeline layout man
     set pipelineLayouts(pipelineLayouts) { this.#pipelineLayouts = pipelineLayouts; }
 
 
-    #createPipelineLayout(descriptor) {
+    #createPipelineLayout(descriptor, args = {}) {
+        const pipelineLayoutDescriptor = descriptor;
+
+        pipelineLayoutDescriptor.bindGroupLayouts = args.bgl_descriptors.map((x) => { return this.bindGroupLayoutManager.getBindGroupLayout(x); });
+
         const pipelineLayout = this.context.createPipelineLayout(descriptor);
         this.pipelineLayouts.set(descriptor, pipelineLayout);
         
@@ -51,18 +59,18 @@ export class PipelineLayoutManager extends ObjectBase { //RC pipeline layout man
 
         return pipelineLayout;
     }
-    createPipelineLayout(descriptor) {
+    createPipelineLayout(descriptor, args = {}) {
         if (this.pipelineLayouts.has(descriptor)) this.#deletePipelineLayout(descriptor);
-        const pipelineLayout = this.#createPipelineLayout(descriptor);
+        const pipelineLayout = this.#createPipelineLayout(descriptor, args);
 
 
         return pipelineLayout;
     }
-    #updatePipelineLayout(descriptor) {
-        return this.createPipelineLayout(descriptor);
+    #updatePipelineLayout(descriptor, args = {}) {
+        return this.createPipelineLayout(descriptor, args);
     }
-    getPipelineLayout(descriptor) {
-        return (this.pipelineLayouts.has(descriptor)) ? ((descriptor.dirty) ? this.#updatePipelineLayout(descriptor) : this.pipelineLayouts.get(descriptor)) : this.createPipelineLayout(descriptor);
+    getPipelineLayout(descriptor, args = {}) {
+        return (this.pipelineLayouts.has(descriptor)) ? ((descriptor.dirty) ? this.#updatePipelineLayout(descriptor, args) : this.pipelineLayouts.get(descriptor)) : this.createPipelineLayout(descriptor, args);
     }
     #deletePipelineLayout(descriptor) {
         // this.pipelineLayouts.get(descriptor).destroy();
