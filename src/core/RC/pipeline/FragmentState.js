@@ -5,6 +5,10 @@ export class FragmentState extends ProgrammableStage {
 
     
     static DEFAULT = {
+        MODULE: undefined,
+        ENTRY_POINT: undefined,
+        CONSTANTS: undefined,
+
         TARGETS: new Array(),
     };
 
@@ -13,7 +17,15 @@ export class FragmentState extends ProgrammableStage {
 
 
     constructor(args = {}) {
-        super(args);
+        super(
+            {
+                ...args,
+
+                module: (args.module !== undefined) ? args.module : FragmentState.DEFAULT.MODULE,
+                entryPoint: (args.entryPoint !== undefined) ? args.entryPoint : FragmentState.DEFAULT.ENTRY_POINT,
+                constants: (args.constants !== undefined) ? args.constants : FragmentState.DEFAULT.CONSTANTS,
+            }
+        );
         
         this.targets = (args.targets !== undefined) ? args.targets : new Array(...FragmentState.DEFAULT.TARGETS); //copy
     }
