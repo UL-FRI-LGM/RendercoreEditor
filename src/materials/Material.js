@@ -7,7 +7,12 @@ export class Material extends ObjectBase {
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "Material",
+
+		INSTRUCTION_CACHE: new Map(),
 	};
+
+
+	#instructionCache = new Map();
 
 
 	constructor(args = {}) {
@@ -19,5 +24,12 @@ export class Material extends ObjectBase {
 				type: (args.type !== undefined) ? args.type : Material.DEFAULT.TYPE,
 			}
 		);
+
+
+		this.instructionCache = new Map();
 	}
+
+
+	get instructionCache() { return this.#instructionCache; }
+	set instructionCache(instructionCache) { this.#instructionCache = instructionCache; }
 };
