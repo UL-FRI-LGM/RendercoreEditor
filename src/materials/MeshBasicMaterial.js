@@ -209,7 +209,10 @@ export class MeshBasicMaterial extends MeshMaterial {
 	get emissive() { return this.#emissive; }
 	set emissive(emissive) { 
 		this.#emissive = emissive;
-		this.setUniform(
+
+		const instruction = this.instructionCache.has("emissive") ? 
+		this.instructionCache.get("emissive") : 
+		this.instructionCache.set(
 			"emissive",
 			new BufferSetInstruction(
 				{
@@ -233,12 +236,18 @@ export class MeshBasicMaterial extends MeshMaterial {
 					size: (4)
 				}
 			)
-		);
+		).get("emissive");
+		instruction.source.arrayBuffer = emissive.arrayBuffer;
+		
+		this.setUniform("emissive", instruction);
 	}
 	get diffuse() { return this.#diffuse; }
 	set diffuse(diffuse) { 
 		this.#diffuse = diffuse;
-		this.setUniform(
+
+		const instruction = this.instructionCache.has("diffuse") ? 
+		this.instructionCache.get("diffuse") : 
+		this.instructionCache.set(
 			"diffuse",
 			new BufferSetInstruction(
 				{
@@ -262,6 +271,9 @@ export class MeshBasicMaterial extends MeshMaterial {
 					size: (4)
 				}
 			)
-		);
+		).get("diffuse");
+		instruction.source.arrayBuffer = diffuse.arrayBuffer;
+
+		this.setUniform("diffuse", instruction);
 	}
 };

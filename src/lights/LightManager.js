@@ -44,6 +44,7 @@ export class LightManager extends ObjectBase {
 		);
 
 		this.dirtyCache = new Map();
+		this.instructionCache = new Map();
 
 		this.lights = new Map([
 			[AmbientLight.DEFAULT.TYPE, new Set()],
@@ -222,11 +223,15 @@ export class LightManager extends ObjectBase {
 
 		for (const aLight of this.lights.get(AmbientLight.DEFAULT.TYPE)) {
 			for (const [key, value] of aLight.dirtyCache) {
-				this.setBufferBinding(
-					i + "|aLight|" + key,
+
+				const instructionKey = i + "|aLight|" + key;
+				const instruction = this.instructionCache.has(instructionKey) ? 
+				this.instructionCache.get(instructionKey) : 
+				this.instructionCache.set(
+					instructionKey,
 					new BufferSetInstruction(
 						{
-							label: i + "|aLight|" + key,
+							label: instructionKey,
 		
 							number: value.number,
 							target: value.target,
@@ -246,7 +251,10 @@ export class LightManager extends ObjectBase {
 							size: value.size
 						}
 					)
-				);
+				).get(instructionKey);
+				instruction.source.arrayBuffer = value.source.arrayBuffer;
+
+				this.setBufferBinding(instructionKey, instruction);
 			}
 			aLight.dirtyCache.clear();
 
@@ -256,11 +264,15 @@ export class LightManager extends ObjectBase {
 
 		for(const pLight of this.lights.get(PointLight.DEFAULT.TYPE)) {
 			for (const [key, value] of pLight.dirtyCache) {
-				this.setBufferBinding(
-					i + "|pLight|" + key,
+
+				const instructionKey = i + "|pLight|" + key;
+				const instruction = this.instructionCache.has(instructionKey) ? 
+				this.instructionCache.get(instructionKey) : 
+				this.instructionCache.set(
+					instructionKey,
 					new BufferSetInstruction(
 						{
-							label: i + "|pLight|" + key,
+							instructionKey,
 		
 							number: value.number,
 							target: value.target,
@@ -280,7 +292,10 @@ export class LightManager extends ObjectBase {
 							size: value.size
 						}
 					)
-				);
+				).get(instructionKey);
+				instruction.source.arrayBuffer = value.source.arrayBuffer;
+
+				this.setBufferBinding(instructionKey, instruction);
 			}
 			pLight.dirtyCache.clear();
 		

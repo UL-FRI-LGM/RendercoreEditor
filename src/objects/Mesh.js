@@ -252,7 +252,9 @@ export class Mesh extends Group {
 
 		//set resource / set binding / update resource / update binding
 		//binding update
-		this.setBufferBinding(
+		const instruction = this.instructionCache.has("MMat") ? 
+		this.instructionCache.get("MMat") : 
+		this.instructionCache.set(
 			"MMat",
 			new BufferSetInstruction(
 				{
@@ -276,9 +278,15 @@ export class Mesh extends Group {
 					size: (16)
 				}
 			)
-		);
+		).get("MMat");
+		instruction.source.arrayBuffer = new Float32Array(this.g_MMat.elements);
 
-		this.setBufferBinding(
+		this.setBufferBinding("MMat", instruction);
+
+
+		const instruction2 = this.instructionCache.has("NMat") ? 
+		this.instructionCache.get("NMat") : 
+		this.instructionCache.set(
 			"NMat",
 			new BufferSetInstruction(
 				{
@@ -302,7 +310,10 @@ export class Mesh extends Group {
 					size: (16)
 				}
 			)
-		);
+		).get("NMat");
+		instruction2.source.arrayBuffer = new Float32Array(this.NMat4.elements);
+
+		this.setBufferBinding("NMat", instruction2);
 	}
 
 	setBufferBinding(name, setInstruction) {

@@ -146,7 +146,9 @@ export class Camera extends Group {
 
 		this.VPMat = this.VPMat.multiplyMatrices(this.PMat, this.VMat);
 
-		this.setBufferBinding(
+		const instruction = this.instructionCache.has("VMat") ? 
+		this.instructionCache.get("VMat") : 
+		this.instructionCache.set(
 			"VMat",
 			new BufferSetInstruction(
 				{
@@ -170,7 +172,10 @@ export class Camera extends Group {
 					size: (16)
 				}
 			)
-		);
+		).get("VMat");
+		instruction.source.arrayBuffer = new Float32Array(viewMatrix.elements);
+
+		this.setBufferBinding("VMat", instruction);
 	}
     get projectionMatrix() { return this.#projectionMatrix; }
 	set projectionMatrix(projectionMatrix) { 
@@ -179,7 +184,9 @@ export class Camera extends Group {
 		this.projectionMatrixInverse.getInverse(projectionMatrix);
 		this.VPMat = this.VPMat.multiplyMatrices(this.PMat, this.VMat);
 
-		this.setBufferBinding(
+		const instruction = this.instructionCache.has("PMat") ? 
+		this.instructionCache.get("PMat") : 
+		this.instructionCache.set(
 			"PMat",
 			new BufferSetInstruction(
 				{
@@ -203,7 +210,10 @@ export class Camera extends Group {
 					size: (16)
 				}
 			)
-		);
+		).get("PMat");
+		instruction.source.arrayBuffer = new Float32Array(projectionMatrix.elements);
+
+		this.setBufferBinding("PMat", instruction);
 	}
     get projectionMatrixInverse() { return this.#projectionMatrixInverse; }
 	set projectionMatrixInverse(projectionMatrixInverse) { 
