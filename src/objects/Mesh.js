@@ -165,6 +165,7 @@ export class Mesh extends Group {
 						]
 					}
 				),
+				// bindGroupLayoutDescriptor: BindGroupLayoutDescriptor.CONFIGURATION.G02_O,
 				bindGroupDescriptor: new BindGroupDescriptor(
 					{
 						label: "mesh bind group",

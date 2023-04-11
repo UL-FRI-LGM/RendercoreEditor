@@ -109,18 +109,15 @@ export class LightManager extends ObjectBase {
 				bindGroupLayoutDescriptor: new BindGroupLayoutDescriptor(
 					{
 						label: "light manager bing group layout",
-						entries: [
-
-						],
+						entries: new Array(),
 					}
 				),
+				// bindGroupLayoutDescriptor: BindGroupLayoutDescriptor.CONFIGURATION.G01_L,
 				bindGroupDescriptor: new BindGroupDescriptor(
 					{
 						label: "light manager bind group",
 						layout: null,
-						entries: [
-
-						],
+						entries: new Array(),
 					}
 				)
 			}

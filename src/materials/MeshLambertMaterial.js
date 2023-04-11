@@ -182,26 +182,19 @@ export class MeshLambertMaterial extends MeshMaterial {
 				),
 				resourceBindingsExteral: new Map(),
 
-				// bindingDescriptors: [
-					
-					
-				// ],
+				// bindingDescriptors: new Array(),
 				bindGroupLayoutDescriptor: new BindGroupLayoutDescriptor(
 					{
-						lable: "mesh lambert material bind group layout",
-						entries: [
-							
-							
-						],
+						label: "mesh lambert material bind group layout [MLM]",
+						entries: new Array(),
 					}
 				),
+				// bindGroupLayoutDescriptor: BindGroupLayoutDescriptor.CONFIGURATION.G03_M,
 				bindGroupDescriptor: new BindGroupDescriptor(
 					{
-						label: "mesh lambert material bind group",
+						label: "mesh lambert material bind group [MLM]",
 						layout: null,
-						entries: [
-							
-						],
+						entries: new Array(),
 					}
 				)
 			}

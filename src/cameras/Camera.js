@@ -108,18 +108,15 @@ export class Camera extends Group {
 				bindGroupLayoutDescriptor: new BindGroupLayoutDescriptor(
 					{
 						label: "camera bind group layout",
-						entries: [
-		
-						],
+						entries: new Array(),
 					}
 				),
+				// bindGroupLayoutDescriptor: BindGroupLayoutDescriptor.CONFIGURATION.G00_C,
 				bindGroupDescriptor: new BindGroupDescriptor(
 					{
 						label: "camera bind group",
 						layout: null,
-						entries: [
-
-						],
+						entries: new Array(),
 					}
 				)
 			}
@@ -149,7 +146,7 @@ export class Camera extends Group {
 
 		this.VPMat = this.VPMat.multiplyMatrices(this.PMat, this.VMat);
 
-		this.uniformGroupDescriptor.dirtyCache.set(
+		this.setBufferBinding(
 			"VMat",
 			new BufferSetInstruction(
 				{
@@ -182,7 +179,7 @@ export class Camera extends Group {
 		this.projectionMatrixInverse.getInverse(projectionMatrix);
 		this.VPMat = this.VPMat.multiplyMatrices(this.PMat, this.VMat);
 
-		this.uniformGroupDescriptor.dirtyCache.set(
+		this.setBufferBinding(
 			"PMat",
 			new BufferSetInstruction(
 				{
@@ -233,5 +230,10 @@ export class Camera extends Group {
 		this.#frustum.copy(frustum); 
 	
 		this.frustum.setFromMatrix(this.VPMat);
+	}
+
+
+	setBufferBinding(name, setInstruction) {
+		this.uniformGroupDescriptor.setBufferBinding(name, setInstruction);
 	}
 };

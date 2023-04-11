@@ -183,24 +183,19 @@ export class MeshBasicMaterial extends MeshMaterial {
 				),
 				resourceBindingsExteral: new Map(),
 
-				// bindingDescriptors: [
-
-				// ],
+				// bindingDescriptors: new Array(),
 				bindGroupLayoutDescriptor: new BindGroupLayoutDescriptor(
 					{
 						label: "mesh basic material bind group layout",
-						entries: [
-
-						],
+						entries: new Array(),
 					}
 				),
+				// bindGroupLayoutDescriptor: BindGroupLayoutDescriptor.CONFIGURATION.G03_M,
 				bindGroupDescriptor: new BindGroupDescriptor(
 					{
 						label: "mesh basic material bind group",
 						layout: null,
-						entries: [
-
-						],
+						entries: new Array(),
 					}
 				)
 			}
