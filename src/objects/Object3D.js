@@ -20,6 +20,7 @@ export class Object3D extends ObjectBase {
 		DESCENDANTS: new Map(),
 
 		DIRTY_CACHE: new Map(),
+		INSTRUCTION_CACHE: new Map(),
 
 		TRANSFORM: { LOCAL: new Transform(), GLOBAL: new Transform() },
 		MATRIX_AUTO_UPDATE: true,
@@ -40,6 +41,7 @@ export class Object3D extends ObjectBase {
 	#descendants = new Map();
 
 	#dirtyCache = new Map();
+	#instructionCache = new Map();
 
 	#transform = { local: new Transform(), global: new Transform() };
 	#matrixAutoUpdate = Object3D.DEFAULT.MATRIX_AUTO_UPDATE;
@@ -66,6 +68,7 @@ export class Object3D extends ObjectBase {
 		this.descendants = new Map();
 
 		this.dirtyCache = new Map();
+		this.instructionCache = new Map();
 
 		this.transform = { local: new Transform(), global: new Transform() };
 		this.matrixAutoUpdate = (args.matrixAutoUpdate !== undefined) ? args.matrixAutoUpdate : Object3D.DEFAULT.MATRIX_AUTO_UPDATE;
@@ -102,6 +105,8 @@ export class Object3D extends ObjectBase {
 
 	get dirtyCache() { return this.#dirtyCache; }
 	set dirtyCache(dirtyCache) { this.#dirtyCache = dirtyCache; }
+	get instructionCache() { return this.#instructionCache; }
+	set instructionCache(instructionCache) { this.#instructionCache = instructionCache; }
 
 	get transform() { return this.#transform; }
 	set transform(transform) { 
