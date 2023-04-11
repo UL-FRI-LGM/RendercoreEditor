@@ -12,7 +12,7 @@ export class Object3D extends ObjectBase {
 
 		VISIBLE: true,
 		FRUSTUM_CULLED: false,
-		RENDER_ORDER: 9,
+		RENDER_ORDER: 0,
 
 		PARENT: null,
 		CHILDREN: new Set(),
