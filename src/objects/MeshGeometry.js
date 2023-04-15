@@ -993,8 +993,6 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 	 * Compute minimal bounding sphere that encapsulates all triangles.
 	 */
 	computeBoundingSphere() {
-		const box = new Box3();
-		const vector = new Vector3();
 
 		// Check if the sphere already exists
 		if (this.#boundingSphere === null) {
@@ -1003,6 +1001,8 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 
 		// Create new bounding sphere using the vertices
 		if (this.vertices) {
+			const box = new Box3();
+			const vector = new Vector3();
 			const arrayBuffer = this.vertices.arrayBuffer;
 			const center = this.boundingSphere.center;
 
