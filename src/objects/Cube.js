@@ -1,11 +1,13 @@
 import { Mesh } from "./Mesh.js";
-import { GPUPrimitiveTopology } from "../core/ENUM/GPUPrimitiveTopology.js";
 import { CubeGeometry } from "./CubeGeometry.js";
 import { CubeBasicMaterial } from "../materials/CubeBasicMaterial.js";
 import { Vector3 } from "../math/Vector3.js";
+import { PrimitiveTopology } from "../core/RC/pipeline/primitive state/PrimitiveTopology.js";
 
 
 export class Cube extends Mesh {
+
+
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "Cube",
@@ -23,14 +25,15 @@ export class Cube extends Mesh {
 		),
 		MATERIAL: new CubeBasicMaterial(),
 		PICKABLE: false,
-		PRIMITIVE: GPUPrimitiveTopology.TRIANGLE_LIST,
+		PRIMITIVE: PrimitiveTopology.TRIANGLE_LIST,
 	};
 
 
 	constructor(args = {}) {
 		super(
 			{
-				...args, 
+				...args,
+				
 				name: (args.name !== undefined) ? args.name : Cube.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : Cube.DEFAULT.TYPE,
 			
