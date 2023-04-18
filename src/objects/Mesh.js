@@ -188,6 +188,8 @@ export class Mesh extends Group {
 				)
 			}
 		);
+
+		this.NMat4 = new Matrix4();
 	}
 
 
@@ -220,22 +222,18 @@ export class Mesh extends Group {
 		super.transform = transform;
 	}
 
-	setup(context, camera) {
+	setup() {
 		super.setup();
-
-		// this.geometry.setup(context, camera);
-		// this.material.setup(context);
-
-		// this.setupContext(context, camera, renderer);
 	}
-	update(context, camera) {
+	update(camera) {
 		super.update();
+
 
 		this.MVMat.multiplyMatrices(camera.VMat, this.g_MMat);
 		this.NMat.getNormalMatrix(this.MVMat);
 
 		const me = this.NMat.elements;
-		this.NMat4 = new Matrix4().set(
+		this.NMat4.set(
 			me[0], me[3], me[6], 0,
 			me[1], me[4], me[7], 0,
 			me[2], me[5], me[8], 0,
@@ -243,48 +241,9 @@ export class Mesh extends Group {
 		);
 
 
-		// this.geometry.update(context);
-		// this.material.update(context);
-
-
-		// this.updateContext(context, camera);
-
-
 		//set resource / set binding / update resource / update binding
 		//binding update
-		const instruction = this.instructionCache.has("MMat") ? 
-		this.instructionCache.get("MMat") : 
-		this.instructionCache.set(
-			"MMat",
-			new BufferSetInstruction(
-				{
-					label: "MMat",
-
-					number: 0,
-					target: ResourceBinding.TARGET.INTERNAL,
-
-					source: {
-						arrayBuffer: new Float32Array(this.g_MMat.elements),
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0*16)
-						}
-					},
-					size: (16)
-				}
-			)
-		).get("MMat");
-		instruction.source.arrayBuffer = new Float32Array(this.g_MMat.elements);
-
-		this.setBufferBinding("MMat", instruction);
-
-
-		const instruction2 = this.instructionCache.has("NMat") ? 
+		const instruction = this.instructionCache.has("NMat") ? 
 		this.instructionCache.get("NMat") : 
 		this.instructionCache.set(
 			"NMat",
@@ -311,9 +270,9 @@ export class Mesh extends Group {
 				}
 			)
 		).get("NMat");
-		instruction2.source.arrayBuffer = new Float32Array(this.NMat4.elements);
+		instruction.source.arrayBuffer.set(this.NMat4.elements);
 
-		this.setBufferBinding("NMat", instruction2);
+		this.setBufferBinding("NMat", instruction);
 	}
 
 	setBufferBinding(name, setInstruction) {

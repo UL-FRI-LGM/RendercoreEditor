@@ -3,9 +3,13 @@ import { ObjectBase } from "../core/ObjectBase.js";
 import { Transform } from "../math/Transform.js";
 import { Sphere } from "../math/Sphere.js";
 import { Bounding } from "../math/Bounding.js";
+import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
+import { ResourceBinding } from "../core/data layouts/ResourceBinding.js";
 
 
 export class Object3D extends ObjectBase {
+
+
 	static DEFAULT = {
 		TYPE: "Object3D",
 		NAME: "",
@@ -179,6 +183,39 @@ export class Object3D extends ObjectBase {
 
 		//update bounding
 		if (this.#bounding !== null) this.#updateBounding();
+
+
+		//update MMat
+		const instruction = this.instructionCache.has("MMat") ? 
+		this.instructionCache.get("MMat") : 
+		this.instructionCache.set(
+			"MMat",
+			new BufferSetInstruction(
+				{
+					label: "MMat",
+
+					number: 0,
+					target: ResourceBinding.TARGET.INTERNAL,
+
+					source: {
+						arrayBuffer: new Float32Array(this.g_MMat.elements),
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0*16)
+						}
+					},
+					size: (16)
+				}
+			)
+		).get("MMat");
+		instruction.source.arrayBuffer.set(this.g_MMat.elements);
+
+		this.setBufferBinding("MMat", instruction);
 	}
 	get modelViewMatrix() { return this.transform.global.modelViewMatrix; }
 	set modelViewMatrix(modelViewMatrix) { this.transform.global.modelViewMatrix = modelViewMatrix; }
@@ -387,5 +424,9 @@ export class Object3D extends ObjectBase {
 
 
 		return bounding;
+	}
+
+	setBufferBinding(name, setInstruction) {
+		this.uniformGroupDescriptor.setBufferBinding(name, setInstruction);
 	}
 };
