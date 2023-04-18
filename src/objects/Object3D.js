@@ -2,7 +2,7 @@ import { _Math } from "../math/Math.js";
 import { ObjectBase } from "../core/ObjectBase.js";
 import { Transform } from "../math/Transform.js";
 import { Sphere } from "../math/Sphere.js";
-import { Vector3 } from "../math/Vector3.js";
+import { Bounding } from "../math/Bounding.js";
 
 
 export class Object3D extends ObjectBase {
@@ -25,9 +25,7 @@ export class Object3D extends ObjectBase {
 		TRANSFORM: { LOCAL: new Transform(), GLOBAL: new Transform() },
 		MATRIX_AUTO_UPDATE: true,
 
-		BOUNDING: {
-			SPHERE: new Sphere(new Vector3(0, 0, 0), Infinity),
-		},
+		BOUNDING: null,
 	};
 
 
@@ -46,7 +44,7 @@ export class Object3D extends ObjectBase {
 	#transform = { local: new Transform(), global: new Transform() };
 	#matrixAutoUpdate = Object3D.DEFAULT.MATRIX_AUTO_UPDATE;
 
-	#bounding = { sphere: new Sphere(new Vector3(0, 0, 0), Infinity) };
+	#bounding = null;
 
 
 	constructor(args = {}) {
@@ -73,7 +71,7 @@ export class Object3D extends ObjectBase {
 		this.transform = { local: new Transform(), global: new Transform() };
 		this.matrixAutoUpdate = (args.matrixAutoUpdate !== undefined) ? args.matrixAutoUpdate : Object3D.DEFAULT.MATRIX_AUTO_UPDATE;
 	
-		this.bounding = { sphere: new Sphere(new Vector3(0, 0, 0), Infinity) };
+		this.bounding = null;
 	}
 
 
@@ -180,8 +178,7 @@ export class Object3D extends ObjectBase {
 		this.transform.global.modelMatrix = modelMatrix;
 
 		//update bounding
-		this.bounding.sphere.set(new Vector3(0, 0, 0), Infinity);
-		this.bounding.sphere.applyMatrix4(this.g_MMat);
+		if (this.#bounding !== null) this.#updateBounding();
 	}
 	get modelViewMatrix() { return this.transform.global.modelViewMatrix; }
 	set modelViewMatrix(modelViewMatrix) { this.transform.global.modelViewMatrix = modelViewMatrix; }
@@ -201,7 +198,12 @@ export class Object3D extends ObjectBase {
 	get NMat() { return this.normalMatrix; }
 	set NMat(NMat) { this.normalMatrix = NMat; }
 
-	get bounding() { return this.#bounding; }
+	get bounding() {
+		if (this.#bounding === null) this.#bounding = this.computeBounding();
+
+
+		return this.#bounding;
+	}
 	set bounding(bounding) { this.#bounding = bounding; }
 
 
@@ -338,5 +340,52 @@ export class Object3D extends ObjectBase {
 	}
 	traverse(callback) {
 		this.traverseDown(callback);
+	}
+
+	computeBoundingSphere() {
+		const boundingSpheres = [];
+
+		// Fetch bounding spheres of all of the children
+		this.traverse((object) => {
+			if (object.geometry) {
+				const boundingSphere = object.geometry.boundingSphere;
+
+				if (!isNaN(boundingSphere.radius) && boundingSphere.radius > 0) {
+					boundingSpheres.push(boundingSphere);
+				}
+			}
+		});
+
+		if (boundingSpheres.length > 0) {
+			return _Math.computeSpheresBoundingSphere(boundingSpheres);
+		} else {
+			return new Sphere();
+		}
+	}
+	#updateBounding() {
+		this.bounding.sphere.worldspace.copy(this.bounding.sphere.objectspace);
+		this.bounding.sphere.worldspace.applyMatrix4(this.g_MMat);
+
+		// TODO, do the same for bounding box
+		// this.bounding.box.worldspace.copy(this.bounding.box.objectspace);
+		// this.bounding.box.worldspace.applyMatrix4(this.g_MMat);
+	}
+	computeBounding() {
+		const boundingSphere_objectspace = this.computeBoundingSphere();
+		const boundingSphere_worldspace = new Sphere().copy(boundingSphere_objectspace).applyMatrix4(this.g_MMat);
+		// const boundingBox_objectspace = this.computeBoundingBox(); // TODO
+
+		const bounding = new Bounding(
+			{
+				sphere: {
+					objectspace: boundingSphere_objectspace,
+					worldspace: boundingSphere_worldspace,
+				},
+				box: undefined
+			}
+		);
+
+
+		return bounding;
 	}
 };
