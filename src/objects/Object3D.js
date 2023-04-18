@@ -261,8 +261,8 @@ export class Object3D extends ObjectBase {
 	scale(multiplierVector) { this.transform.local.scale(multiplierVector); }
 
 	updateMatrixWorld(updateParents, updateChildren) {
-		if (updateParents) {
-			parent.updateMatrixWorld(true, false);
+		if (updateParents && this.parent !== null) {
+			this.parent.updateMatrixWorld(true, false);
 		}
 
 		this.l_MMat = this.l_MMat.compose(this.position, this.quaternion, this.scaling);
