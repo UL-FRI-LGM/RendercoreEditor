@@ -22,7 +22,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 	};
 
 
-	#attributeLocationDescriptors;
+	#attributeLocationDescriptors; //#resourceLocationDescriptors;
 
 	#indices;
 	#vertices; //positions
@@ -44,25 +44,28 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		super(
 			{
 				...args,
+
 				name: (args.name !== undefined) ? args.name : MeshGeometry.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : MeshGeometry.DEFAULT.TYPE,
 			}
 		);
 
 
-		this.attributeLocationDescriptors = new Map([
-			["indices", null],
-			["vertices", null],
-			["normals", null],
-			["tangents", null],
-			["bitangents", null],
-			["colors", null],
-			["uvs", null],
-			["MMats", null],
-			["translations", null],
-			
-			["wireframeIndices", null],
-		]);
+		this.attributeLocationDescriptors = new Map(
+			[
+				["indices", null],
+				["vertices", null],
+				["normals", null],
+				["tangents", null],
+				["bitangents", null],
+				["colors", null],
+				["uvs", null],
+				["MMats", null],
+				["translations", null],
+				
+				["wireframeIndices", null],
+			]
+		);
 
 		// attribute locations
 		this.indices = (args.indices !== undefined) ? args.indices : null;
