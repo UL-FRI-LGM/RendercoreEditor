@@ -57,8 +57,8 @@ export class Pass extends ObjectBase { //pass base
 
 	initializeInternal(args = {}) { return { ...args, ...this.initializeExternal(args) }; }
 	preprocessInternal(args = {}) { return { ...args, ...this.preprocessExternal(args) }; }
-	processInternal(args = {}) { return {...args, ...this.processExternal(args) }; }
-	postprocessInternal(args = {}) { return {...args, ...this.postprocessExternal(args) }; }
+	processInternal(args = {}) { return { ...args, ...this.processExternal(args) }; }
+	postprocessInternal(args = {}) { return { ...args, ...this.postprocessExternal(args) }; }
 	processMain(args = {}) {
 		// INITIALIZE
 		if (!this.initialized) {
