@@ -5,6 +5,15 @@ import { Sphere } from "../math/Sphere.js";
 import { Bounding } from "../math/Bounding.js";
 import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 import { ResourceBinding } from "../core/data layouts/ResourceBinding.js";
+import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
+import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
+import { BindGroupLayoutEntry } from "../core/RC/resource binding/BindGroupLayoutEntry.js";
+import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
+import { GPUBufferBindingLayout } from "../core/DICTS/GPUBufferBindingLayout.js";
+import { GPUBufferBindingType } from "../core/ENUM/GPUBufferBindingType.js";
+import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
+import { RCBufferBindingResource } from "../core/RCBufferBindingResource.js";
+import { ResourcePack } from "../core/data layouts/ResourcePack.js";
 
 
 export class Object3D extends ObjectBase {
@@ -33,6 +42,8 @@ export class Object3D extends ObjectBase {
 	};
 
 
+	#resourcePack;
+
 	#visible = Object3D.DEFAULT.VISIBLE;
 	#frustumCulled = Object3D.DEFAULT.FRUSTUM_CULLED;
 	#renderOrder = Object3D.DEFAULT.RENDER_ORDER;
@@ -54,11 +65,14 @@ export class Object3D extends ObjectBase {
 	constructor(args = {}) {
 		super(
 			{
-				...args, 
+				...args,
+
 				name: (args.name !== undefined) ? args.name : Object3D.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : Object3D.DEFAULT.TYPE,
 			}
 		);
+
+		this.resourcePack = new ResourcePack();
 
 		this.visible = (args.visible !== undefined) ? args.visible : Object3D.DEFAULT.VISIBLE;
 		this.frustumCulled = (args.frustumCulled !== undefined) ? args.frustumCulled : Object3D.DEFAULT.FRUSTUM_CULLED;
@@ -76,8 +90,58 @@ export class Object3D extends ObjectBase {
 		this.matrixAutoUpdate = (args.matrixAutoUpdate !== undefined) ? args.matrixAutoUpdate : Object3D.DEFAULT.MATRIX_AUTO_UPDATE;
 	
 		this.bounding = null;
+
+
+		this.resourcePack.setResourceBindingInternal(
+			2,
+			0,
+			new ResourceBinding(
+				{
+					number: 0,
+					arrayBuffer: new Float32Array(16 + (9 + 7)),
+					
+					resourceDescriptor: new BufferDescriptor(
+						{
+							label: "object buffer",
+							size: (16 + (9 + 7)),
+							usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
+							mappedAtCreation: false,
+						}
+					),
+					bindGroupLayoutEntry: new BindGroupLayoutEntry(
+						{
+							binding: 0,
+							visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
+							buffer: new GPUBufferBindingLayout(
+								{
+									type: GPUBufferBindingType.UNIFORM,
+									hasDynamicOffset: false,
+									minBindingSize: 0,
+								}
+							),
+						}
+					),
+					bindGroupEntry: new BindGroupEntry(
+						{
+							binding: 0,
+							resource: new RCBufferBindingResource(
+								{
+									buffer: null,
+									offset: 0,
+									size: (16 + (9 + 7)) * 4,
+								}
+							),
+						}
+					),
+				}
+			)
+		);
 	}
 
+
+	// resource bindings
+	get resourcePack() { return this.#resourcePack; }
+	set resourcePack(resourcePack) { this.#resourcePack = resourcePack; }
 
 	get visible() { return this.#visible; }
 	set visible(visible) { this.#visible = visible; }
@@ -215,7 +279,7 @@ export class Object3D extends ObjectBase {
 		).get("MMat");
 		instruction.source.arrayBuffer.set(this.g_MMat.elements);
 
-		this.setBufferBinding("MMat", instruction);
+		this.resourcePack.setResourceBindingValueInternal(2, 0, instruction);
 	}
 	get modelViewMatrix() { return this.transform.global.modelViewMatrix; }
 	set modelViewMatrix(modelViewMatrix) { this.transform.global.modelViewMatrix = modelViewMatrix; }
@@ -424,9 +488,5 @@ export class Object3D extends ObjectBase {
 
 
 		return bounding;
-	}
-
-	setBufferBinding(name, setInstruction) {
-		this.uniformGroupDescriptor.setBufferBinding(name, setInstruction);
 	}
 };

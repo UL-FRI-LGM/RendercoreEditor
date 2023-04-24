@@ -12,7 +12,7 @@ export class UniformGroupDescriptor extends DescriptorBase { //Uniform group des
         DIRTY_CACHE: new Map(),
 
 		NUMBER: null,
-		RESOURCE_BINDINGS: new Map(),
+		RESOURCE_BINDINGS_INTERNAL: new Map(),
 		RESOURCE_BINDINGS_EXTERNAL: new Map(),
 
 		// BINDING_DESCRIPTORS: new Array(),
@@ -28,7 +28,7 @@ export class UniformGroupDescriptor extends DescriptorBase { //Uniform group des
 
 
 	#number;
-	#resourceBindings;
+	#resourceBindingsInternal;
 	#resourceBindingsExternal;
 
 	// #bindingDescriptors;
@@ -54,7 +54,7 @@ export class UniformGroupDescriptor extends DescriptorBase { //Uniform group des
 		);
 
 		this.number = (args.number !== undefined) ? args.number : UniformGroupDescriptor.DEFAULT.NUMBER;
-		this.resourceBindings = (args.resourceBindings !== undefined) ? args.resourceBindings : new Map(UniformGroupDescriptor.DEFAULT.RESOURCE_BINDINGS); //copy
+		this.resourceBindingsInternal = (args.resourceBindingsInternal !== undefined) ? args.resourceBindingsInternal : new Map(UniformGroupDescriptor.DEFAULT.RESOURCE_BINDINGS_INTERNAL); //copy
 		this.resourceBindingsExternal = (args.resourceBindingsExternal !== undefined) ? args.resourceBindingsExternal : new Map(UniformGroupDescriptor.DEFAULT.RESOURCE_BINDINGS_EXTERNAL); //copy
 
 		// this.bindingDescriptors = (args.bindingDescriptors !== undefined) ? args.bindingDescriptors : new Array(UniformGroupDescriptor.DEFAULT.BINDING_DESCRIPTORS); //copy
@@ -69,8 +69,8 @@ export class UniformGroupDescriptor extends DescriptorBase { //Uniform group des
 
 	get number() { return this.#number; }
 	set number(number) { this.#number = number; }
-	get resourceBindings() { return this.#resourceBindings; }
-    set resourceBindings(resourceBindings) { this.#resourceBindings = resourceBindings; }
+	get resourceBindingsInternal() { return this.#resourceBindingsInternal; }
+    set resourceBindingsInternal(resourceBindingsInternal) { this.#resourceBindingsInternal = resourceBindingsInternal; }
 	get resourceBindingsExternal() { return this.#resourceBindingsExternal; }
     set resourceBindingsExternal(resourceBindingsExternal) { this.#resourceBindingsExternal = resourceBindingsExternal; }
 	
@@ -128,7 +128,10 @@ export class UniformGroupDescriptor extends DescriptorBase { //Uniform group des
 		);
 	}
 
-	addMapBinding(name, map, setInstruction = undefined) {
+	getMapBinding() {
+		throw new Error("Not implemented!");
+	}
+	setMapBinding(name, groupNumber, bindingNumber, map, setInstruction = undefined) {
 		const textureBinding = map.textureBinding;
 		this.resourceBindingsExternal.set(
 			textureBinding.number, //TODO add max + max here!!!!
@@ -142,12 +145,13 @@ export class UniformGroupDescriptor extends DescriptorBase { //Uniform group des
 		);
 
 
-		if (setInstruction) this.setMapBinding(name, setInstruction);
+		if (setInstruction) this.setMapBindingValue(name, setInstruction);
 	}
-	getMapBinding() {
-		new Error("Not implemented!");
+
+	getMapBindingValue() {
+		throw new Error("Not implemented!");
 	}
-	setMapBinding(name, setInstruction) {		
+	setMapBindingValue(name, setInstruction) {
 		// this.setResourceBinding(
 		// 	"SET | MAP | BINDING NUMBER: " + setInstruction.number,
 		// 	setInstruction

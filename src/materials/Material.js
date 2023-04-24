@@ -1,4 +1,5 @@
 import { ObjectBase } from "../core/ObjectBase.js";
+import { ResourcePack } from "../core/data layouts/ResourcePack.js";
 
 
 export class Material extends ObjectBase {
@@ -8,10 +9,12 @@ export class Material extends ObjectBase {
 		NAME: "",
 		TYPE: "Material",
 
+		RESOURCE_RACK: undefined,
 		INSTRUCTION_CACHE: new Map(),
 	};
 
 
+	#resourcePack;
 	#instructionCache = new Map();
 
 
@@ -26,10 +29,14 @@ export class Material extends ObjectBase {
 		);
 
 
+		this.resourcePack = new ResourcePack();
 		this.instructionCache = new Map();
 	}
 
 
+	// resource bindings
+	get resourcePack() { return this.#resourcePack; }
+	set resourcePack(resourcePack) { this.#resourcePack = resourcePack; }
 	get instructionCache() { return this.#instructionCache; }
 	set instructionCache(instructionCache) { this.#instructionCache = instructionCache; }
 };

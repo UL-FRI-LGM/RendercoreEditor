@@ -8,14 +8,12 @@ import { AmbientLight } from "./AmbientLight.js";
 import { DirectionalLight } from "./DirectionalLight.js";
 import { PointLight } from "./PointLight.js";
 import { SpotLight } from "./SpotLight.js";
-import { UniformGroupDescriptor } from "../core/data layouts/UniformGroupDescriptor.js";
 import { BindGroupLayoutEntry } from "../core/RC/resource binding/BindGroupLayoutEntry.js";
-import { BindGroupLayoutDescriptor } from "../core/RC/resource binding/BindGroupLayoutDescriptor.js";
 import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
 import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
-import { BindGroupDescriptor } from "../core/RC/resource binding/BindGroupDescriptor.js";
 import { ResourceBinding } from "../core/data layouts/ResourceBinding.js";
 import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
+import { ResourcePack } from "../core/data layouts/ResourcePack.js";
 
 
 export class LightManager extends ObjectBase {
@@ -43,6 +41,7 @@ export class LightManager extends ObjectBase {
 			}
 		);
 
+		this.resourcePack = new ResourcePack();
 		this.dirtyCache = new Map();
 		this.instructionCache = new Map();
 
@@ -54,74 +53,49 @@ export class LightManager extends ObjectBase {
 		]);
 		this.maxLights = (args.maxLights !== undefined) ? args.maxLights : LightManager.DEFAULT.MAX_LIGHTS;
 
-		this.uniformGroupDescriptor = new UniformGroupDescriptor(
-			{
-				label: "light manager resource group",
-				number: 1,
-				resourceBindings: new Map(
-					[
-						[
-							10,
-							new ResourceBinding(
+		this.resourcePack.setResourceBindingInternal(
+			1,
+			10,
+			new ResourceBinding(
+				{
+					number: 10,
+					arrayBuffer: new Float32Array((4+4+4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights),
+					
+					resourceDescriptor: new BufferDescriptor(
+						{
+							label: "light manager buffer",
+							size: (4+4+4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights,
+							usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
+							mappedAtCreation: false,
+						}
+					),
+					bindGroupLayoutEntry: new BindGroupLayoutEntry(
+						{
+							binding: 10,
+							visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
+							buffer: new GPUBufferBindingLayout(
 								{
-									number: 10,
-									arrayBuffer: new Float32Array((4+4+4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights),
-									
-									resourceDescriptor: new BufferDescriptor(
-										{
-											label: "light manager buffer",
-											size: (4+4+4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights,
-											usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
-											mappedAtCreation: false,
-										}
-									),
-									bindGroupLayoutEntry: new BindGroupLayoutEntry(
-										{
-											binding: 10,
-											visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-											buffer: new GPUBufferBindingLayout(
-												{
-													type: GPUBufferBindingType.UNIFORM,
-													hasDynamicOffset: false,
-													minBindingSize: 0,
-												}
-											),
-										}
-									),
-									bindGroupEntry: new BindGroupEntry(
-										{
-											binding: 10,
-											resource: new RCBufferBindingResource(
-												{
-													buffer: null,
-													offset: 0,
-													size: ((4+4+4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights) * 4,
-												}
-											),
-										}
-									),
+									type: GPUBufferBindingType.UNIFORM,
+									hasDynamicOffset: false,
+									minBindingSize: 0,
 								}
-							)
-						]
-					]
-				),
-				resourceBindingsExteral: new Map(),
-
-				bindGroupLayoutDescriptor: new BindGroupLayoutDescriptor(
-					{
-						label: "light manager bing group layout",
-						entries: new Array(),
-					}
-				),
-				// bindGroupLayoutDescriptor: BindGroupLayoutDescriptor.CONFIGURATION.G01_L,
-				bindGroupDescriptor: new BindGroupDescriptor(
-					{
-						label: "light manager bind group",
-						layout: null,
-						entries: new Array(),
-					}
-				)
-			}
+							),
+						}
+					),
+					bindGroupEntry: new BindGroupEntry(
+						{
+							binding: 10,
+							resource: new RCBufferBindingResource(
+								{
+									buffer: null,
+									offset: 0,
+									size: ((4+4+4) * this.maxLights + (4+4+4 + 1+1+1+1) * this.maxLights) * 4,
+								}
+							),
+						}
+					),
+				}
+			)
 		);
 	}
 
@@ -254,7 +228,7 @@ export class LightManager extends ObjectBase {
 				).get(instructionKey);
 				instruction.source.arrayBuffer = value.source.arrayBuffer;
 
-				this.setBufferBinding(instructionKey, instruction);
+				this.resourcePack.setResourceBindingValueInternal(1, 10, instruction);
 			}
 			aLight.dirtyCache.clear();
 
@@ -295,16 +269,12 @@ export class LightManager extends ObjectBase {
 				).get(instructionKey);
 				instruction.source.arrayBuffer = value.source.arrayBuffer;
 
-				this.setBufferBinding(instructionKey, instruction);
+				this.resourcePack.setResourceBindingValueInternal(1, 10, instruction);
 			}
 			pLight.dirtyCache.clear();
 		
 			offset += (4 + 4 + 4 + 4) * 4;
 			i++;
 		}
-	}
-
-	setBufferBinding(name, setInstruction) {
-		this.uniformGroupDescriptor.setBufferBinding(name, setInstruction);
 	}
 };

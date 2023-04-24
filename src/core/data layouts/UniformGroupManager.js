@@ -1,11 +1,4 @@
 import { ObjectBase } from "../ObjectBase.js";
-import { GPUExtent3D } from "../DICTS/GPUExtent3D.js";
-import { GPUImageCopyTexture } from "../DICTS/GPUImageCopyTexture.js";
-import { GPUImageDataLayout } from "../DICTS/GPUImageDataLayout.js";
-import { GPUOrigin3D } from "../DICTS/GPUOrigin3D.js";
-import { BufferDescriptor } from "../RC/buffers/BufferDescriptor.js";
-import { SamplerDescriptor } from "../RC/samplers/SamplerDescriptor.js";
-import { TextureDescriptor } from "../RC/textures/TextureDescriptor.js";
 import { ResourceBinding } from "./ResourceBinding.js";
 
 
@@ -42,6 +35,8 @@ export class UniformGroupManager extends ObjectBase { //RC uniform group manager
         this.bindGroupLayoutManager = contextManager.bindGroupLayoutManager;
         this.bindGroupManager = contextManager.bindGroupManager;
 
+        this.resourceBindingManager = contextManager.resourceBindingManager;
+
         this.descriptors = (args.descriptors !== undefined) ? args.descriptors : new Set();
         this.uniformGroups = (args.uniformGroups !== undefined) ? args.uniformGroups : new Map();
 	}
@@ -57,9 +52,10 @@ export class UniformGroupManager extends ObjectBase { //RC uniform group manager
 
 
     #createUniformGroup(descriptor) {
+        // TODO make new wrapper class for this, or context.createUniformGroup(descriptor)?
         const uniformGroup = descriptor;
 
-        const resourceBindings = uniformGroup.resourceBindings;
+        const resourceBindingsInternal = uniformGroup.resourceBindingsInternal;
         const resourceBindingsExternal = uniformGroup.resourceBindingsExternal;
 		const bindGroupLayoutDescriptor = uniformGroup.bindGroupLayoutDescriptor;
 		const bindGroupDescriptor = uniformGroup.bindGroupDescriptor;
@@ -67,24 +63,12 @@ export class UniformGroupManager extends ObjectBase { //RC uniform group manager
         const bindGroupLayoutEntries = new Map();
         const bindGroupEntries = new Map();
 
-        for (const [number, resourceBinding] of resourceBindings) {
+        for (const [number, resourceBinding] of resourceBindingsInternal) {
             const resourceDescriptor = resourceBinding.resourceDescriptor;
             const bindGroupLayoutEntry = resourceBinding.bindGroupLayoutEntry;
             const bindGroupEntry = resourceBinding.bindGroupEntry;
 
-			switch (resourceDescriptor.type) {
-				case BufferDescriptor.DEFAULT.TYPE:
-					bindGroupEntry.resource.buffer = this.bufferManager.getBuffer(resourceDescriptor);
-					break;
-				case TextureDescriptor.DEFAULT.TYPE:
-					bindGroupEntry.resource = this.textureManager.getTexture(resourceDescriptor).createView();
-					break;
-				case SamplerDescriptor.DEFAULT.TYPE:
-					bindGroupEntry.resource = this.samplerManager.getSampler(resourceDescriptor);
-					break;
-				default:
-                    throw new Error(`Unknown resource type: [${resourceDescriptor.type}]!`);
-			}
+			this.resourceBindingManager.createResourceBinding(resourceBinding);
 
             bindGroupLayoutEntries.set(number, bindGroupLayoutEntry);
             bindGroupEntries.set(number, bindGroupEntry);
@@ -95,19 +79,7 @@ export class UniformGroupManager extends ObjectBase { //RC uniform group manager
             const bindGroupLayoutEntry = resourceBinding.bindGroupLayoutEntry;
             const bindGroupEntry = resourceBinding.bindGroupEntry;
 
-			switch (resourceDescriptor.type) {
-				case BufferDescriptor.DEFAULT.TYPE:
-					bindGroupEntry.resource.buffer = this.bufferManager.getBuffer(resourceDescriptor);
-					break;
-				case TextureDescriptor.DEFAULT.TYPE:
-					bindGroupEntry.resource = this.textureManager.getTexture(resourceDescriptor).createView();
-					break;
-				case SamplerDescriptor.DEFAULT.TYPE:
-					bindGroupEntry.resource = this.samplerManager.getSampler(resourceDescriptor);
-					break;
-				default:
-                    throw new Error(`Unknown resource type: [${resourceDescriptor.type}]!`);
-			}
+			this.resourceBindingManager.createResourceBinding(resourceBinding);
 
             bindGroupLayoutEntries.set(number, bindGroupLayoutEntry);
             bindGroupEntries.set(number, bindGroupEntry);
@@ -148,107 +120,39 @@ export class UniformGroupManager extends ObjectBase { //RC uniform group manager
         return (this.uniformGroups.has(descriptor)) ? this.#deleteUniformGroup(descriptor) : false;
     }
 
-    #setBufferBinding(bufferDescriptor, setInstruction) {
-        const buffer_dst = this.bufferManager.getBuffer(bufferDescriptor);
-        const offset_dst = setInstruction.destination.layout.offset;
-        const arrayBuffer_src = setInstruction.source.arrayBuffer;
-        const offset_src = setInstruction.source.layout.offset;
-        const size = setInstruction.size;
-
-        const byteSize_dst = 4;
-        const byteSize_src = arrayBuffer_src.byteLength / arrayBuffer_src.length;
-
-        this.context.queue.writeBuffer(
-            buffer_dst,
-            offset_dst * byteSize_dst,
-            arrayBuffer_src.buffer,
-            offset_src * byteSize_src,
-            size * byteSize_src
-        );
-    }
-    #setTextureBinding(textureDescriptor, setInstruction) {    
-        const texture = this.textureManager.getTexture(textureDescriptor);
-
-        this.context.queue.writeTexture(
-            new GPUImageCopyTexture(
-                {
-                    texture: texture,
-        
-                    mipLevel: setInstruction.destination.layout.mipLevel,
-                    origin: new GPUOrigin3D(
-                        {
-                            x: setInstruction.destination.layout.x,
-                            y: setInstruction.destination.layout.y,
-                            z: setInstruction.destination.layout.z,
-                        }
-                    ),
-                    aspect: setInstruction.destination.layout.aspect,
-                }
-            ),
-            setInstruction.source.arrayBuffer.buffer,
-            new GPUImageDataLayout(
-                {
-                    offset: setInstruction.source.layout.offset,
-                    bytesPerRow: setInstruction.size.width * 4,
-                    rowsPerImage: setInstruction.size.height,
-                }
-            ),
-            new GPUExtent3D(
-                {
-                    width: setInstruction.size.width,
-                    height: setInstruction.size.height,
-                    depthOrArrayLayers: setInstruction.size.depthOrArrayLayers,
-                }
-            )
-        );
-    }
-    #setResourceBinding(resourceBinding, setInstruction) {
-        const resourceDescriptor = resourceBinding.resourceDescriptor;
-        const bindGroupLayoutEntry = resourceBinding.bindGroupLayoutEntry;
-        const bindGroupEntry = resourceBinding.bindGroupEntry;
-
-        switch (resourceDescriptor.type) {
-            case BufferDescriptor.DEFAULT.TYPE:
-                this.#setBufferBinding(resourceDescriptor, setInstruction);
-                break;
-            case TextureDescriptor.DEFAULT.TYPE:
-                this.#setTextureBinding(resourceDescriptor, setInstruction);
-                break;
-            case SamplerDescriptor.DEFAULT.TYPE:
-                // this.#setSamplerBinding();
-                break;
-            default:
-                throw new Error(`Unknown resource type: [${resourceDescriptor.target}]!`);
-        }
-    }
-    #setUniformBinding(descriptor) {
-        //TODO add uniform binding manager
-    }
-    setUniformGroup(descriptor) {
+    setUniformGroupValue(descriptor) {
         const uniformGroup = this.uniformGroups.get(descriptor);
 
-        const resourceBindings = uniformGroup.resourceBindings;
+        const resourceBindingsInternal = uniformGroup.resourceBindingsInternal;
         const resourceBindingsExternal = uniformGroup.resourceBindingsExternal;
 		const bindGroupLayoutDescriptor = uniformGroup.bindGroupLayoutDescriptor;
 		const bindGroupDescriptor = uniformGroup.bindGroupDescriptor;
 
-        for (const [name, setInstruction] of uniformGroup.dirtyCache) {
-            
+        // for (const [name, setInstruction] of uniformGroup.dirtyCache) {}
+        // uniformGroup.dirtyCache.forEach((setInstruction, name) => {});
+		uniformGroup.dirtyCache.forEach((setInstruction, name) => {
+            console.warn(name, setInstruction);
+
             switch (setInstruction.target) {
-				case ResourceBinding.TARGET.INTERNAL:
-                    const resourceBindingInternal = resourceBindings.get(setInstruction.number);
-                    this.#setResourceBinding(resourceBindingInternal, setInstruction);
-					break;
-				case ResourceBinding.TARGET.EXTERNAL:
+                case ResourceBinding.TARGET.INTERNAL:
+                    const resourceBindingInternal = resourceBindingsInternal.get(setInstruction.number);
+                    this.resourceBindingManager.setResourceBinding(resourceBindingInternal, setInstruction);
+                    break;
+                case ResourceBinding.TARGET.EXTERNAL:
                     const resourceBindingExternal = resourceBindingsExternal.get(setInstruction.number);
-                    this.#setResourceBinding(resourceBindingExternal, setInstruction);
-					break;
-				default:
+                    this.resourceBindingManager.setResourceBinding(resourceBindingExternal, setInstruction);
+                    break;
+                default:
                     throw new Error(`Unknown set instruction target: [${setInstruction.target}]!`);
-			}
-
-
-        }
+            }
+		});
         uniformGroup.dirtyCache.clear();
+
+        resourceBindingsInternal.forEach((resourceBinding, number) => {
+            this.resourceBindingManager.setResourceBindingValue(resourceBinding);
+		});
+        resourceBindingsExternal.forEach((resourceBinding, number) => {
+            this.resourceBindingManager.setResourceBindingValue(resourceBinding);
+		});
     }
 };

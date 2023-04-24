@@ -1,18 +1,7 @@
-import { MeshGeometry } from "./MeshGeometry.js";
-import { GPUBufferBindingLayout } from "../core/DICTS/GPUBufferBindingLayout.js";
-import { RCBufferBindingResource } from "../core/RCBufferBindingResource.js";
-import { GPUBufferBindingType } from "../core/ENUM/GPUBufferBindingType.js";
 import { Group } from "./Group.js";
+import { MeshGeometry } from "./MeshGeometry.js";
 import { Matrix4 } from "../RenderCore.js";
-import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
-import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 import { PrimitiveTopology } from "../core/RC/pipeline/primitive state/PrimitiveTopology.js";
-import { UniformGroupDescriptor } from "../core/data layouts/UniformGroupDescriptor.js";
-import { BindGroupLayoutDescriptor } from "../core/RC/resource binding/BindGroupLayoutDescriptor.js";
-import { BindGroupLayoutEntry } from "../core/RC/resource binding/BindGroupLayoutEntry.js";
-import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
-import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
-import { BindGroupDescriptor } from "../core/RC/resource binding/BindGroupDescriptor.js";
 import { ResourceBinding } from "../core/data layouts/ResourceBinding.js";
 import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 
@@ -76,118 +65,117 @@ export class Mesh extends Group {
 		this.firstVertex = (args.firstVertex !== undefined) ? args.firstVertex : Mesh.DEFAULT.FIRST_VERTEX;
 		this.firstInstance = (args.firstInstance !== undefined) ? args.firstInstance : Mesh.DEFAULT.FIRST_INSTANCE;
 
-		this.uniformGroupDescriptor = new UniformGroupDescriptor(
-			{
-				label: "mesh resource group",
-				number: 2,
-				resourceBindings: new Map(
-					[
-						[
-							0,
-							new ResourceBinding(
-								{
-									number: 0,
-									arrayBuffer: new Float32Array(16 + (9 + 7)),
+		// this.uniformGroupDescriptor = new UniformGroupDescriptor(
+		// 	{
+		// 		label: "mesh resource group",
+		// 		number: 2,
+		// 		resourceBindingsInternal: new Map(
+		// 			[
+		// 				[
+		// 					0,
+		// 					new ResourceBinding(
+		// 						{
+		// 							number: 0,
+		// 							arrayBuffer: new Float32Array(16 + (9 + 7)),
 									
-									resourceDescriptor: new BufferDescriptor(
-										{
-											label: "mesh buffer",
-											size: (16 + (9 + 7)),
-											usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
-											mappedAtCreation: false,
-										}
-									),
-									bindGroupLayoutEntry: new BindGroupLayoutEntry(
-										{
-											binding: 0,
-											visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-											buffer: new GPUBufferBindingLayout(
-												{
-													type: GPUBufferBindingType.UNIFORM,
-													hasDynamicOffset: false,
-													minBindingSize: 0,
-												}
-											),
-										}
-									),
-									bindGroupEntry: new BindGroupEntry(
-										{
-											binding: 0,
-											resource: new RCBufferBindingResource(
-												{
-													buffer: null,
-													offset: 0,
-													size: (16 + (9 + 7)) * 4,
-												}
-											),
-										}
-									),
-								}
-							)
-						]
-					]
-				),
-				resourceBindingsExteral: new Map(),
+		// 							resourceDescriptor: new BufferDescriptor(
+		// 								{
+		// 									label: "mesh buffer",
+		// 									size: (16 + (9 + 7)),
+		// 									usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
+		// 									mappedAtCreation: false,
+		// 								}
+		// 							),
+		// 							bindGroupLayoutEntry: new BindGroupLayoutEntry(
+		// 								{
+		// 									binding: 0,
+		// 									visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
+		// 									buffer: new GPUBufferBindingLayout(
+		// 										{
+		// 											type: GPUBufferBindingType.UNIFORM,
+		// 											hasDynamicOffset: false,
+		// 											minBindingSize: 0,
+		// 										}
+		// 									),
+		// 								}
+		// 							),
+		// 							bindGroupEntry: new BindGroupEntry(
+		// 								{
+		// 									binding: 0,
+		// 									resource: new RCBufferBindingResource(
+		// 										{
+		// 											buffer: null,
+		// 											offset: 0,
+		// 											size: (16 + (9 + 7)) * 4,
+		// 										}
+		// 									),
+		// 								}
+		// 							),
+		// 						}
+		// 					)
+		// 				]
+		// 			]
+		// 		),
+		// 		resourceBindingsExternal: new Map(),
 
-				// bindingDescriptors: [
-				// 	new BindingDescriptor(
-				// 		{
-				// 			binding: 0,
-				// 			arrayBuffer: new Float32Array(16 + (9 + 7)),
-				// 			resourceDescriptor: new BufferDescriptor(
-				// 				{
-				// 					label: "mesh buffer",
-				// 					size: (16 + (9 + 7)),
-				// 					usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
-				// 					mappedAtCreation: false,
-				// 				}
-				// 			)
-				// 		}
-				// 	)
-				// ],
-				bindGroupLayoutDescriptor: new BindGroupLayoutDescriptor(
-					{
-						label: "mesh bind group layout",
-						entries: [
-							// new BindGroupLayoutEntry(
-							// 	{
-							// 		binding: 0,
-							// 		visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-							// 		buffer: new GPUBufferBindingLayout(
-							// 			{
-							// 				type: GPUBufferBindingType.UNIFORM,
-							// 				hasDynamicOffset: false,
-							// 				minBindingSize: 0,
-							// 			}
-							// 		),
-							// 	}
-							// ),
-						]
-					}
-				),
-				// bindGroupLayoutDescriptor: BindGroupLayoutDescriptor.CONFIGURATION.G02_O,
-				bindGroupDescriptor: new BindGroupDescriptor(
-					{
-						label: "mesh bind group",
-						layout: null,
-						entries: [
-							// new BindGroupEntry(
-							// 	{
-							// 		binding: 0,
-							// 		resource: new RCBufferBindingResource(
-							// 			{
-							// 				buffer: null,
-							// 				offset: 0,
-							// 				size: (16 + (9 + 7)) * 4,
-							// 			}
-							// 		),
-							// 	}
-							// ),
-						],
-					}
-				)
-			}
-		);
+		// 		// bindingDescriptors: [
+		// 		// 	new BindingDescriptor(
+		// 		// 		{
+		// 		// 			binding: 0,
+		// 		// 			arrayBuffer: new Float32Array(16 + (9 + 7)),
+		// 		// 			resourceDescriptor: new BufferDescriptor(
+		// 		// 				{
+		// 		// 					label: "mesh buffer",
+		// 		// 					size: (16 + (9 + 7)),
+		// 		// 					usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
+		// 		// 					mappedAtCreation: false,
+		// 		// 				}
+		// 		// 			)
+		// 		// 		}
+		// 		// 	)
+		// 		// ],
+		// 		bindGroupLayoutDescriptor: new BindGroupLayoutDescriptor(
+		// 			{
+		// 				label: "mesh bind group layout",
+		// 				entries: [
+		// 					// new BindGroupLayoutEntry(
+		// 					// 	{
+		// 					// 		binding: 0,
+		// 					// 		visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
+		// 					// 		buffer: new GPUBufferBindingLayout(
+		// 					// 			{
+		// 					// 				type: GPUBufferBindingType.UNIFORM,
+		// 					// 				hasDynamicOffset: false,
+		// 					// 				minBindingSize: 0,
+		// 					// 			}
+		// 					// 		),
+		// 					// 	}
+		// 					// ),
+		// 				]
+		// 			}
+		// 		),
+		// 		bindGroupDescriptor: new BindGroupDescriptor(
+		// 			{
+		// 				label: "mesh bind group",
+		// 				layout: null,
+		// 				entries: [
+		// 					// new BindGroupEntry(
+		// 					// 	{
+		// 					// 		binding: 0,
+		// 					// 		resource: new RCBufferBindingResource(
+		// 					// 			{
+		// 					// 				buffer: null,
+		// 					// 				offset: 0,
+		// 					// 				size: (16 + (9 + 7)) * 4,
+		// 					// 			}
+		// 					// 		),
+		// 					// 	}
+		// 					// ),
+		// 				],
+		// 			}
+		// 		)
+		// 	}
+		// );
 
 		this.NMat4 = new Matrix4();
 	}
@@ -221,6 +209,7 @@ export class Mesh extends Group {
 	set transform(transform) {
 		super.transform = transform;
 	}
+
 
 	setup() {
 		super.setup();
@@ -272,10 +261,6 @@ export class Mesh extends Group {
 		).get("NMat");
 		instruction.source.arrayBuffer.set(this.NMat4.elements);
 
-		this.setBufferBinding("NMat", instruction);
-	}
-
-	setBufferBinding(name, setInstruction) {
-		this.uniformGroupDescriptor.setBufferBinding(name, setInstruction);
+		this.resourcePack.setResourceBindingValueInternal(2, 0, instruction);
 	}
 };

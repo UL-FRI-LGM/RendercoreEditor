@@ -106,7 +106,7 @@ export class ResourceBindingManager extends ObjectBase { //RC resource binding m
         return (this.resourceBindings.has(descriptor)) ? this.#deleteResourceBinding(descriptor) : false;
     }
 
-    #setBufferBinding(bufferDescriptor, setInstruction) {
+    #setBufferBindingValue(bufferDescriptor, setInstruction) {
         const buffer_dst = this.bufferManager.getBuffer(bufferDescriptor);
         const offset_dst = setInstruction.destination.layout.offset;
         const arrayBuffer_src = setInstruction.source.arrayBuffer;
@@ -124,7 +124,7 @@ export class ResourceBindingManager extends ObjectBase { //RC resource binding m
             size * byteSize_src
         );
     }
-    #setTextureBinding(textureDescriptor, setInstruction) {    
+    #setTextureBindingValue(textureDescriptor, setInstruction) {    
         const texture = this.textureManager.getTexture(textureDescriptor);
 
         this.context.queue.writeTexture(
@@ -161,23 +161,26 @@ export class ResourceBindingManager extends ObjectBase { //RC resource binding m
         );
     }
     // #setUniformBinding(descriptor) {}
-    #setResourceBinding(resourceBinding, setInstruction) {
+    setResourceBindingValue(resourceBinding) {
         const resourceDescriptor = resourceBinding.resourceDescriptor;
         const bindGroupLayoutEntry = resourceBinding.bindGroupLayoutEntry;
         const bindGroupEntry = resourceBinding.bindGroupEntry;
 
-        switch (resourceDescriptor.type) {
-            case BufferDescriptor.DEFAULT.TYPE:
-                this.#setBufferBinding(resourceDescriptor, setInstruction);
-                break;
-            case TextureDescriptor.DEFAULT.TYPE:
-                this.#setTextureBinding(resourceDescriptor, setInstruction);
-                break;
-            case SamplerDescriptor.DEFAULT.TYPE:
-                // this.#setSamplerBinding();
-                break;
-            default:
-                throw new Error(`Unknown resource type: [${resourceDescriptor.target}]!`);
-        }
+        resourceBinding.dirtyCache.forEach((setInstruction, name) => {
+            switch (resourceDescriptor.type) {
+                case BufferDescriptor.DEFAULT.TYPE:
+                    this.#setBufferBindingValue(resourceDescriptor, setInstruction);
+                    break;
+                case TextureDescriptor.DEFAULT.TYPE:
+                    this.#setTextureBindingValue(resourceDescriptor, setInstruction);
+                    break;
+                case SamplerDescriptor.DEFAULT.TYPE:
+                    // this.#setSamplerBinding();
+                    break;
+                default:
+                    throw new Error(`Unknown resource type: [${resourceDescriptor.target}]!`);
+            }
+        });
+        resourceBinding.dirtyCache.clear();
     }
 };

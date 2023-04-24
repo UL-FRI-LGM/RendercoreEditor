@@ -78,4 +78,31 @@ export class ResourceBinding extends Resource { //custom resource binding (unifo
     set bindGroupLayoutEntry(bindGroupLayoutEntry) { this.#bindGroupLayoutEntry = bindGroupLayoutEntry; }
 	get bindGroupEntry() { return this.#bindGroupEntry }
 	set bindGroupEntry(bindGroupEntry){ this.#bindGroupEntry = bindGroupEntry; }
+
+
+	setResourceBinding(name, setInstruction) {
+		//set (update) this resource binding
+		this.dirtyCache.set(
+			name,
+			setInstruction
+		);
+	}
+	setBufferBinding(name, setInstruction) {
+		this.setResourceBinding(
+			`SET | BUFFER | ${name} | BINDING NUMBER: ${setInstruction.number}`,
+			setInstruction
+		);
+	}
+	setTextureBinding(name, setInstruction) {
+		this.setResourceBinding(
+			`SET | TEXTURE | ${name} | BINDING NUMBER: ${setInstruction.number}`,
+			setInstruction
+		);
+	}
+	setSamplerBinding(name, setInstruction) {
+		this.setResourceBinding(
+			`SET | SAMPLER | ${name} | BINDING NUMBER: ${setInstruction.number}`,
+			setInstruction
+		);
+	}
 };

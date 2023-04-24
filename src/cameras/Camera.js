@@ -6,12 +6,9 @@ import { RCBufferBindingResource } from "../core/RCBufferBindingResource.js";
 import { Matrix4 } from "../math/Matrix4.js";
 import { Group } from "../objects/Group.js";
 import { Frustum } from "../RenderCore.js";
-import { UniformGroupDescriptor } from "../core/data layouts/UniformGroupDescriptor.js";
 import { BindGroupLayoutEntry } from "../core/RC/resource binding/BindGroupLayoutEntry.js";
 import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
-import { BindGroupLayoutDescriptor } from "../core/RC/resource binding/BindGroupLayoutDescriptor.js";
 import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
-import { BindGroupDescriptor } from "../core/RC/resource binding/BindGroupDescriptor.js";
 import { ResourceBinding } from "../core/data layouts/ResourceBinding.js";
 import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 
@@ -52,74 +49,49 @@ export class Camera extends Group {
 			}
 		);
 
-		this.uniformGroupDescriptor = new UniformGroupDescriptor(
-			{
-				label: "camera resource group",
-				number: 0,
-				resourceBindings: new Map(
-					[
-						[
-							0,
-							new ResourceBinding(
+		this.resourcePack.setResourceBindingInternal(
+			0,
+			0,
+			new ResourceBinding(
+				{
+					number: 0,
+					arrayBuffer: new Float32Array(16*2),
+	
+					resourceDescriptor: new BufferDescriptor(
+						{
+							label: "camera buffer",
+							size: 16*2,
+							usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
+							mappedAtCreation: false,					
+						}
+					),
+					bindGroupLayoutEntry: new BindGroupLayoutEntry(
+						{
+							binding: 0,
+							visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
+							buffer: new GPUBufferBindingLayout(
 								{
-									number: 0,
-									arrayBuffer: new Float32Array(16*2),
-
-									resourceDescriptor: new BufferDescriptor(
-										{
-											label: "camera buffer",
-											size: 16*2,
-											usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
-											mappedAtCreation: false,					
-										}
-									),
-									bindGroupLayoutEntry: new BindGroupLayoutEntry(
-										{
-											binding: 0,
-											visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-											buffer: new GPUBufferBindingLayout(
-												{
-													type: GPUBufferBindingType.UNIFORM,
-													hasDynamicOffset: false,
-													minBindingSize: 0,
-												}
-											),
-										}
-									),
-									bindGroupEntry: new BindGroupEntry(
-										{
-											binding: 0,
-											resource: new RCBufferBindingResource(
-												{
-													buffer: null,
-													offset: 0,
-													size: (16*2) * 4,
-												}
-											),
-										}
-									),
+									type: GPUBufferBindingType.UNIFORM,
+									hasDynamicOffset: false,
+									minBindingSize: 0,
 								}
-							)
-						]
-					]
-				),
-				resourceBindingsExteral: new Map(),
-
-				bindGroupLayoutDescriptor: new BindGroupLayoutDescriptor(
-					{
-						label: "camera bind group layout",
-						entries: new Array(),
-					}
-				),
-				// bindGroupLayoutDescriptor: BindGroupLayoutDescriptor.CONFIGURATION.G00_C,
-				bindGroupDescriptor: new BindGroupDescriptor(
-					{
-						label: "camera bind group",
-						layout: null,
-						entries: new Array(),
-					}
-				)
-			}
+							),
+						}
+					),
+					bindGroupEntry: new BindGroupEntry(
+						{
+							binding: 0,
+							resource: new RCBufferBindingResource(
+								{
+									buffer: null,
+									offset: 0,
+									size: (16*2) * 4,
+								}
+							),
+						}
+					),
+				}
+			)
 		);
 
 		this.viewMatrix = new Matrix4(); 				//VMat
@@ -173,9 +145,9 @@ export class Camera extends Group {
 				}
 			)
 		).get("VMat");
-		instruction.source.arrayBuffer = new Float32Array(viewMatrix.elements);
+		instruction.source.arrayBuffer.set(viewMatrix.elements);
 
-		this.setBufferBinding("VMat", instruction);
+		this.resourcePack.setResourceBindingValueInternal(0, 0, instruction);
 	}
     get projectionMatrix() { return this.#projectionMatrix; }
 	set projectionMatrix(projectionMatrix) { 
@@ -211,9 +183,9 @@ export class Camera extends Group {
 				}
 			)
 		).get("PMat");
-		instruction.source.arrayBuffer = new Float32Array(projectionMatrix.elements);
+		instruction.source.arrayBuffer.set(projectionMatrix.elements);
 
-		this.setBufferBinding("PMat", instruction);
+		this.resourcePack.setResourceBindingValueInternal(0, 0, instruction);
 	}
     get projectionMatrixInverse() { return this.#projectionMatrixInverse; }
 	set projectionMatrixInverse(projectionMatrixInverse) { 
@@ -243,7 +215,13 @@ export class Camera extends Group {
 	}
 
 
-	setBufferBinding(name, setInstruction) {
-		this.uniformGroupDescriptor.setBufferBinding(name, setInstruction);
+	setup(args = null) {
+		super.setup(args);
+	}
+	update(args = null) {
+		super.update(args);
+
+		
+		this.updateMatrixWorld(args.updateParents, args.updateChildren);
 	}
 };

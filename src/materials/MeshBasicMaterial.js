@@ -16,10 +16,7 @@ import { GPUTextureViewDimension } from "../core/ENUM/GPUTextureViewDimension.js
 import { SamplerDescriptor } from "../core/RC/samplers/SamplerDescriptor.js";
 import { FilterMode } from "../core/RC/samplers/FilterMode.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
-import { UniformGroupDescriptor } from "../core/data layouts/UniformGroupDescriptor.js";
-import { BindGroupDescriptor } from "../core/RC/resource binding/BindGroupDescriptor.js";
 import { BindGroupLayoutEntry } from "../core/RC/resource binding/BindGroupLayoutEntry.js";
-import { BindGroupLayoutDescriptor } from "../core/RC/resource binding/BindGroupLayoutDescriptor.js";
 import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
 import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
 import { ResourceBinding } from "../core/data layouts/ResourceBinding.js";
@@ -58,147 +55,123 @@ export class MeshBasicMaterial extends MeshMaterial {
 			},
 		);
 
-		this.uniformGroupDescriptor = new UniformGroupDescriptor(
-			{
-				label: "mesh basic resource material group",
-				number: 3,
-				resourceBindings: new Map(
-					[
-						[
-							0,
-							new ResourceBinding(
-								{
-									number: 0,
+		this.resourcePack.setResourceBindingInternal(
+			3,
+			0,
+			new ResourceBinding(
+				{
+					number: 0,
 
-									arrayBuffer: new Float32Array(2*4),
-									resourceDescriptor: new BufferDescriptor(
-										{
-											label: "mesh basic material buffer",
-											size: (2*4),
-											usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
-											mappedAtCreation: false,					
-										}
-									),
-									bindGroupLayoutEntry: new BindGroupLayoutEntry(
-										{
-											binding: 0,
-											visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-											buffer: new GPUBufferBindingLayout(
-												{
-													type: GPUBufferBindingType.UNIFORM,
-													hasDynamicOffset: false,
-													minBindingSize: 0,
-												}
-											),
-										}
-									),
-									bindGroupEntry: new BindGroupEntry(
-										{
-											binding: 0,
-											resource: new RCBufferBindingResource(
-												{
-													buffer: null,
-													offset: 0,
-													size: (2*4) * 4,
-												}
-											),
-										}
-									),
-								}
-							)
-						],
-						[
-							10,
-							new ResourceBinding(
+					arrayBuffer: new Float32Array(2*4),
+					resourceDescriptor: new BufferDescriptor(
+						{
+							label: "mesh basic material buffer",
+							size: (2*4),
+							usage: BufferUsage.UNIFORM | BufferUsage.COPY_DST,
+							mappedAtCreation: false,					
+						}
+					),
+					bindGroupLayoutEntry: new BindGroupLayoutEntry(
+						{
+							binding: 0,
+							visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
+							buffer: new GPUBufferBindingLayout(
 								{
-									number: 10,
-									arrayBuffer: new Uint8ClampedArray([255, 0, 255, 255]),
-									
-									resourceDescriptor: new TextureDescriptor(
-										{
-											label: "mesh basic material texture 0",
-											size: new GPUExtent3D({ width: 1, height: 1, depthOrArrayLayers: 1 }),
-											format: GPUTextureFormat.RGBA_8_UNORM,
-											usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,				
-										}
-									),
-									bindGroupLayoutEntry: new BindGroupLayoutEntry(
-										{
-											binding: 10,
-											visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-											texture: new GPUTextureBindingLayout(
-												{
-													sampleType: GPUTextureSamplingType.FLOAT,
-													viewDimension: GPUTextureViewDimension.D2,
-													multisampled: false
-												}
-											),
-										}
-									),
-									bindGroupEntry: new BindGroupEntry(
-										{
-											binding: 10,
-											resource: null,
-										}
-									),
+									type: GPUBufferBindingType.UNIFORM,
+									hasDynamicOffset: false,
+									minBindingSize: 0,
 								}
-							)
-						],
-						[
-							20,
-							new ResourceBinding(
+							),
+						}
+					),
+					bindGroupEntry: new BindGroupEntry(
+						{
+							binding: 0,
+							resource: new RCBufferBindingResource(
 								{
-									number: 20,
-									arrayBuffer: null,
-									resourceDescriptor: new SamplerDescriptor(
-										{
-											label: "mesh basic material sampler 0",
-											magFilter: FilterMode.LINEAR,
-											minFilter: FilterMode.LINEAR,
-											mipmapFilter: FilterMode.LINEAR,
-										}
-									),
-									
-									bindGroupLayoutEntry: new BindGroupLayoutEntry(
-										{
-											binding: 20,
-											visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
-											sampler: new GPUSamplerBindingLayout(
-												{
-													type: GPUSamplerBindingType.FILTERING
-												}
-											),
-										}
-									),
-									bindGroupEntry: new BindGroupEntry(
-										{
-											binding: 20,
-											resource: null,
-										}
-									),
+									buffer: null,
+									offset: 0,
+									size: (2*4) * 4,
 								}
-							)
-						],
-					]
-				),
-				resourceBindingsExteral: new Map(),
-
-				// bindingDescriptors: new Array(),
-				bindGroupLayoutDescriptor: new BindGroupLayoutDescriptor(
-					{
-						label: "mesh basic material bind group layout",
-						entries: new Array(),
-					}
-				),
-				// bindGroupLayoutDescriptor: BindGroupLayoutDescriptor.CONFIGURATION.G03_M,
-				bindGroupDescriptor: new BindGroupDescriptor(
-					{
-						label: "mesh basic material bind group",
-						layout: null,
-						entries: new Array(),
-					}
-				)
-			}
+							),
+						}
+					),
+				}
+			)
+		);
+		this.resourcePack.setResourceBindingInternal(
+			3,
+			10,
+			new ResourceBinding(
+				{
+					number: 10,
+					arrayBuffer: new Uint8ClampedArray([255, 0, 255, 255]),
+					
+					resourceDescriptor: new TextureDescriptor(
+						{
+							label: "mesh basic material texture 0",
+							size: new GPUExtent3D({ width: 1, height: 1, depthOrArrayLayers: 1 }),
+							format: GPUTextureFormat.RGBA_8_UNORM,
+							usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,				
+						}
+					),
+					bindGroupLayoutEntry: new BindGroupLayoutEntry(
+						{
+							binding: 10,
+							visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
+							texture: new GPUTextureBindingLayout(
+								{
+									sampleType: GPUTextureSamplingType.FLOAT,
+									viewDimension: GPUTextureViewDimension.D2,
+									multisampled: false
+								}
+							),
+						}
+					),
+					bindGroupEntry: new BindGroupEntry(
+						{
+							binding: 10,
+							resource: null,
+						}
+					),
+				}
+			)
+		);
+		this.resourcePack.setResourceBindingInternal(
+			3,
+			20,
+			new ResourceBinding(
+				{
+					number: 20,
+					arrayBuffer: null,
+					resourceDescriptor: new SamplerDescriptor(
+						{
+							label: "mesh basic material sampler 0",
+							magFilter: FilterMode.LINEAR,
+							minFilter: FilterMode.LINEAR,
+							mipmapFilter: FilterMode.LINEAR,
+						}
+					),
+					
+					bindGroupLayoutEntry: new BindGroupLayoutEntry(
+						{
+							binding: 20,
+							visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
+							sampler: new GPUSamplerBindingLayout(
+								{
+									type: GPUSamplerBindingType.FILTERING
+								}
+							),
+						}
+					),
+					bindGroupEntry: new BindGroupEntry(
+						{
+							binding: 20,
+							resource: null,
+						}
+					),
+				}
+			)
 		);
 
 		this.emissive = (args.emissive !== undefined) ? args.emissive : new Color4(0, 0, 0, 0);
@@ -239,7 +212,7 @@ export class MeshBasicMaterial extends MeshMaterial {
 		).get("emissive");
 		instruction.source.arrayBuffer = emissive.arrayBuffer;
 		
-		this.setUniform("emissive", instruction);
+		this.resourcePack.setResourceBindingValueInternal(3, 0, instruction);
 	}
 	get diffuse() { return this.#diffuse; }
 	set diffuse(diffuse) { 
@@ -274,6 +247,6 @@ export class MeshBasicMaterial extends MeshMaterial {
 		).get("diffuse");
 		instruction.source.arrayBuffer = diffuse.arrayBuffer;
 
-		this.setUniform("diffuse", instruction);
+		this.resourcePack.setResourceBindingValueInternal(3, 0, instruction);
 	}
 };
