@@ -2,6 +2,8 @@ import {Object3D} from "./Object3D.js";
 
 
 export class Group extends Object3D {
+
+
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "Group",
@@ -14,7 +16,8 @@ export class Group extends Object3D {
 	constructor(args = {}) {
 		super(
 			{
-				...args, 
+				...args,
+
 				name: (args.name !== undefined) ? args.name : Group.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : Group.DEFAULT.TYPE,
 
