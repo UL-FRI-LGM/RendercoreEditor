@@ -89,80 +89,76 @@ export class UniformGroupDescriptor extends DescriptorBase { //Uniform group des
 	set maxSamplers(maxSamplers) { this.#maxSamplers = maxSamplers; }
 
 
-	addResourceBinding() {
-		//add new (override external, if exists)
-		new Error("Not implemented!");
+	#hasResourceBinding(channel, number) {
+		return channel.has(number);
 	}
-	removeResourceBinding() {
-		new Error("Not implemented!");
+	hasResourceBindingsInternal(number) {
+		return this.#hasResourceBinding(this.resourceBindingsInternal, number);
 	}
-	getResourceBinding() {
-		new Error("Not implemented!");
-	}
-	setResourceBinding(name, setInstruction) {
-		//set (update) existing resource binding
-		this.dirtyCache.set(
-			name,
-			setInstruction
-		);
+	hasResourceBindingsExternal(number) {
+		return this.#hasResourceBinding(this.resourceBindingsExternal, number);
 	}
 
-	setBufferBinding(name, setInstruction) {
-		this.setResourceBinding(
-			`SET | BUFFER | ${name} | BINDING NUMBER: ${setInstruction.number}`,
-			setInstruction
-		);
+	#getResourceBinding(channel, number) {
+		if (channel.has(number)) {
+			return channel.get(number);
+		} else {
+			console.warn(`No resource binding [${this.number.toString().padStart(2, '0')}][${number.toString().padStart(2, '0')}]!`);
+			return undefined;
+		}
 	}
-
-	setTextureBinding(name, setInstruction) {
-		this.setResourceBinding(
-			`SET | TEXTURE | ${name} | BINDING NUMBER: ${setInstruction.number}`,
-			setInstruction
-		);
+	getResourceBindingInternal(number) {
+		return this.#getResourceBinding(this.resourceBindingsInternal, number);
 	}
-
-	setSamplerBinding(name, setInstruction) {
-		this.setResourceBinding(
-			`SET | SAMPLER | ${name} | BINDING NUMBER: ${setInstruction.number}`,
-			setInstruction
-		);
+	getResourceBindingExternal(number) {
+		return this.#getResourceBinding(this.resourceBindingsExternal, number);
 	}
-
-	getMapBinding() {
+	getResourceBindingExteInte(number) {
+		return this.hasResourceBindingsExternal(number) ? this.getResourceBindingExternal(number) : this.getResourceBindingInternal(number);
+	}
+	#setResourceBinding(channel, number, binding) {
+		channel.set(number, binding);
+	}
+	setResourceBindingInternal(number, binding) {
+		this.#setResourceBinding(this.resourceBindingsInternal, number, binding);
+	}
+	setResourceBindingExternal(number, binding) {
+		this.#setResourceBinding(this.resourceBindingsExternal, number, binding);
+	}
+	setResourceBindingExteInte(number, binding) {
 		throw new Error("Not implemented!");
 	}
-	setMapBinding(name, groupNumber, bindingNumber, map, setInstruction = undefined) {
-		const textureBinding = map.textureBinding;
-		this.resourceBindingsExternal.set(
-			textureBinding.number, //TODO add max + max here!!!!
-			textureBinding
-		);
-
-		const samplerBinding = map.samplerBinding;
-		this.resourceBindingsExternal.set(
-			samplerBinding.number,
-			samplerBinding
-		);
-
-
-		if (setInstruction) this.setMapBindingValue(name, setInstruction);
-	}
-
-	getMapBindingValue() {
+	setMapBindingInternal() {
 		throw new Error("Not implemented!");
 	}
-	setMapBindingValue(name, setInstruction) {
-		// this.setResourceBinding(
-		// 	"SET | MAP | BINDING NUMBER: " + setInstruction.number,
-		// 	setInstruction
-		// );
-		this.setTextureBinding(
-			name,
-			setInstruction.textureSetInstruction
-		);
-		// this.setSamplerBinding(
-		// 	name,
-		// 	setInstruction.samplerSetInstruction
-		// );
+	setMapBindingExternal(mapNumber, mapBinding, setInstruction = undefined) {
+		const textureBinding = mapBinding.textureBinding;
+		const samplerBinding = mapBinding.samplerBinding;
+
+		//TODO add max + max here!!!!
+		this.setResourceBindingExternal(mapNumber + 10, textureBinding);
+		this.setResourceBindingExternal(mapNumber + 20, samplerBinding);
+	
+
+		if (setInstruction) {
+			this.setMapBindingValueExternal(mapNumber, setInstruction);
+		}
+	}
+
+	#setResourceBindingValue(channel, number, setInstruction) {
+		this.#getResourceBinding(channel, number).setValue(setInstruction);
+	}
+	setResourceBindingValueInternal(number, setInstruction){
+		this.#setResourceBindingValue(this.resourceBindingsInternal, number, setInstruction);
+	}
+	setResourceBindingValueExternal(number, setInstruction){
+		this.#setResourceBindingValue(this.resourceBindingsExternal, number, setInstruction);
+	}
+	setMapBindingValueInternal() {
+		throw new Error("Not implemented!");
+	}
+	setMapBindingValueExternal(mapNumber, setInstruction) {
+		this.setResourceBindingValueExternal(mapNumber + 10, setInstruction.textureSetInstruction);
+		// this.setResourceBindingValueExternal(mapNumber + 20, setInstruction.samplerSetInstruction);
 	}
 };

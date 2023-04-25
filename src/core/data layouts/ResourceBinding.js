@@ -80,29 +80,40 @@ export class ResourceBinding extends Resource { //custom resource binding (unifo
 	set bindGroupEntry(bindGroupEntry){ this.#bindGroupEntry = bindGroupEntry; }
 
 
-	setResourceBinding(name, setInstruction) {
-		//set (update) this resource binding
-		this.dirtyCache.set(
-			name,
-			setInstruction
-		);
+	getValue(getInstruction) {
+		throw new Error("Not implemented!");
 	}
-	setBufferBinding(name, setInstruction) {
-		this.setResourceBinding(
-			`SET | BUFFER | ${name} | BINDING NUMBER: ${setInstruction.number}`,
-			setInstruction
-		);
+	setValue(setInstruction) {
+		this.dirtyCache.set(setInstruction, setInstruction);
 	}
-	setTextureBinding(name, setInstruction) {
-		this.setResourceBinding(
-			`SET | TEXTURE | ${name} | BINDING NUMBER: ${setInstruction.number}`,
-			setInstruction
-		);
-	}
-	setSamplerBinding(name, setInstruction) {
-		this.setResourceBinding(
-			`SET | SAMPLER | ${name} | BINDING NUMBER: ${setInstruction.number}`,
-			setInstruction
-		);
-	}
+
+	// setResourceBinding(name, setInstruction) {
+	// 	//set (update) this resource binding
+	// 	this.dirtyCache.set(
+	// 		name,
+	// 		setInstruction
+	// 	);
+	// }
+	// setBufferBinding(name, setInstruction) {
+	// 	this.setResourceBinding(
+	// 		`SET | BUFFER | ${name} | BINDING NUMBER: ${setInstruction.number}`,
+	// 		setInstruction
+	// 	);
+	// }
+	// setTextureBinding(name, setInstruction) {
+	// 	this.setResourceBinding(
+	// 		`SET | TEXTURE | ${name} | BINDING NUMBER: ${setInstruction.number}`,
+	// 		setInstruction
+	// 	);
+	// }
+	// setSamplerBinding(name, setInstruction) {
+	// 	this.setResourceBinding(
+	// 		`SET | SAMPLER | ${name} | BINDING NUMBER: ${setInstruction.number}`,
+	// 		setInstruction
+	// 	);
+	// }
+	// setMapBinding(name, setInstruction) {
+	// 	this.setTextureBinding("TEXTURE" + name, setInstruction.textureSetInstruction);
+	// 	this.setTextureBinding("SAMPLER" + name, setInstruction.samplerSetInstruction);
+	// }
 };

@@ -30,7 +30,7 @@ export class ResourcePack extends ObjectBase {
         super(
 			{
 				...args,
-				
+
                 name: (args.name !== undefined) ? args.name : ResourcePack.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : ResourcePack.DEFAULT.TYPE,
             }
@@ -111,7 +111,7 @@ export class ResourcePack extends ObjectBase {
 		if (this.resourceBindingGroups.has(groupNumber)) {
 			return this.resourceBindingGroups.get(groupNumber);
 		} else {
-			console.warn(`No resource binding group [${groupNumber}]!`);
+			console.warn(`No resource binding group [${groupNumber.toString().padStart(2, '0')}]!`);
 			return null;
 		}
 	}
@@ -119,92 +119,52 @@ export class ResourcePack extends ObjectBase {
 		this.resourceBindingGroups.set(groupNumber, resourceBindingGroup);
 	}
 
-	#getResourceBinding(resourceBindings, bindingNumber) {
-		if (resourceBindings.has(bindingNumber)) {
-			return resourceBindings.get(bindingNumber);
-		} else {
-			console.warn(`No resource binding [${bindingNumber}]!`);
-			return null;
-		}
-	}
+	// #getResourceBinding(resourceBindings, bindingNumber) {
+	// 	if (resourceBindings.has(bindingNumber)) {
+	// 		return resourceBindings.get(bindingNumber);
+	// 	} else {
+	// 		console.warn(`No resource binding [${bindingNumber}]!`);
+	// 		return null;
+	// 	}
+	// }
 	getResourceBindingInternal(groupNumber, bindingNumber) {
-		const resourceBindingGroup = this.getResourceBindingGroup(groupNumber);
-		const resourceBindings = resourceBindingGroup.resourceBindingsInternal;
-
-
-		return this.#getResourceBinding(resourceBindings, bindingNumber);
+		return this.getResourceBindingGroup(groupNumber).getResourceBindingInternal(bindingNumber);
 	}
 	getResourceBindingExternal(groupNumber, bindingNumber) {
-		const resourceBindingGroup = this.getResourceBindingGroup(groupNumber);
-		const resourceBindings = resourceBindingGroup.resourceBindingsExternal;
-
-
-		return this.#getResourceBinding(resourceBindings, bindingNumber);
+		return this.getResourceBindingGroup(groupNumber).getResourceBindingExternal(bindingNumber);
 	}
-	getResourceBindingAny(groupNumber, bindingNumber) {
-		const resourceBindingExternal = this.getResourceBindingExternal(groupNumber, bindingNumber);
-		if (resourceBindingExternal !== null) {
-			return resourceBindingExternal;
-		} else {
-			return this.getResourceBindingInternal(groupNumber, bindingNumber);
-		}
+	getResourceBindingExteInte(groupNumber, bindingNumber) {
+		return this.getResourceBindingGroup(groupNumber).getResourceBindingExteInte(bindingNumber);
 	}
 
-	#setResourceBinding(resourceBindings, bindingNumber, binding) {
-		resourceBindings.set(bindingNumber, binding);
-	}
 	setResourceBindingInternal(groupNumber, bindingNumber, binding) {
-		const resourceBindingGroup = this.getResourceBindingGroup(groupNumber);
-		const resourceBindings = resourceBindingGroup.resourceBindingsInternal;
-
-
-		this.#setResourceBinding(resourceBindings, bindingNumber, binding);
+		this.getResourceBindingGroup(groupNumber).setResourceBindingInternal(bindingNumber, binding);
 	}
 	setResourceBindingExternal(groupNumber, bindingNumber, binding) {
-		const resourceBindingGroup = this.getResourceBindingGroup(groupNumber);
-		const resourceBindings = resourceBindingGroup.resourceBindingsExternal;
-
-
-		this.#setResourceBinding(resourceBindings, bindingNumber, binding);
+		this.getResourceBindingGroup(groupNumber).setResourceBindingExternal(bindingNumber, binding);
 	}
-
-	#setResourceBindingValue(resourceBindings, bindingNumber, setInstruction) {
-		const resourceBinding = this.#getResourceBinding(resourceBindings, bindingNumber);
-
-
-		resourceBinding.dirtyCache.set(setInstruction, setInstruction);
+	setResourceBindingExteInte(groupNumber, bindingNumber, binding) {
+		this.getResourceBindingGroup(groupNumber).setResourceBindingExteInte(bindingNumber, binding);
 	}
-	setResourceBindingValueInternal(groupNumber, bindingNumber, setInstruction) {
-		const resourceBindingGroup = this.getResourceBindingGroup(groupNumber);
-		const resourceBindings = resourceBindingGroup.resourceBindingsInternal;
-
-
-		this.#setResourceBindingValue(resourceBindings, bindingNumber, setInstruction);
+	setMapBindingInternal(groupNumber, mapNumber, mapBinding, setInstruction = undefined) {
+		this.getResourceBindingGroup(groupNumber).setMapBindingInternal(mapNumber, mapBinding, setInstruction);
 	}
-	setResourceBindingValueExternal(groupNumber, bindingNumber, setInstruction) {
-		const resourceBindingGroup = this.getResourceBindingGroup(groupNumber);
-		const resourceBindings = resourceBindingGroup.resourceBindingsExternal;
-
-
-		this.#setResourceBindingValue(resourceBindings, bindingNumber, setInstruction);
+	setMapBindingExternal(groupNumber, mapNumber, mapBinding, setInstruction = undefined) {
+		this.getResourceBindingGroup(groupNumber).setMapBindingExternal(mapNumber, mapBinding, setInstruction);
 	}
 
 	//TODO set unifroms here?
 	// bindings (uniforms)
-	setMapBindingExternal(name, groupNumber, MAP_NUMBER, mapBinding, setInstruction = undefined) {
-		const textureBinding = mapBinding.textureBinding;
-		const samplerBinding = mapBinding.samplerBinding;
-		
-		//TODO add max + max here!!!!
-		this.setResourceBindingExternal(groupNumber, MAP_NUMBER + 10, textureBinding);
-		this.setResourceBindingExternal(groupNumber, MAP_NUMBER + 20, samplerBinding);
-
-
-		if (setInstruction) {
-			const textureSetInstruction = setInstruction.textureSetInstruction;
-			const samplerSetInstruction = setInstruction.samplerSetInstruction; //currently not in use
-			
-			this.setResourceBindingValueExternal(groupNumber, MAP_NUMBER + 10, textureSetInstruction);
-		}
+	setResourceBindingValueInternal(groupNumber, bindingNumber, setInstruction) {
+		this.getResourceBindingGroup(groupNumber).setResourceBindingValueInternal(bindingNumber, setInstruction);
+	}
+	setResourceBindingValueExternal(groupNumber, bindingNumber, setInstruction) {
+		this.getResourceBindingGroup(groupNumber).setResourceBindingValueExternal(bindingNumber, setInstruction);
+	}
+	setMapBindingValueInternal(groupNumber, mapNumber, mapBinding, setInstruction) {
+		this.getResourceBindingGroup(groupNumber).setMapBindingValueInternal(mapNumber, mapBinding, setInstruction);
+	}
+	setMapBindingValueExternal(groupNumber, mapNumber, mapBinding, setInstruction) {
+		this.getResourceBindingGroup(groupNumber).setMapBindingValueExternal(mapNumber, mapBinding, setInstruction);
 	}
 };
