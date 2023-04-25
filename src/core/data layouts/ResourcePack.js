@@ -75,7 +75,7 @@ export class ResourcePack extends ObjectBase {
 		for (let i = 0; i < this.maxBindingGroups; i++) {
 			const resourceBindingGroup = new UniformGroupDescriptor(
 				{
-					label: `resource grou [${i}]`,
+					label: `resource group [${i}]`,
 					number: i,
 					resourceBindingsInternal: new Map(),
 					resourceBindingsExternal: new Map(),
@@ -84,13 +84,13 @@ export class ResourcePack extends ObjectBase {
 					//TODO members not needed?
 					bindGroupLayoutDescriptor: new BindGroupLayoutDescriptor(
 						{
-							label: `object bind group layout [${i}]`,
+							label: `bind group layout [${i}]`,
 							entries: new Array()
 						}
 					),
 					bindGroupDescriptor: new BindGroupDescriptor(
 						{
-							label: `object bind group [${i}]`,
+							label: `bind group [${i}]`,
 							layout: null,
 							entries: new Array(),
 						}
