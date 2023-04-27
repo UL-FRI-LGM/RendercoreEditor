@@ -103,7 +103,7 @@ export class PointGeometry extends MeshGeometry {
 					)
 				}
 			);
-			verticesAttributeLocation.set(
+			verticesAttributeLocation.setValue(
 				"point vertices",
 				new BufferSetInstruction(
 					{
@@ -183,7 +183,7 @@ export class PointGeometry extends MeshGeometry {
 				}
 			);
 			// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
-			normalsAttributeLocation.set(
+			normalsAttributeLocation.setValue(
 				"point normals",
 				new BufferSetInstruction(
 					{
@@ -262,7 +262,7 @@ export class PointGeometry extends MeshGeometry {
 					)
 				}
 			);
-			uvsAttributeLocation.set(
+			uvsAttributeLocation.setValue(
 				"point uvs",
 				new BufferSetInstruction(
 					{

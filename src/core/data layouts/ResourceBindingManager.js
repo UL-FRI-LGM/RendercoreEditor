@@ -163,24 +163,26 @@ export class ResourceBindingManager extends ObjectBase { //RC resource binding m
     // #setUniformBinding(descriptor) {}
     setResourceBindingValue(resourceBinding) {
         const resourceDescriptor = resourceBinding.resourceDescriptor;
-        const bindGroupLayoutEntry = resourceBinding.bindGroupLayoutEntry;
-        const bindGroupEntry = resourceBinding.bindGroupEntry;
+        // const bindGroupLayoutEntry = resourceBinding.bindGroupLayoutEntry;
+        // const bindGroupEntry = resourceBinding.bindGroupEntry;
 
-        resourceBinding.dirtyCache.forEach((setInstruction, name) => {
-            switch (resourceDescriptor.type) {
-                case BufferDescriptor.DEFAULT.TYPE:
-                    this.#setBufferBindingValue(resourceDescriptor, setInstruction);
-                    break;
-                case TextureDescriptor.DEFAULT.TYPE:
-                    this.#setTextureBindingValue(resourceDescriptor, setInstruction);
-                    break;
-                case SamplerDescriptor.DEFAULT.TYPE:
-                    // this.#setSamplerBinding();
-                    break;
-                default:
-                    throw new Error(`Unknown resource type: [${resourceDescriptor.target}]!`);
-            }
-        });
-        resourceBinding.dirtyCache.clear();
+        if (resourceBinding.dirtyCache.size > 0) {
+            resourceBinding.dirtyCache.forEach((setInstruction, name) => {
+                switch (resourceDescriptor.type) {
+                    case BufferDescriptor.DEFAULT.TYPE:
+                        this.#setBufferBindingValue(resourceDescriptor, setInstruction);
+                        break;
+                    case TextureDescriptor.DEFAULT.TYPE:
+                        this.#setTextureBindingValue(resourceDescriptor, setInstruction);
+                        break;
+                    case SamplerDescriptor.DEFAULT.TYPE:
+                        // this.#setSamplerBinding();
+                        break;
+                    default:
+                        throw new Error(`Unknown resource type: [${resourceDescriptor.target}]!`);
+                }
+            });
+            resourceBinding.dirtyCache.clear();
+        }
     }
 };

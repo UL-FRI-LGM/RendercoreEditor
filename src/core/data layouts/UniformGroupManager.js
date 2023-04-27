@@ -125,34 +125,40 @@ export class UniformGroupManager extends ObjectBase { //RC uniform group manager
 
         const resourceBindingsInternal = uniformGroup.resourceBindingsInternal;
         const resourceBindingsExternal = uniformGroup.resourceBindingsExternal;
-		const bindGroupLayoutDescriptor = uniformGroup.bindGroupLayoutDescriptor;
-		const bindGroupDescriptor = uniformGroup.bindGroupDescriptor;
+		// const bindGroupLayoutDescriptor = uniformGroup.bindGroupLayoutDescriptor;
+		// const bindGroupDescriptor = uniformGroup.bindGroupDescriptor;
 
         // for (const [name, setInstruction] of uniformGroup.dirtyCache) {}
         // uniformGroup.dirtyCache.forEach((setInstruction, name) => {});
-		uniformGroup.dirtyCache.forEach((setInstruction, name) => {
-            console.warn(name, setInstruction);
+        // if (uniformGroup.dirtyCache.size > 0) {
+        //     uniformGroup.dirtyCache.forEach((setInstruction, name) => {
+        //         console.warn(name, setInstruction);
 
-            switch (setInstruction.target) {
-                case ResourceBinding.TARGET.INTERNAL:
-                    const resourceBindingInternal = resourceBindingsInternal.get(setInstruction.number);
-                    this.resourceBindingManager.setResourceBinding(resourceBindingInternal, setInstruction);
-                    break;
-                case ResourceBinding.TARGET.EXTERNAL:
-                    const resourceBindingExternal = resourceBindingsExternal.get(setInstruction.number);
-                    this.resourceBindingManager.setResourceBinding(resourceBindingExternal, setInstruction);
-                    break;
-                default:
-                    throw new Error(`Unknown set instruction target: [${setInstruction.target}]!`);
-            }
-		});
-        uniformGroup.dirtyCache.clear();
+        //         switch (setInstruction.target) {
+        //             case ResourceBinding.TARGET.INTERNAL:
+        //                 const resourceBindingInternal = resourceBindingsInternal.get(setInstruction.number);
+        //                 this.resourceBindingManager.setResourceBinding(resourceBindingInternal, setInstruction);
+        //                 break;
+        //             case ResourceBinding.TARGET.EXTERNAL:
+        //                 const resourceBindingExternal = resourceBindingsExternal.get(setInstruction.number);
+        //                 this.resourceBindingManager.setResourceBinding(resourceBindingExternal, setInstruction);
+        //                 break;
+        //             default:
+        //                 throw new Error(`Unknown set instruction target: [${setInstruction.target}]!`);
+        //         }
+        //     });
+        //     uniformGroup.dirtyCache.clear();
+        // }
 
-        resourceBindingsInternal.forEach((resourceBinding, number) => {
-            this.resourceBindingManager.setResourceBindingValue(resourceBinding);
-		});
-        resourceBindingsExternal.forEach((resourceBinding, number) => {
-            this.resourceBindingManager.setResourceBindingValue(resourceBinding);
-		});
+        if (resourceBindingsInternal.size > 0) {
+            resourceBindingsInternal.forEach((resourceBinding, number) => {
+                this.resourceBindingManager.setResourceBindingValue(resourceBinding);
+            });
+        }
+        if (resourceBindingsExternal.sie > 0) {
+            resourceBindingsExternal.forEach((resourceBinding, number) => {
+                this.resourceBindingManager.setResourceBindingValue(resourceBinding);
+            });
+        }
     }
 };

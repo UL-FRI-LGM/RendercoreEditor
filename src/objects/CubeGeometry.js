@@ -156,7 +156,7 @@ export class CubeGeometry extends MeshGeometry {
 					)
 				}
 			);
-			verticesAttributeLocation.set(
+			verticesAttributeLocation.setValue(
 				"cube vertices",
 				new BufferSetInstruction(
 					{
@@ -287,7 +287,7 @@ export class CubeGeometry extends MeshGeometry {
 				}
 			);
 			// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
-			normalsAttributeLocation.set(
+			normalsAttributeLocation.setValue(
 				"cube normals",
 				new BufferSetInstruction(
 					{
@@ -417,7 +417,7 @@ export class CubeGeometry extends MeshGeometry {
 					)
 				}
 			);
-			uvsAttributeLocation.set(
+			uvsAttributeLocation.setValue(
 				"cube uvs",
 				new BufferSetInstruction(
 					{

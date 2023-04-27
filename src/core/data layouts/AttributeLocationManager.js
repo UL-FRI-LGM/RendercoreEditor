@@ -83,7 +83,7 @@ export class AttributeLocationManager extends ObjectBase { //RC attribute locati
         return (this.attributeLocations.has(descriptor)) ? this.#deleteAttributeLocation(descriptor) : false;
     }
 
-    #setBufferLoaction(bufferDescriptor, setInstruction) {
+    #setBufferLoactionValue(bufferDescriptor, setInstruction) {
         const buffer_dst = this.bufferManager.getBuffer(bufferDescriptor);
         const offset_dst = setInstruction.destination.layout.offset;
         const arrayBuffer_src = setInstruction.source.arrayBuffer;
@@ -101,20 +101,21 @@ export class AttributeLocationManager extends ObjectBase { //RC attribute locati
             size * byteSize_src
         );
     }
-    #setResourceLocation(resourceLocation, setInstruction) {
+    #setResourceLocationValue(resourceLocation, setInstruction) {
         const resourceDescriptor = resourceLocation.bufferDescriptor;
 
-        this.#setBufferLoaction(resourceDescriptor, setInstruction);
+        this.#setBufferLoactionValue(resourceDescriptor, setInstruction);
     }
-    setAttributeLocation(descriptor) {
+    setAttributeLocationValue(descriptor) {
         const attributeLocation = this.attributeLocations.get(descriptor);
+        // const bufferDescriptor = attributeLocation.bufferDescriptor;
+        // const vertexBufferLayoutDescriptor = attributeLocation.vertexBufferLayoutDescriptor;
 
-        const bufferDescriptor = attributeLocation.bufferDescriptor;
-        const vertexBufferLayoutDescriptor = attributeLocation.vertexBufferLayoutDescriptor;
-
-        for (const [name, setInstruction] of attributeLocation.dirtyCache) {
-            this.#setResourceLocation(attributeLocation, setInstruction);
+        if (attributeLocation.dirtyCache.size > 0) {
+            attributeLocation.dirtyCache.forEach((setInstruction, name) => {
+                this.#setResourceLocationValue(attributeLocation, setInstruction);
+            });
+            attributeLocation.dirtyCache.clear();
         }
-        attributeLocation.dirtyCache.clear();
     }
 };

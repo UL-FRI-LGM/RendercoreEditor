@@ -356,7 +356,7 @@ export class OBJLoader extends XHRLoader {
 					)
 				}
 			);
-			meshGeometry.vertices.set(
+			meshGeometry.vertices.setValue(
 				"OBJ vertices",
 				new BufferSetInstruction(
 					{
@@ -413,7 +413,7 @@ export class OBJLoader extends XHRLoader {
 						)
 					}
 				);
-				meshGeometry.normals.set(
+				meshGeometry.normals.setValue(
 					"OBJ normals",
 					new BufferSetInstruction(
 						{
@@ -473,7 +473,7 @@ export class OBJLoader extends XHRLoader {
 						)
 					}
 				);
-				meshGeometry.uvs.set(
+				meshGeometry.uvs.setValue(
 					"OBJ uvs",
 					new BufferSetInstruction(
 						{

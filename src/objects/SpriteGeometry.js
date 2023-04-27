@@ -123,7 +123,7 @@ export class SpriteGeometry extends MeshGeometry {
 					)
 				}
 			);
-			verticesAttributeLocation.set(
+			verticesAttributeLocation.setValue(
 				"sprite vertices",
 				new BufferSetInstruction(
 					{
@@ -209,7 +209,7 @@ export class SpriteGeometry extends MeshGeometry {
 				}
 			);
 			// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
-			normalsAttributeLocation.set(
+			normalsAttributeLocation.setValue(
 				"sprite normals",
 				new BufferSetInstruction(
 					{
@@ -294,7 +294,7 @@ export class SpriteGeometry extends MeshGeometry {
 					)
 				}
 			);
-			uvsAttributeLocation.set(
+			uvsAttributeLocation.setValue(
 				"sprite uvs",
 				new BufferSetInstruction(
 					{
@@ -384,7 +384,7 @@ export class SpriteGeometry extends MeshGeometry {
 					)
 				}
 			);
-			directionsAttributeLocation.set(
+			directionsAttributeLocation.setValue(
 				"sprite vertices",
 				new BufferSetInstruction(
 					{

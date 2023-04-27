@@ -219,7 +219,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				)
 			}
 		);
-		wireframeIndicesAttributeLocation.set(
+		wireframeIndicesAttributeLocation.setValue(
 			"mesh wireframe indices",
 			new BufferSetInstruction(
 				{
@@ -394,7 +394,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 			}
 		);
 		normalsAttributeLocation.normalize();
-		normalsAttributeLocation.set(
+		normalsAttributeLocation.setValue(
 			"mesh normals",
 			new BufferSetInstruction(
 				{
@@ -535,7 +535,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				}
 			);
 			// tangentsAttributeLocation.normalize();
-			tangentsAttributeLocation.set(
+			tangentsAttributeLocation.setValue(
 				"mesh tangents",
 				new BufferSetInstruction(
 					{
@@ -668,7 +668,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				}
 			);
 			// tangentsAttributeLocation.normalize();
-			tangentsAttributeLocation.set(
+			tangentsAttributeLocation.setValue(
 				"mesh tangents",
 				new BufferSetInstruction(
 					{
@@ -807,7 +807,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				}
 			);
 			// bitangentsAttributeLocation.normalize();
-			bitangentsAttributeLocation.set(
+			bitangentsAttributeLocation.setValue(
 				"mesh bitangents",
 				new BufferSetInstruction(
 					{
@@ -940,7 +940,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				}
 			);
 			// bitangentsAttributeLocation.normalize();
-			bitangentsAttributeLocation.set(
+			bitangentsAttributeLocation.setValue(
 				"mesh bitangents",
 				new BufferSetInstruction(
 					{

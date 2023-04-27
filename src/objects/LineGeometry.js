@@ -108,7 +108,7 @@ export class LineGeometry extends MeshGeometry {
 					)
 				}
 			);
-			verticesAttributeLocation.set(
+			verticesAttributeLocation.setValue(
 				"line vertices",
 				new BufferSetInstruction(
 					{
@@ -189,7 +189,7 @@ export class LineGeometry extends MeshGeometry {
 				}
 			);
 			// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
-			normalsAttributeLocation.set(
+			normalsAttributeLocation.setValue(
 				"line normals",
 				new BufferSetInstruction(
 					{
@@ -269,7 +269,7 @@ export class LineGeometry extends MeshGeometry {
 					)
 				}
 			);
-			uvsAttributeLocation.set(
+			uvsAttributeLocation.setValue(
 				"line uvs",
 				new BufferSetInstruction(
 					{

@@ -116,7 +116,7 @@ export class QuadGeometry extends MeshGeometry {
 					)
 				}
 			);
-			verticesAttributeLocation.set(
+			verticesAttributeLocation.setValue(
 				"quad vertices",
 				new BufferSetInstruction(
 					{
@@ -202,7 +202,7 @@ export class QuadGeometry extends MeshGeometry {
 				}
 			);
 			// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
-			normalsAttributeLocation.set(
+			normalsAttributeLocation.setValue(
 				"quad normals",
 				new BufferSetInstruction(
 					{
@@ -287,7 +287,7 @@ export class QuadGeometry extends MeshGeometry {
 					)
 				}
 			);
-			uvsAttributeLocation.set(
+			uvsAttributeLocation.setValue(
 				"quad uvs",
 				new BufferSetInstruction(
 					{
