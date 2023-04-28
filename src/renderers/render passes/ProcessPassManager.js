@@ -2,7 +2,6 @@ import { ShaderLoader } from "../../loaders/ShaderLoader.js";
 import { ShaderBuilder } from "../../program_management/ShaderBuilder.js";
 import { LoadingManager } from "../../loaders/LoadingManager.js";
 import { PassManager } from "./PassManager.js";
-import { RenderArrayManager } from "../RenderArrayManager.js";
 import { MeshBasicMaterial, MeshLambertMaterial } from "../../RenderCore.js";
 import { PostprocessToneMappingMaterial } from "../../materials/PostprocessToneMappingMaterial.js";
 import { PostprocessInvertMaterial } from "../../materials/PostprocessInvertMaterial.js";
@@ -49,7 +48,6 @@ export class ProcessPassManager extends PassManager { //RC process (compute/rend
 				}
 			);
 
-			this.renderArrayManager = new RenderArrayManager({});
 			this.textureMap = new Map();
 
 
@@ -75,7 +73,7 @@ export class ProcessPassManager extends PassManager { //RC process (compute/rend
 		return super.initializeInternal(args);
 	}
 	preprocessInternal(args = {}) {
-		this.renderArrayManager.clearAll();
+
 	}
 	processInternal(args = {}) {
 		super.processInternal(args);

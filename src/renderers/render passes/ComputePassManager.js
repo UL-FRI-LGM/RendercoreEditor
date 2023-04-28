@@ -1,7 +1,6 @@
 import { ShaderLoader } from "../../loaders/ShaderLoader.js";
 import { ShaderBuilder } from "../../program_management/ShaderBuilder.js";
 import { LoadingManager } from "../../loaders/LoadingManager.js";
-import { RenderArrayManager } from "../RenderArrayManager.js";
 import { MeshBasicMaterial } from "../../materials/MeshBasicMaterial.js";
 import { MeshLambertMaterial } from "../../materials/MeshLambertMaterial.js";
 import { PostprocessToneMappingMaterial } from "../../materials/PostprocessToneMappingMaterial.js";
@@ -50,7 +49,6 @@ export class ComputePassManager extends PassManager { //RC compute pass manager
 			);
 
 
-			this.renderArrayManager = new RenderArrayManager({});
 			this.textureMap = new Map();
 
 

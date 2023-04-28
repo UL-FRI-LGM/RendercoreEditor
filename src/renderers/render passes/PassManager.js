@@ -7,12 +7,12 @@ import { LoadingManager } from "../../loaders/LoadingManager.js";
 export class PassManager extends ObjectBase { //RC pass manager base
 
 
-    static DEFAULT = {
-        NAME: "",
+	static DEFAULT = {
+		NAME: "",
 		TYPE: "PassManager",
-    };
+	};
 
-	
+
 	#context;
 	#canvas;
 
@@ -58,9 +58,9 @@ export class PassManager extends ObjectBase { //RC pass manager base
 
 
 	get context() { return this.#context; }
-    set context(context) { this.#context = context; }
+	set context(context) { this.#context = context; }
 	get canvas() { return this.#canvas; }
-    set canvas(canvas) { this.#canvas = canvas; }
+	set canvas(canvas) { this.#canvas = canvas; }
 
 	get loadingManager() { return this.#loadingManager; }
 	set loadingManager(loadingManager) { this.#loadingManager = loadingManager; }
@@ -71,20 +71,20 @@ export class PassManager extends ObjectBase { //RC pass manager base
 	get shaderCache() { return this.#shaderCache; }
 	set shaderCache(shaderCache) { this.#shaderCache = shaderCache; }
 
-    get descriptors() { return this.#descriptors; }
-    set descriptors(descriptors) { this.#descriptors = descriptors; }
-    get passes() { return this.#passes; }
-    set passes(passes) { this.#passes = passes; }
+	get descriptors() { return this.#descriptors; }
+	set descriptors(descriptors) { this.#descriptors = descriptors; }
+	get passes() { return this.#passes; }
+	set passes(passes) { this.#passes = passes; }
 
 	get commandEncoder() { return this.#commandEncoder; }
-    set commandEncoder(commandEncoder) { this.#commandEncoder = commandEncoder; }
+	set commandEncoder(commandEncoder) { this.#commandEncoder = commandEncoder; }
 	get passEncoder() { return this.#passEncoder; }
-    set passEncoder(passEncoder) { this.#passEncoder = passEncoder; }
+	set passEncoder(passEncoder) { this.#passEncoder = passEncoder; }
 
 	get pipelineLayoutDescriptors() { return this.#pipelineLayoutDescriptors; }
-    set pipelineLayoutDescriptors(pipelineLayoutDescriptors) { this.#pipelineLayoutDescriptors = pipelineLayoutDescriptors; }
+	set pipelineLayoutDescriptors(pipelineLayoutDescriptors) { this.#pipelineLayoutDescriptors = pipelineLayoutDescriptors; }
 	get pipeline() { return this.#pipeline; }
-    set pipeline(pipeline) { this.#pipeline = pipeline; }
+	set pipeline(pipeline) { this.#pipeline = pipeline; }
 
 	get viewport() {
 		return Array.from(this.passes).map(([name, pass]) => {
@@ -162,7 +162,6 @@ export class PassManager extends ObjectBase { //RC pass manager base
 					scene: args.scene,
 					camera: args.camera,
 					renderPassManager: this,
-					renderArrayManager: this.renderArrayManager,
 					textureMap: this.textureMap,
 				}
 			);
