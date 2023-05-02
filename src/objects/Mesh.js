@@ -23,9 +23,12 @@ export class Mesh extends Group {
 
 		INSTANCED: false,
 		INSTANCED_TRANSLATION: false,
+		VERTEX_COUNT: null,
 		INSTANCE_COUNT: 1,
 		FIRST_VERTEX: 0,
 		FIRST_INSTANCE: 0,
+
+		INSTANCES: new Array(),
 	};
 
 
@@ -36,9 +39,12 @@ export class Mesh extends Group {
 
 	#instanced;
 	#instancedTranslation;
+	#vertexCount;
 	#instanceCount;
 	#firstVertex = 0;
 	#firstInstance = 0;
+
+	#instances;
 
 
 	constructor(args = {}) {
@@ -61,6 +67,7 @@ export class Mesh extends Group {
 
 		this.instanced = (args.instanced !== undefined) ? args.instanced : Mesh.DEFAULT.INSTANCED;
 		this.instancedTranslation = (args.instancedTranslation !== undefined) ? args.instancedTranslation : Mesh.DEFAULT.INSTANCED_TRANSLATION;
+		this.vertexCount = (args.vertexCount !== undefined) ? args.vertexCount : Mesh.DEFAULT.VERTEX_COUNT;
 		this.instanceCount = (args.instanceCount !== undefined) ? args.instanceCount : Mesh.DEFAULT.INSTANCE_COUNT;
 		this.firstVertex = (args.firstVertex !== undefined) ? args.firstVertex : Mesh.DEFAULT.FIRST_VERTEX;
 		this.firstInstance = (args.firstInstance !== undefined) ? args.firstInstance : Mesh.DEFAULT.FIRST_INSTANCE;
@@ -198,6 +205,8 @@ export class Mesh extends Group {
 	set instancedTranslation(instancedTranslation) {
 		this.#instancedTranslation = instancedTranslation;
 	}
+	get vertexCount() { return this.#vertexCount ?? this.geometry.vertices.count(); }
+	set vertexCount(vertexCount) { this.#vertexCount = vertexCount; }
 	get instanceCount() { return this.#instanceCount; }
 	set instanceCount(instanceCount) { this.#instanceCount = instanceCount; }
 	get firstVertex() { return this.#firstVertex; }
@@ -211,13 +220,14 @@ export class Mesh extends Group {
 	}
 
 
-	setup() {
+	setup(camera) {
 		super.setup();
 	}
 	update(camera) {
 		super.update();
 
 
+		// PERFORMANCE
 		this.MVMat.multiplyMatrices(camera.VMat, this.g_MMat);
 		this.NMat.getNormalMatrix(this.MVMat);
 
