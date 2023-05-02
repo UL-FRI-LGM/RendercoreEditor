@@ -15,6 +15,8 @@ export class LineGeometry extends MeshGeometry {
 	static DEFAULT = {
 		TYPE: "LineGeometry",
 		NAME: "",
+
+		INDEXED: false,
 	};
 	
 
@@ -22,8 +24,11 @@ export class LineGeometry extends MeshGeometry {
 		super(
 			{
 				...args,
+
 				name: (args.name !== undefined) ? args.name : LineGeometry.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : LineGeometry.DEFAULT.TYPE,
+
+				indexed: (args.indexed !== undefined) ? args.indexed : LineGeometry.DEFAULT.INDEXED,
 
 				indices: (args.indices !== undefined) ? args.indices : LineGeometry.assembleIndices(args),
 				vertices: (args.vertices !== undefined) ? args.vertices : LineGeometry.assembleVertices(args),

@@ -15,6 +15,8 @@ export class QuadGeometry extends MeshGeometry {
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "QuadGeometry",
+
+		INDEXED: false,
 	};
 	
 
@@ -25,6 +27,8 @@ export class QuadGeometry extends MeshGeometry {
 
 				name: (args.name !== undefined) ? args.name : QuadGeometry.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : QuadGeometry.DEFAULT.TYPE,
+
+				indexed: (args.indexed !== undefined) ? args.indexed : QuadGeometry.DEFAULT.INDEXED,
 
 				indices: (args.indices !== undefined) ? args.indices : QuadGeometry.assembleIndices(args),
 				vertices: (args.vertices !== undefined) ? args.vertices : QuadGeometry.assembleVertices(args),

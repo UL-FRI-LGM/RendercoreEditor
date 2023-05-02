@@ -15,6 +15,8 @@ export class SpriteGeometry extends MeshGeometry {
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "SpriteGeometry",
+
+		INDEXED: false,
 	};
 	
 
@@ -28,6 +30,8 @@ export class SpriteGeometry extends MeshGeometry {
 
 				name: (args.name !== undefined) ? args.name : SpriteGeometry.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : SpriteGeometry.DEFAULT.TYPE,
+
+				indexed: (args.indexed !== undefined) ? args.indexed : SpriteGeometry.DEFAULT.INDEXED,
 
 				indices: (args.indices !== undefined) ? args.indices : SpriteGeometry.assembleIndices(args),
 				vertices: (args.vertices !== undefined) ? args.vertices : SpriteGeometry.assembleVertices(args),

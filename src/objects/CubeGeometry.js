@@ -15,6 +15,8 @@ export class CubeGeometry extends MeshGeometry {
 	static DEFAULT = {
 		TYPE: "CubeGeometry",
 		NAME: "",
+
+		INDEXED: false,
 	};
 	
 
@@ -22,8 +24,11 @@ export class CubeGeometry extends MeshGeometry {
 		super(
 			{
 				...args,
+
 				name: (args.name !== undefined) ? args.name : CubeGeometry.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : CubeGeometry.DEFAULT.TYPE,
+
+				indexed: (args.indexed !== undefined) ? args.indexed : CubeGeometry.DEFAULT.INDEXED,
 
 				indices: (args.indices !== undefined) ? args.indices : CubeGeometry.assembleIndices(args),
 				vertices: (args.vertices !== undefined) ? args.vertices : CubeGeometry.assembleVertices(args),

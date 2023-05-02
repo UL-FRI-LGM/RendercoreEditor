@@ -15,6 +15,8 @@ export class PointGeometry extends MeshGeometry {
 	static DEFAULT = {
 		TYPE: "PointGeometry",
 		NAME: "",
+
+		INDEXED: false,
 	};
 	
 
@@ -22,8 +24,11 @@ export class PointGeometry extends MeshGeometry {
 		super(
 			{
 				...args,
+
 				name: (args.name !== undefined) ? args.name : PointGeometry.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : PointGeometry.DEFAULT.TYPE,
+
+				indexed: (args.indexed !== undefined) ? args.indexed : PointGeometry.DEFAULT.INDEXED,
 
 				indices: (args.indices !== undefined) ? args.indices : PointGeometry.assembleIndices(args),
 				vertices: (args.vertices !== undefined) ? args.vertices : PointGeometry.assembleVertices(args),

@@ -16,6 +16,8 @@ export class TriangleGeometry extends MeshGeometry {
 	static DEFAULT = {
 		TYPE: "TriangleGeometry",
 		NAME: "",
+
+		INDEXED: false,
 	};
 	
 
@@ -23,8 +25,11 @@ export class TriangleGeometry extends MeshGeometry {
 		super(
 			{
 				...args,
+
 				name: (args.name !== undefined) ? args.name : TriangleGeometry.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : TriangleGeometry.DEFAULT.TYPE,
+
+				indexed: (args.indexed !== undefined) ? args.indexed : TriangleGeometry.DEFAULT.INDEXED,
 
 				indices: (args.indices !== undefined) ? args.indices : TriangleGeometry.assembleIndices(args),
 				vertices: (args.vertices !== undefined) ? args.vertices : TriangleGeometry.assembleVertices(args),
@@ -105,7 +110,7 @@ export class TriangleGeometry extends MeshGeometry {
 					)
 				}
 			);
-			verticesAttributeLocation.set(
+			verticesAttributeLocation.setValue(
 				"triangle vertices",
 				new BufferSetInstruction(
 					{
@@ -197,7 +202,7 @@ export class TriangleGeometry extends MeshGeometry {
 				}
 			);
 			normalsAttributeLocation.normalize();
-			normalsAttributeLocation.set(
+			normalsAttributeLocation.setValue(
 				"triangle normals",
 				new BufferSetInstruction(
 					{
@@ -278,7 +283,7 @@ export class TriangleGeometry extends MeshGeometry {
 					)
 				}
 			);
-			uvsAttributeLocation.set(
+			uvsAttributeLocation.setValue(
 				"triangle uvs",
 				new BufferSetInstruction(
 					{
