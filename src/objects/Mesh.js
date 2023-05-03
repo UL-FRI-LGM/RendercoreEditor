@@ -31,6 +31,7 @@ export class Mesh extends Group {
 
 		// INSTANCED: false,
 		// INSTANCED_TRANSLATION: false,
+		INDEX_COUNT: Infinity,
 		VERTEX_COUNT: Infinity,
 		INSTANCE_COUNT: 1,
 		FIRST_VERTEX: 0,
@@ -47,6 +48,7 @@ export class Mesh extends Group {
 
 	// #instanced;
 	// #instancedTranslation;
+	#indexCount = Infinity;
 	#vertexCount = Infinity;
 	#instanceCount = 1;
 	#firstVertex = 0;
@@ -75,6 +77,7 @@ export class Mesh extends Group {
 
 		// this.instanced = (args.instanced !== undefined) ? args.instanced : Mesh.DEFAULT.INSTANCED;
 		// this.instancedTranslation = (args.instancedTranslation !== undefined) ? args.instancedTranslation : Mesh.DEFAULT.INSTANCED_TRANSLATION;
+		this.indexCount = (args.indexCount !== undefined) ? args.indexCount : Mesh.DEFAULT.INDEX_COUNT;
 		this.vertexCount = (args.vertexCount !== undefined) ? args.vertexCount : Mesh.DEFAULT.VERTEX_COUNT;
 		this.instanceCount = (args.instanceCount !== undefined) ? args.instanceCount : Mesh.DEFAULT.INSTANCE_COUNT;
 		this.firstVertex = (args.firstVertex !== undefined) ? args.firstVertex : Mesh.DEFAULT.FIRST_VERTEX;
@@ -106,6 +109,13 @@ export class Mesh extends Group {
 	// set instancedTranslation(instancedTranslation) {
 	// 	this.#instancedTranslation = instancedTranslation;
 	// }
+	get indexCount() {
+		// return this.#indexCount ?? this.geometry.indices.count();
+		return Math.min(this.#indexCount, this.geometry.indices.count());
+	}
+	set indexCount(indexCount) {
+		this.#indexCount = Math.floor(indexCount);
+	}
 	get vertexCount() {
 		// return this.#vertexCount ?? this.geometry.vertices.count();
 		return Math.min(this.#vertexCount, this.geometry.vertices.count());
