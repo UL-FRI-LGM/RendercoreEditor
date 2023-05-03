@@ -58,7 +58,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 
 		this.attributeLocationDescriptors = new Map(
 			[
-				["indices", null],
+				// ["indices", null],
 				["vertices", null],
 				["normals", null],
 				["tangents", null],
@@ -100,7 +100,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 	get indices() { return this.#indices; }
 	set indices(indices) { 
 		this.#indices = indices;
-		this.attributeLocationDescriptors.set("indices", indices);
+		// this.attributeLocationDescriptors.set("indices", indices);
 	}
 	get vertices() { return this.#vertices; }
 	set vertices(vertices) { 

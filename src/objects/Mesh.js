@@ -34,8 +34,10 @@ export class Mesh extends Group {
 		INDEX_COUNT: Infinity,
 		VERTEX_COUNT: Infinity,
 		INSTANCE_COUNT: 1,
+		FIRST_INDEX: 0,
 		FIRST_VERTEX: 0,
 		FIRST_INSTANCE: 0,
+		BASE_VERTEX: 0,
 
 		INSTANCES: new Array(new Matrix4()),
 	};
@@ -51,8 +53,10 @@ export class Mesh extends Group {
 	#indexCount = Infinity;
 	#vertexCount = Infinity;
 	#instanceCount = 1;
+	#firstIndex = 0;
 	#firstVertex = 0;
 	#firstInstance = 0;
+	#baseVertex = 0;
 
 	#instances = new Array(new Matrix4());
 
@@ -80,8 +84,10 @@ export class Mesh extends Group {
 		this.indexCount = (args.indexCount !== undefined) ? args.indexCount : Mesh.DEFAULT.INDEX_COUNT;
 		this.vertexCount = (args.vertexCount !== undefined) ? args.vertexCount : Mesh.DEFAULT.VERTEX_COUNT;
 		this.instanceCount = (args.instanceCount !== undefined) ? args.instanceCount : Mesh.DEFAULT.INSTANCE_COUNT;
+		this.firstIndex = (args.firstIndex !== undefined) ? args.firstIndex : Mesh.DEFAULT.FIRST_INDEX;
 		this.firstVertex = (args.firstVertex !== undefined) ? args.firstVertex : Mesh.DEFAULT.FIRST_VERTEX;
 		this.firstInstance = (args.firstInstance !== undefined) ? args.firstInstance : Mesh.DEFAULT.FIRST_INSTANCE;
+		this.baseVertex = (args.baseVertex !== undefined) ? args.baseVertex : Mesh.DEFAULT.BASE_VERTEX;
 
 		this.instances = (args.instances !== undefined) ? args.instances : new Array(...Mesh.DEFAULT.INSTANCES);
 
@@ -133,10 +139,14 @@ export class Mesh extends Group {
 
 		this.updateResources();
 	}
+	get firstIndex() { return this.#firstIndex; }
+	set firstIndex(firstIndex) { this.#firstIndex = firstIndex; }
 	get firstVertex() { return this.#firstVertex; }
 	set firstVertex(firstVertex) { this.#firstVertex = firstVertex; }
 	get firstInstance() { return this.#firstInstance; }
 	set firstInstance(firstInstance) { this.#firstInstance = firstInstance; }
+	get baseVertex() { return this.#baseVertex; }
+	set baseVertex(baseVertex) { this.#baseVertex = baseVertex; }
 
 	get instances() { return this.#instances; }
 	set instances(instances) {

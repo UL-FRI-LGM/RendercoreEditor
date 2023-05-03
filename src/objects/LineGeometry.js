@@ -49,7 +49,81 @@ export class LineGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 
 		if (indexed) {
-			//TODO
+			let indicesArray = new Array();
+
+			for (let p = 0; p < positions.length; p++) {
+				const instanceSize = 2 * 1;
+				const instanceOffset = instanceSize * p;
+				const array = new Array(instanceSize);
+
+
+				array[0] = instanceOffset+0; //vertex 0
+				array[1] = instanceOffset+1; //vertex 1
+
+
+				indicesArray = indicesArray.concat(array);
+			}
+
+			const indicesArrayBuffer = new Uint32Array(indicesArray);
+			const indicesAttributeLocation = new AttributeLocation(
+				{
+					number: null,
+					itemSize: 1,
+					arrayBuffer: indicesArrayBuffer,
+
+					bufferDescriptor: new BufferDescriptor(
+						{
+							label: "line indices buffer",
+							size: indicesArrayBuffer.length,
+							usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
+						}
+					),
+					// vertexBufferLayoutDescriptor: new VertexBufferLayout(
+					// 	{
+					// 		arrayStride: 1 * 4,
+					// 		stepMode: VertexStepMode.VERTEX,
+					// 		attributes: [
+					// 			new VertexAttribute(
+					// 				{
+					// 					format: VertexFormat.UINT_32,
+					// 					offset: 0,
+					// 					shaderLocation: 0,
+					// 				}
+					// 			)
+					// 		],			
+					// 	}
+					// )
+					vertexBufferLayoutDescriptor: null
+				}
+			);
+			indicesAttributeLocation.setValue(
+				"line indices",
+				new BufferSetInstruction(
+					{
+						label: "line indices",
+	
+						number: null,
+	
+						source: {
+							arrayBuffer: indicesArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: indicesArrayBuffer.length
+					}
+				)
+			);
+
+
+			return indicesAttributeLocation;
 		} else {
 			return null;
 		}
@@ -59,11 +133,10 @@ export class LineGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
+		let verticesArray = new Array();
+
+
 		if (indexed) {
-
-		} else {
-			let verticesArray = new Array();
-
 			for (let p = 0; p < positions.length; p+=2) {
 				const array = new Array(2 * 3);
 				const position1 = positions[p];
@@ -76,231 +149,273 @@ export class LineGeometry extends MeshGeometry {
 				const pz2 = position2.z;
 
 
-				array[0] = px1; array[1] = py1; array[2] = pz1;
-				array[3] = px2; array[4] = py2; array[5] = pz2;
+				array[0] = px1; array[1] = py1; array[2] = pz1; //vertex 0
+				array[3] = px2; array[4] = py2; array[5] = pz2; //vertex 1
 
 
 				verticesArray = verticesArray.concat(array);
 			}
+		} else {
+			for (let p = 0; p < positions.length; p+=2) {
+				const array = new Array(2 * 3);
+				const position1 = positions[p];
+				const position2 = positions[p + 1];
+				const px1 = position1.x;
+				const py1 = position1.y;
+				const pz1 = position1.z;
+				const px2 = position2.x;
+				const py2 = position2.y;
+				const pz2 = position2.z;
 
-			const verticesArrayBuffer = new Float32Array(verticesArray);
-			const verticesAttributeLocation = new AttributeLocation(
-				{
-					itemSize: 3,
-					arrayBuffer: verticesArrayBuffer,
-					bufferDescriptor: new BufferDescriptor(
-						{
-							label: "line vertices buffer",
-							size: verticesArrayBuffer.length,
-							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-							mappedAtCreation: false
-						}
-					),
-					vertexBufferLayoutDescriptor: new VertexBufferLayout(
-						{
-							arrayStride: 3 * 4,
-							stepMode: VertexStepMode.VERTEX,
-							attributes: [
-								new VertexAttribute(
-									{
-										format: VertexFormat.FLOAT_32x3,
-										offset: 0,
-										shaderLocation: 0,
-									}
-								)
-							],						
-						}
-					)
-				}
-			);
-			verticesAttributeLocation.setValue(
-				"line vertices",
-				new BufferSetInstruction(
+
+				array[0] = px1; array[1] = py1; array[2] = pz1; //vertex 0
+				array[3] = px2; array[4] = py2; array[5] = pz2; //vertex 1
+
+
+				verticesArray = verticesArray.concat(array);
+			}
+		}
+
+
+		const verticesArrayBuffer = new Float32Array(verticesArray);
+		const verticesAttributeLocation = new AttributeLocation(
+			{
+				itemSize: 3,
+				arrayBuffer: verticesArrayBuffer,
+				bufferDescriptor: new BufferDescriptor(
 					{
-						label: "line vertices",
-	
-						number: 0,
-	
-						source: {
-							arrayBuffer: verticesArrayBuffer,
-							layout: {
-								offset: (0),
-							}
-						},
-						destination: {
-							buffer: null,
-							layout: {
-								offset: (0)
-							}
-						},
-						size: verticesArrayBuffer.length
+						label: "line vertices buffer",
+						size: verticesArrayBuffer.length,
+						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+						mappedAtCreation: false
+					}
+				),
+				vertexBufferLayoutDescriptor: new VertexBufferLayout(
+					{
+						arrayStride: 3 * 4,
+						stepMode: VertexStepMode.VERTEX,
+						attributes: [
+							new VertexAttribute(
+								{
+									format: VertexFormat.FLOAT_32x3,
+									offset: 0,
+									shaderLocation: 0,
+								}
+							)
+						],						
 					}
 				)
-			);
+			}
+		);
+		verticesAttributeLocation.setValue(
+			"line vertices",
+			new BufferSetInstruction(
+				{
+					label: "line vertices",
+
+					number: 0,
+
+					source: {
+						arrayBuffer: verticesArrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0)
+						}
+					},
+					size: verticesArrayBuffer.length
+				}
+			)
+		);
 
 
-			return verticesAttributeLocation;
-		}
+		return verticesAttributeLocation;
 	}
 	static assembleNormals(args = {}) {
 		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
-		if (indexed) {
-			//TODO
-		} else {
-			let normalsArray = new Array();
+		let normalsArray = new Array();
 
+
+		if (indexed) {
 			for (let p = 0; p < positions.length; p+=2) {
 				const array = new Array(2 * 3);
 
 
-				array[0] = +0; array[1] = +0; array[2] = +1;
-				array[3] = +0; array[4] = +0; array[5] = +1;
+				array[0] = +0; array[1] = +0; array[2] = +1; //vertex 0
+				array[3] = +0; array[4] = +0; array[5] = +1; //vertex 1
 
 
 				normalsArray = normalsArray.concat(array);
 			}
+		} else {
+			for (let p = 0; p < positions.length; p+=2) {
+				const array = new Array(2 * 3);
 
-			const normalsArrayBuffer = new Float32Array(normalsArray);
-			const normalsAttributeLocation = new AttributeLocation(
-				{
-					itemSize: 3,
-					arrayBuffer: normalsArrayBuffer,
-					bufferDescriptor: new BufferDescriptor(
-						{
-							label: "line normals buffer",
-							size: normalsArrayBuffer.length,
-							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-							mappedAtCreation: false
-						}
-					),
-					vertexBufferLayoutDescriptor: new VertexBufferLayout(
-						{
-							arrayStride: 3 * 4,
-							stepMode: VertexStepMode.VERTEX,
-							attributes: [
-								new VertexAttribute(
-									{
-										format: VertexFormat.FLOAT_32x3,
-										offset: 0,
-										shaderLocation: 1,
-									}
-								)
-							],						
-						}
-					)
-				}
-			);
-			// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
-			normalsAttributeLocation.setValue(
-				"line normals",
-				new BufferSetInstruction(
+
+				array[0] = +0; array[1] = +0; array[2] = +1; //vertex 0
+				array[3] = +0; array[4] = +0; array[5] = +1; //vertex 1
+
+
+				normalsArray = normalsArray.concat(array);
+			}
+		}
+
+
+		const normalsArrayBuffer = new Float32Array(normalsArray);
+		const normalsAttributeLocation = new AttributeLocation(
+			{
+				itemSize: 3,
+				arrayBuffer: normalsArrayBuffer,
+				bufferDescriptor: new BufferDescriptor(
 					{
-						label: "line normals",
-	
-						number: 1,
-	
-						source: {
-							arrayBuffer: normalsArrayBuffer,
-							layout: {
-								offset: (0),
-							}
-						},
-						destination: {
-							buffer: null,
-							layout: {
-								offset: (0)
-							}
-						},
-						size: normalsArrayBuffer.length
+						label: "line normals buffer",
+						size: normalsArrayBuffer.length,
+						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+						mappedAtCreation: false
+					}
+				),
+				vertexBufferLayoutDescriptor: new VertexBufferLayout(
+					{
+						arrayStride: 3 * 4,
+						stepMode: VertexStepMode.VERTEX,
+						attributes: [
+							new VertexAttribute(
+								{
+									format: VertexFormat.FLOAT_32x3,
+									offset: 0,
+									shaderLocation: 1,
+								}
+							)
+						],						
 					}
 				)
-			);
+			}
+		);
+		// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
+		normalsAttributeLocation.setValue(
+			"line normals",
+			new BufferSetInstruction(
+				{
+					label: "line normals",
+
+					number: 1,
+
+					source: {
+						arrayBuffer: normalsArrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0)
+						}
+					},
+					size: normalsArrayBuffer.length
+				}
+			)
+		);
 
 
-			return normalsAttributeLocation;
-		}
+		return normalsAttributeLocation;
 	}
 	static assembleUVs(args = {}) {
 		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
-		if (indexed) {
-			//TODO
-		} else {
-			let uvsArray = new Array();
+		let uvsArray = new Array();
 
+
+		if (indexed) {
 			for (let p = 0; p < positions.length; p+=2) {
 				const array = new Array(2 * 2);
 
 
-				array[0] = +0; array[1] = +0;
-				array[2] = +0; array[3] = +0;
+				array[0] = +0; array[1] = +0; //vertex 0
+				array[2] = +0; array[3] = +0; //vertex 1
 
 
 				uvsArray = uvsArray.concat(array);
 			}
+		} else {
+			for (let p = 0; p < positions.length; p+=2) {
+				const array = new Array(2 * 2);
 
-			const uvsArrayBuffer = new Float32Array(uvsArray);
-			const uvsAttributeLocation = new AttributeLocation(
-				{
-					itemSize: 2,
-					arrayBuffer: uvsArrayBuffer,
-					bufferDescriptor: new BufferDescriptor(
-						{
-							label: "line uvs buffer",
-							size: uvsArrayBuffer.length,
-							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-							mappedAtCreation: false
-						}
-					),
-					vertexBufferLayoutDescriptor: new VertexBufferLayout(
-						{
-							arrayStride: 2 * 4,
-							stepMode: VertexStepMode.VERTEX,
-							attributes: [
-								new VertexAttribute(
-									{
-										format: VertexFormat.FLOAT_32x2,
-										offset: 0,
-										shaderLocation: 2,
-									}
-								)
-							],						
-						}
-					)
-				}
-			);
-			uvsAttributeLocation.setValue(
-				"line uvs",
-				new BufferSetInstruction(
+
+				array[0] = +0; array[1] = +0; //vertex 0
+				array[2] = +0; array[3] = +0; //vertex 1
+
+
+				uvsArray = uvsArray.concat(array);
+			}
+		}
+
+
+		const uvsArrayBuffer = new Float32Array(uvsArray);
+		const uvsAttributeLocation = new AttributeLocation(
+			{
+				itemSize: 2,
+				arrayBuffer: uvsArrayBuffer,
+				bufferDescriptor: new BufferDescriptor(
 					{
-						label: "line uvs",
-	
-						number: 2,
-	
-						source: {
-							arrayBuffer: uvsArrayBuffer,
-							layout: {
-								offset: (0),
-							}
-						},
-						destination: {
-							buffer: null,
-							layout: {
-								offset: (0)
-							}
-						},
-						size: uvsArrayBuffer.length
+						label: "line uvs buffer",
+						size: uvsArrayBuffer.length,
+						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+						mappedAtCreation: false
+					}
+				),
+				vertexBufferLayoutDescriptor: new VertexBufferLayout(
+					{
+						arrayStride: 2 * 4,
+						stepMode: VertexStepMode.VERTEX,
+						attributes: [
+							new VertexAttribute(
+								{
+									format: VertexFormat.FLOAT_32x2,
+									offset: 0,
+									shaderLocation: 2,
+								}
+							)
+						],						
 					}
 				)
-			);
+			}
+		);
+		uvsAttributeLocation.setValue(
+			"line uvs",
+			new BufferSetInstruction(
+				{
+					label: "line uvs",
+
+					number: 2,
+
+					source: {
+						arrayBuffer: uvsArrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0)
+						}
+					},
+					size: uvsArrayBuffer.length
+				}
+			)
+		);
 
 
-			return uvsAttributeLocation;
-		}
+		return uvsAttributeLocation;
 	}
 };

@@ -49,7 +49,81 @@ export class PointGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 
 		if (indexed) {
-			//TODO
+			let indicesArray = new Array();
+
+			for (let p = 0; p < positions.length; p++) {
+				const instanceSize = 1 * 1;
+				const instanceOffset = instanceSize * p;
+				const array = new Array(instanceSize);
+
+
+				array[0] = instanceOffset+0; //vertex 0
+
+
+				indicesArray = indicesArray.concat(array);
+			}
+
+
+			const indicesArrayBuffer = new Uint32Array(indicesArray);
+			const indicesAttributeLocation = new AttributeLocation(
+				{
+					number: null,
+					itemSize: 1,
+					arrayBuffer: indicesArrayBuffer,
+
+					bufferDescriptor: new BufferDescriptor(
+						{
+							label: "point indices buffer",
+							size: indicesArrayBuffer.length,
+							usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
+							mappedAtCreation: false
+						}
+					),
+					// vertexBufferLayoutDescriptor: new VertexBufferLayout(
+					// 	{
+					// 		arrayStride: 1 * 4,
+					// 		stepMode: VertexStepMode.VERTEX,
+					// 		attributes: [
+					// 			new VertexAttribute(
+					// 				{
+					// 					format: VertexFormat.UINT_32,
+					// 					offset: 0,
+					// 					shaderLocation: 0,
+					// 				}
+					// 			)
+					// 		],			
+					// 	}
+					// )
+					vertexBufferLayoutDescriptor: null
+				}
+			);
+			indicesAttributeLocation.setValue(
+				"point indices",
+				new BufferSetInstruction(
+					{
+						label: "point indices",
+	
+						number: null,
+	
+						source: {
+							arrayBuffer: indicesArrayBuffer,
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (0)
+							}
+						},
+						size: indicesArrayBuffer.length
+					}
+				)
+			);
+
+
+			return indicesAttributeLocation;
 		} else {
 			return null;
 		}
@@ -59,11 +133,10 @@ export class PointGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
+		let verticesArray = new Array();
+
+
 		if (indexed) {
-
-		} else {
-			let verticesArray = new Array();
-
 			for (let p = 0; p < positions.length; p++) {
 				const array = new Array(1 * 3);
 				const position = positions[p];
@@ -72,13 +145,29 @@ export class PointGeometry extends MeshGeometry {
 				const pz = position.z;
 
 
-				array[0] = px; array[1] = py; array[2] = pz;
+				array[0] = px; array[1] = py; array[2] = pz; //vertex 0
 
 
 				verticesArray = verticesArray.concat(array);
 			}
+		} else {
+			for (let p = 0; p < positions.length; p++) {
+				const array = new Array(1 * 3);
+				const position = positions[p];
+				const px = position.x;
+				const py = position.y;
+				const pz = position.z;
 
-			const verticesArrayBuffer = new Float32Array(verticesArray);
+
+				array[0] = px; array[1] = py; array[2] = pz; //vertex 0
+
+
+				verticesArray = verticesArray.concat(array);
+			}
+		}
+
+
+		const verticesArrayBuffer = new Float32Array(verticesArray);
 			const verticesAttributeLocation = new AttributeLocation(
 				{
 					itemSize: 3,
@@ -135,165 +224,184 @@ export class PointGeometry extends MeshGeometry {
 
 
 			return verticesAttributeLocation;
-		}
 	}
 	static assembleNormals(args = {}) {
 		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
-		if (indexed) {
-			//TODO
-		} else {
-			let normalsArray = new Array();
+		let normalsArray = new Array();
 
+
+		if (indexed) {
 			for (let p = 0; p < positions.length; p++) {
 				const array = new Array(1 * 3);
 
 
-				array[0] = +0; array[1] = +0; array[2] = +1;
+				array[0] = +0; array[1] = +0; array[2] = +1; //vertex 0
 
 
 				normalsArray = normalsArray.concat(array);
 			}
+		} else {
+			for (let p = 0; p < positions.length; p++) {
+				const array = new Array(1 * 3);
 
-			const normalsArrayBuffer = new Float32Array(normalsArray);
-			const normalsAttributeLocation = new AttributeLocation(
-				{
-					itemSize: 3,
-					arrayBuffer: normalsArrayBuffer,
-					bufferDescriptor: new BufferDescriptor(
-						{
-							label: "point normals buffer",
-							size: normalsArrayBuffer.length,
-							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-							mappedAtCreation: false
-						}
-					),
-					vertexBufferLayoutDescriptor: new VertexBufferLayout(
-						{
-							arrayStride: 3 * 4,
-							stepMode: VertexStepMode.VERTEX,
-							attributes: [
-								new VertexAttribute(
-									{
-										format: VertexFormat.FLOAT_32x3,
-										offset: 0,
-										shaderLocation: 1,
-									}
-								)
-							],						
-						}
-					)
-				}
-			);
-			// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
-			normalsAttributeLocation.setValue(
-				"point normals",
-				new BufferSetInstruction(
+
+				array[0] = +0; array[1] = +0; array[2] = +1; //vertex 0
+
+
+				normalsArray = normalsArray.concat(array);
+			}
+		}
+
+
+		const normalsArrayBuffer = new Float32Array(normalsArray);
+		const normalsAttributeLocation = new AttributeLocation(
+			{
+				itemSize: 3,
+				arrayBuffer: normalsArrayBuffer,
+				bufferDescriptor: new BufferDescriptor(
 					{
-						label: "point normals",
-	
-						number: 1,
-	
-						source: {
-							arrayBuffer: normalsArrayBuffer,
-							layout: {
-								offset: (0),
-							}
-						},
-						destination: {
-							buffer: null,
-							layout: {
-								offset: (0)
-							}
-						},
-						size: normalsArrayBuffer.length
+						label: "point normals buffer",
+						size: normalsArrayBuffer.length,
+						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+						mappedAtCreation: false
+					}
+				),
+				vertexBufferLayoutDescriptor: new VertexBufferLayout(
+					{
+						arrayStride: 3 * 4,
+						stepMode: VertexStepMode.VERTEX,
+						attributes: [
+							new VertexAttribute(
+								{
+									format: VertexFormat.FLOAT_32x3,
+									offset: 0,
+									shaderLocation: 1,
+								}
+							)
+						],						
 					}
 				)
-			);
+			}
+		);
+		// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
+		normalsAttributeLocation.setValue(
+			"point normals",
+			new BufferSetInstruction(
+				{
+					label: "point normals",
+
+					number: 1,
+
+					source: {
+						arrayBuffer: normalsArrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0)
+						}
+					},
+					size: normalsArrayBuffer.length
+				}
+			)
+		);
 
 
-			return normalsAttributeLocation;
-		}
+		return normalsAttributeLocation;
 	}
 	static assembleUVs(args = {}) {
 		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
-		if (indexed) {
-			//TODO
-		} else {
-			let uvsArray = new Array();
+		let uvsArray = new Array();
 
+
+		if (indexed) {
 			for (let p = 0; p < positions.length; p++) {
 				const array = new Array(1 * 2);
 
 
-				array[0] = +0; array[1] = +0;
+				array[0] = +0; array[1] = +0; //vertex 0
 
 
 				uvsArray = uvsArray.concat(array);
 			}
+		} else {
+			for (let p = 0; p < positions.length; p++) {
+				const array = new Array(1 * 2);
 
-			const uvsArrayBuffer = new Float32Array(uvsArray);
-			const uvsAttributeLocation = new AttributeLocation(
-				{
-					itemSize: 2,
-					arrayBuffer: uvsArrayBuffer,
-					bufferDescriptor: new BufferDescriptor(
-						{
-							label: "point uvs buffer",
-							size: uvsArrayBuffer.length,
-							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-							mappedAtCreation: false
-						}
-					),
-					vertexBufferLayoutDescriptor: new VertexBufferLayout(
-						{
-							arrayStride: 2 * 4,
-							stepMode: VertexStepMode.VERTEX,
-							attributes: [
-								new VertexAttribute(
-									{
-										format: VertexFormat.FLOAT_32x2,
-										offset: 0,
-										shaderLocation: 2,
-									}
-								)
-							],						
-						}
-					)
-				}
-			);
-			uvsAttributeLocation.setValue(
-				"point uvs",
-				new BufferSetInstruction(
+
+				array[0] = +0; array[1] = +0; //vertex 0
+
+
+				uvsArray = uvsArray.concat(array);
+			}
+		}
+
+
+		const uvsArrayBuffer = new Float32Array(uvsArray);
+		const uvsAttributeLocation = new AttributeLocation(
+			{
+				itemSize: 2,
+				arrayBuffer: uvsArrayBuffer,
+				bufferDescriptor: new BufferDescriptor(
 					{
-						label: "point uvs",
-	
-						number: 2,
-	
-						source: {
-							arrayBuffer: uvsArrayBuffer,
-							layout: {
-								offset: (0),
-							}
-						},
-						destination: {
-							buffer: null,
-							layout: {
-								offset: (0)
-							}
-						},
-						size: uvsArrayBuffer.length
+						label: "point uvs buffer",
+						size: uvsArrayBuffer.length,
+						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+						mappedAtCreation: false
+					}
+				),
+				vertexBufferLayoutDescriptor: new VertexBufferLayout(
+					{
+						arrayStride: 2 * 4,
+						stepMode: VertexStepMode.VERTEX,
+						attributes: [
+							new VertexAttribute(
+								{
+									format: VertexFormat.FLOAT_32x2,
+									offset: 0,
+									shaderLocation: 2,
+								}
+							)
+						],						
 					}
 				)
-			);
+			}
+		);
+		uvsAttributeLocation.setValue(
+			"point uvs",
+			new BufferSetInstruction(
+				{
+					label: "point uvs",
+
+					number: 2,
+
+					source: {
+						arrayBuffer: uvsArrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0)
+						}
+					},
+					size: uvsArrayBuffer.length
+				}
+			)
+		);
 
 
-			return uvsAttributeLocation;
-		}
+		return uvsAttributeLocation;
 	}
 };
