@@ -4,6 +4,14 @@ import { Matrix4 } from "../RenderCore.js";
 import { PrimitiveTopology } from "../core/RC/pipeline/primitive state/PrimitiveTopology.js";
 import { ResourceBinding } from "../core/data layouts/ResourceBinding.js";
 import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
+import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
+import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
+import { BindGroupLayoutEntry } from "../core/RC/resource binding/BindGroupLayoutEntry.js";
+import { ShaderStage } from "../core/RC/resource binding/ShaderStage.js";
+import { GPUBufferBindingLayout } from "../core/DICTS/GPUBufferBindingLayout.js";
+import { GPUBufferBindingType } from "../core/ENUM/GPUBufferBindingType.js";
+import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
+import { RCBufferBindingResource } from "../core/RCBufferBindingResource.js";
 
 
 export class Mesh extends Group {
@@ -21,14 +29,14 @@ export class Mesh extends Group {
 		PICKABLE: false,
 		PRIMITIVE: PrimitiveTopology.TRIANGLE_LIST,
 
-		INSTANCED: false,
-		INSTANCED_TRANSLATION: false,
-		VERTEX_COUNT: null,
+		// INSTANCED: false,
+		// INSTANCED_TRANSLATION: false,
+		VERTEX_COUNT: Infinity,
 		INSTANCE_COUNT: 1,
 		FIRST_VERTEX: 0,
 		FIRST_INSTANCE: 0,
 
-		INSTANCES: new Array(),
+		INSTANCES: new Array(new Matrix4()),
 	};
 
 
@@ -37,14 +45,14 @@ export class Mesh extends Group {
 	#pickable;
 	#primitive;
 
-	#instanced;
-	#instancedTranslation;
-	#vertexCount;
-	#instanceCount;
+	// #instanced;
+	// #instancedTranslation;
+	#vertexCount = Infinity;
+	#instanceCount = 1;
 	#firstVertex = 0;
 	#firstInstance = 0;
 
-	#instances;
+	#instances = new Array(new Matrix4());
 
 
 	constructor(args = {}) {
@@ -65,12 +73,162 @@ export class Mesh extends Group {
 		this.pickable = (args.pickable !== undefined) ? args.pickable : Mesh.DEFAULT.PICKABLE;
 		this.primitive = (args.primitive !== undefined) ? args.primitive : Mesh.DEFAULT.PRIMITIVE;
 
-		this.instanced = (args.instanced !== undefined) ? args.instanced : Mesh.DEFAULT.INSTANCED;
-		this.instancedTranslation = (args.instancedTranslation !== undefined) ? args.instancedTranslation : Mesh.DEFAULT.INSTANCED_TRANSLATION;
+		// this.instanced = (args.instanced !== undefined) ? args.instanced : Mesh.DEFAULT.INSTANCED;
+		// this.instancedTranslation = (args.instancedTranslation !== undefined) ? args.instancedTranslation : Mesh.DEFAULT.INSTANCED_TRANSLATION;
 		this.vertexCount = (args.vertexCount !== undefined) ? args.vertexCount : Mesh.DEFAULT.VERTEX_COUNT;
 		this.instanceCount = (args.instanceCount !== undefined) ? args.instanceCount : Mesh.DEFAULT.INSTANCE_COUNT;
 		this.firstVertex = (args.firstVertex !== undefined) ? args.firstVertex : Mesh.DEFAULT.FIRST_VERTEX;
 		this.firstInstance = (args.firstInstance !== undefined) ? args.firstInstance : Mesh.DEFAULT.FIRST_INSTANCE;
+
+		this.instances = (args.instances !== undefined) ? args.instances : new Array(...Mesh.DEFAULT.INSTANCES);
+
+		this.NMat4 = new Matrix4();
+
+
+		this.updateResources();
+	}
+
+
+	get geometry() { return this.#geometry; }
+	set geometry(geometry) { this.#geometry = geometry; }
+	get material() { return this.#material; }
+	set material(material) { this.#material = material; }
+	get pickable() { return this.#pickable; }
+	set pickable(pickable) { this.#pickable = pickable; }
+	get primitive() { return this.#primitive; }
+	set primitive(primitive) { this.#primitive = primitive; }
+
+	// get instanced() { return this.#instanced; }
+	// set instanced(instanced) {
+	// 	this.#instanced = instanced;
+	// }
+	// get instancedTranslation() { return this.#instancedTranslation; }
+	// set instancedTranslation(instancedTranslation) {
+	// 	this.#instancedTranslation = instancedTranslation;
+	// }
+	get vertexCount() {
+		// return this.#vertexCount ?? this.geometry.vertices.count();
+		return Math.min(this.#vertexCount, this.geometry.vertices.count());
+	}
+	set vertexCount(vertexCount) {
+		this.#vertexCount = Math.floor(vertexCount);
+	}
+	get instanceCount() {
+		// return this.#instanceCount ?? this.instances.length;
+		return Math.min(this.#instanceCount, this.instances.length);
+	}
+	set instanceCount(instanceCount) {
+		this.#instanceCount = Math.floor(instanceCount);
+
+
+		this.updateResources();
+	}
+	get firstVertex() { return this.#firstVertex; }
+	set firstVertex(firstVertex) { this.#firstVertex = firstVertex; }
+	get firstInstance() { return this.#firstInstance; }
+	set firstInstance(firstInstance) { this.#firstInstance = firstInstance; }
+
+	get instances() { return this.#instances; }
+	set instances(instances) {
+		this.#instances = instances;
+
+
+		this.updateResources();
+	}
+
+	get transform() { return super.transform; }
+	set transform(transform) {
+		super.transform = transform;
+	}
+
+
+	updateResources() {
+		const instanceCount = this.instanceCount;
+		const instances = this.instances;
+
+
+		this.resourcePack.setResourceBindingInternal(
+			2,
+			1,
+			new ResourceBinding(
+				{
+					number: 1,
+					arrayBuffer: new Float32Array(instanceCount * 16),
+					
+					resourceDescriptor: new BufferDescriptor(
+						{
+							label: "object instance buffer",
+							size: (instanceCount * 16),
+							usage: BufferUsage.STORAGE | BufferUsage.COPY_DST,
+							mappedAtCreation: false,
+						}
+					),
+					bindGroupLayoutEntry: new BindGroupLayoutEntry(
+						{
+							binding: 1,
+							visibility: ShaderStage.VERTEX | ShaderStage.FRAGMENT,
+							buffer: new GPUBufferBindingLayout(
+								{
+									type: GPUBufferBindingType.READ_ONLY_STORAGE,
+									hasDynamicOffset: false,
+									minBindingSize: 0,
+								}
+							),
+						}
+					),
+					bindGroupEntry: new BindGroupEntry(
+						{
+							binding: 1,
+							resource: new RCBufferBindingResource(
+								{
+									buffer: null,
+									offset: 0,
+									size: (instanceCount * 16) * 4,
+								}
+							),
+						}
+					),
+				}
+			)
+		);
+
+
+		for (let i = 0; i < instanceCount; i++) {
+			const IMMat = instances[i];
+
+			const instructionName = `IMMat_${i}`;
+			const instruction = this.instructionCache.has(instructionName) ? 
+			this.instructionCache.get(instructionName) : 
+			this.instructionCache.set(
+				instructionName,
+				new BufferSetInstruction(
+					{
+						label: instructionName,
+	
+						number: 1,
+						target: ResourceBinding.TARGET.INTERNAL,
+	
+						source: {
+							arrayBuffer: new Float32Array(IMMat.elements),
+							layout: {
+								offset: (0),
+							}
+						},
+						destination: {
+							buffer: null,
+							layout: {
+								offset: (i*16)
+							}
+						},
+						size: (16)
+					}
+				)
+			).get(instructionName);
+			instruction.source.arrayBuffer.set(IMMat.elements);
+	
+			this.resourcePack.setResourceBindingValueInternal(2, 1, instruction);
+		}
+
 
 		// this.uniformGroupDescriptor = new UniformGroupDescriptor(
 		// 	{
@@ -183,43 +341,9 @@ export class Mesh extends Group {
 		// 		)
 		// 	}
 		// );
-
-		this.NMat4 = new Matrix4();
 	}
 
-
-	get geometry() { return this.#geometry; }
-	set geometry(geometry) { this.#geometry = geometry; }
-	get material() { return this.#material; }
-	set material(material) { this.#material = material; }
-	get pickable() { return this.#pickable; }
-	set pickable(pickable) { this.#pickable = pickable; }
-	get primitive() { return this.#primitive; }
-	set primitive(primitive) { this.#primitive = primitive; }
-
-	get instanced() { return this.#instanced; }
-	set instanced(instanced) {
-		this.#instanced = instanced;
-	}
-	get instancedTranslation() { return this.#instancedTranslation; }
-	set instancedTranslation(instancedTranslation) {
-		this.#instancedTranslation = instancedTranslation;
-	}
-	get vertexCount() { return this.#vertexCount ?? this.geometry.vertices.count(); }
-	set vertexCount(vertexCount) { this.#vertexCount = vertexCount; }
-	get instanceCount() { return this.#instanceCount; }
-	set instanceCount(instanceCount) { this.#instanceCount = instanceCount; }
-	get firstVertex() { return this.#firstVertex; }
-	set firstVertex(firstVertex) { this.#firstVertex = firstVertex; }
-	get firstInstance() { return this.#firstInstance; }
-	set firstInstance(firstInstance) { this.#firstInstance = firstInstance; }
-
-	get transform() { return super.transform; }
-	set transform(transform) {
-		super.transform = transform;
-	}
-
-
+	
 	setup(camera) {
 		super.setup();
 	}
