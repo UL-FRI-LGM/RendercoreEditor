@@ -53,9 +53,10 @@ export class CubeGeometry extends MeshGeometry {
 			let indicesArray = new Array();
 
 			for (let p = 0; p < positions.length; p++) {
-				const instanceSize = 6 * 2 * 3 * 1;
-				const instanceOffset = instanceSize * p;
-				const array = new Array(instanceSize);
+				const instanceIndexSize = 8;
+				const instanceVertexSize = 6 * 2 * 3 * 1;
+				const instanceOffset = instanceIndexSize * p;
+				const array = new Array(instanceVertexSize);
 
 
 				array[0 ] = instanceOffset+0; //vertex 0 //front

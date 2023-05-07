@@ -65,9 +65,10 @@ export class SpriteGeometry extends MeshGeometry {
 			let indicesArray = new Array();
 
 			for (let p = 0; p < positions.length; p++) {
-				const instanceSize = 1 * 2 * 3 * 1;
-				const instanceOffset = instanceSize * p;
-				const array = new Array(instanceSize);
+				const instanceIndexSize = 4;
+				const instanceVertexSize = 1 * 2 * 3 * 1;
+				const instanceOffset = instanceIndexSize * p;
+				const array = new Array(instanceVertexSize);
 
 
 				array[0] = instanceOffset+0; //vertex 0
