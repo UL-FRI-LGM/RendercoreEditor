@@ -53,6 +53,7 @@ export class RenderPass extends Pass { //custom render pass
 		VIEWPORT: { x: 0, y: 0, width: 1280, height: 720 },
 		CLEAR_VALUE: new Color4(0, 0, 0, 1),
 		COLOR_LOAD_OPERATION: GPULoadOp.CLEAR,
+		PIXEL_RATIO: window.devicePixelRatio || 1,
 	};
 
 
@@ -61,6 +62,7 @@ export class RenderPass extends Pass { //custom render pass
 	// #viewport = { ...RenderPass.DEFAULT.VIEWPORT }; //clone
 	#clearValue = RenderPass.DEFAULT.CLEAR_VALUE.clone();
 	#colorLoadOperation = RenderPass.DEFAULT.COLOR_LOAD_OPERATION;
+	#pixelRatio = RenderPass.DEFAULT.PIXEL_RATIO;
 
 	#colorAttachments;
     #depthStencilAttachment;
@@ -116,6 +118,7 @@ export class RenderPass extends Pass { //custom render pass
 		this.viewport = (args.viewport !== undefined) ? args.viewport : { ...RenderPass.DEFAULT.VIEWPORT }; //copy
 		this.clearValue = (args.clearValue !== undefined) ? args.clearValue : RenderPass.DEFAULT.CLEAR_VALUE;
 		this.colorLoadOperation = (args.colorLoadOperation !== undefined) ? args.colorLoadOperation : RenderPass.DEFAULT.COLOR_LOAD_OPERATION;
+		this.pixelRatio = (args.pixelRatio !== undefined) ? args.pixelRatio : RenderPass.DEFAULT.PIXEL_RATIO;
 	
 
 
@@ -149,6 +152,8 @@ export class RenderPass extends Pass { //custom render pass
 	set clearValue(clearValue) { this.renderTarget.clearValue = clearValue; }
 	get colorLoadOperation() { return this.renderTarget.colorLoadOperation; }
 	set colorLoadOperation(colorLoadOperation) { this.renderTarget.colorLoadOperation = colorLoadOperation; }
+	get pixelRatio() { return this.renderTarget.pixelRatio; }
+	set pixelRatio(pixelRatio) { this.renderTarget.pixelRatio = pixelRatio; }
 
 
 	get outDepthID() {

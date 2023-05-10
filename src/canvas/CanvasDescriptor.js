@@ -1,5 +1,4 @@
-import { Canvas } from "../../Canvas.js";
-import { DescriptorBase } from "../../RC/DescriptorBase.js";
+import { DescriptorBase } from "../core/RC/DescriptorBase.js";
 
 
 export class CanvasDescriptor extends DescriptorBase {  //RC canvas descriptor
@@ -13,17 +12,14 @@ export class CanvasDescriptor extends DescriptorBase {  //RC canvas descriptor
         VIEWPORT: undefined,
         WIDTH: undefined,
         HEIGHT: undefined,
-        PIXEL_RATIO: window.devicePixelRatio || 1,
 	};
 
 
     #api;
 
     #parent;
-	#viewport = CanvasDescriptor.DEFAULT.VIEWPORT;
 	#width = CanvasDescriptor.DEFAULT.WIDTH;
 	#height = CanvasDescriptor.DEFAULT.HEIGHT;
-    #pixelRatio;
 
 
     constructor(api, args = {}) {
@@ -32,10 +28,8 @@ export class CanvasDescriptor extends DescriptorBase {  //RC canvas descriptor
         this.api = api;
 
         this.parent = (args.parent !== undefined) ? args.parent : CanvasDescriptor.DEFAULT.PARENT;
-		this.viewport = (args.viewport !== undefined) ? args.viewport : this.viewport;
 		this.width = (args.width !== undefined) ? args.width : this.width;
         this.height = (args.height !== undefined) ? args.height : this.height;
-		this.pixelRatio = (args.pixelRatio !== undefined) ? args.pixelRatio : CanvasDescriptor.DEFAULT.PIXEL_RATIO;
     }
 
     
@@ -50,11 +44,6 @@ export class CanvasDescriptor extends DescriptorBase {  //RC canvas descriptor
 		this.#parent = parent;
         this.dirtyCache.set("parent", parent);
 	}
-    get viewport() { return this.#viewport; }
-    set viewport(viewport) { 
-        this.#viewport = viewport;
-        this.dirtyCache.set("viewport", viewport);
-    }
 	get width() { return this.#width; }
 	set width(width) { 
 		this.#width = width;
@@ -66,9 +55,4 @@ export class CanvasDescriptor extends DescriptorBase {  //RC canvas descriptor
         this.dirtyCache.set("height", height);
 	}
 	get aspect() { return this.width / this.height; }
-	get pixelRatio() { return this.#pixelRatio; }
-	set pixelRatio(pixelRatio) { 
-		this.#pixelRatio = pixelRatio;
-        this.dirtyCache.set("pixelRatio", pixelRatio);
-	}
 };

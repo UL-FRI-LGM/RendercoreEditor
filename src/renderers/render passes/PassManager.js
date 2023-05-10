@@ -128,6 +128,26 @@ export class PassManager extends ObjectBase { //RC pass manager base
 			}
 		}
 	}
+	get pixelRatio() {
+		return Array.from(this.passes).map(([name, pass]) => {
+			return [name, pass.pixelRatio];
+		});
+	}
+	set pixelRatio(pixelRatio) {
+		if (pixelRatio instanceof Map) {
+			for (const [pName, pPixelRatio] of pixelRatio) {
+				if (this.passes.has(pName)) {
+					this.passes.get(pName).pixelRatio = pPixelRatio;
+				} else {
+					console.warn(pName);
+				}
+			}
+		} else {
+			for (const [pName, pass] of this.passes) {
+				pass.pixelRatio = pixelRatio;
+			}
+		}
+	}
 
 
 	async load(MATC) {

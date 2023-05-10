@@ -14,6 +14,8 @@ import { RenderPass } from "./RenderPass.js";
 
 
 export class MeshRenderer extends Renderer {
+
+
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "MeshRenderer",
@@ -25,6 +27,7 @@ export class MeshRenderer extends Renderer {
 		VIEWPORT: { x: 0, y: 0, width: 1280, height: 720 },
 		CLEAR_VALUE: new Color4(0, 0, 0, 1),
 		COLOR_LOAD_OPERATION: GPULoadOp.CLEAR,
+		PIXEL_RATIO: window.devicePixelRatio || 1,
 	};
 	static MODE = {
 		COLOR: 0,
@@ -50,6 +53,7 @@ export class MeshRenderer extends Renderer {
 	#viewport = { ...MeshRenderer.DEFAULT.VIEWPORT }; //clone
 	#clearColor = MeshRenderer.DEFAULT.CLEAR_VALUE.clone();
 	#colorLoadOperation = MeshRenderer.DEFAULT.COLOR_LOAD_OPERATION;
+	#pixelRatio = MeshRenderer.DEFAULT.PIXEL_RATIO;
 
 
 	constructor(api, args = {}) {
@@ -79,6 +83,7 @@ export class MeshRenderer extends Renderer {
 			this.viewport = (args.viewport !== undefined) ? args.viewport : { x: 0, y: 0, width: this.canvas.bufferWidth, height: this.canvas.bufferHeight };
 			this.clearColor = (args.clearColor !== undefined) ? args.clearColor : MeshRenderer.DEFAULT.CLEAR_VALUE;
 			this.colorLoadOperation = (args.colorLoadOperation !== undefined) ? args.colorLoadOperation : MeshRenderer.DEFAULT.COLOR_LOAD_OPERATION;
+			this.pixelRatio = (args.pixelRatio !== undefined) ? args.pixelRatio : MeshRenderer.DEFAULT.PIXEL_RATIO;
 
 
             return this;
@@ -121,6 +126,12 @@ export class MeshRenderer extends Renderer {
 		this.#colorLoadOperation = colorLoadOperation;
 
 		this.renderPassManager.colorLoadOperation = colorLoadOperation;
+	}
+	get pixelRatio() { return this.#pixelRatio; }
+	set pixelRatio(pixelRatio) { 
+		this.#pixelRatio = pixelRatio; 
+
+		his.renderPassManager.pixelRatio = pixelRatio;
 	}
 
 

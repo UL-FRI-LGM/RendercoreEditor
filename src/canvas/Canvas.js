@@ -1,10 +1,10 @@
 // A GPUCanvasContext object is created via the getContext() method of an HTMLCanvasElement instance by passing the string literal 'webgpu' as its contextType argument.
 
 
-import { ObjectBase } from './ObjectBase.js';
+import { ObjectBase } from '../core/ObjectBase.js';
 
 
-export class Canvas extends ObjectBase { //GPUCanvasContext //RC canvas object (wrapper)
+export class Canvas extends ObjectBase { //RC canvas wrapper //GPUCanvasContext
 
 
 	// readonly attribute (HTMLCanvasElement or OffscreenCanvas) canvas;
@@ -20,10 +20,9 @@ export class Canvas extends ObjectBase { //GPUCanvasContext //RC canvas object (
 		TYPE: "Canvas",
 
 		PARENT: null,
-		VIEWPORT: { width: 1280, height: 720 },
+
 		WIDTH: 1280,
 		HEIGHT: 720,
-		PIXEL_RATIO: window.devicePixelRatio || 1,
 
 		CANVAS: Canvas.#generateCanvas(),
 
@@ -35,10 +34,9 @@ export class Canvas extends ObjectBase { //GPUCanvasContext //RC canvas object (
 	#canvas = Canvas.DEFAULT.CANVAS.cloneNode(true);
 
 	#parent;
-	#viewport = Canvas.DEFAULT.VIEWPORT;
+
 	#width = Canvas.DEFAULT.WIDTH;
 	#height = Canvas.DEFAULT.HEIGHT;
-	#pixelRatio;
 
 	#context;
 
@@ -55,10 +53,9 @@ export class Canvas extends ObjectBase { //GPUCanvasContext //RC canvas object (
 		this.canvas = (args.canvas !== undefined) ? args.canvas : this.canvas;
 
 		this.parent = (args.parent !== undefined) ? args.parent : Canvas.DEFAULT.PARENT;
-		this.viewport = (args.viewport !== undefined) ? args.viewport : { width: this.canvas.clientWidth , height: this.canvas.clientHeight };
+		
 		this.width = (args.width !== undefined) ? args.width : this.width;
         this.height = (args.height !== undefined) ? args.height : this.height;
-		this.pixelRatio = (args.pixelRatio !== undefined) ? args.pixelRatio : Canvas.DEFAULT.PIXEL_RATIO;
 
 		this.context = (contextType !== undefined) ? this.getContext(contextType, args.contextAttributes) : Canvas.DEFAULT.CONTEXT;
 	}
@@ -68,56 +65,28 @@ export class Canvas extends ObjectBase { //GPUCanvasContext //RC canvas object (
 	set canvas(canvas) {
 		this.#canvas = canvas;
 
-		if (this.parent) {
-			this.parent.appendChild(this.canvas);
-			this.updateSize();
-		}
+		if (this.parent) this.parent.appendChild(this.canvas);
 	}
 
 	get parent() { return this.#parent; }
 	set parent(parent) {
 		this.#parent = parent;
 
-		if (this.canvas) {
-			this.parent.appendChild(this.canvas);
-			this.updateSize();
-		}
+		if (this.canvas) this.parent.appendChild(this.canvas);
 	}
-	get viewport() { return this.#viewport; }
-	set viewport(viewport) {
-		this.#viewport = viewport;
 
-		this.#width = viewport.width;
-		this.#height = viewport.height;
-
-		this.#canvas.width = Math.floor(viewport.width * this.pixelRatio);
-		this.#canvas.height = Math.floor(viewport.height * this.pixelRatio);
-	}
 	get width() { return this.#width; }
 	set width(width) {
-		this.#viewport.width = width;
-
 		this.#width = width;
 
-		this.#canvas.width = Math.floor(width * this.pixelRatio);
+		this.#canvas.width = width;
 	}
 	get height() { return this.#height; }
 	set height(height) {
-		this.#viewport.height = height;
-
 		this.#height = height;
 
-		this.#canvas.height = Math.floor(height * this.pixelRatio);
+		this.#canvas.height = height;
 	}
-	get aspect() { return this.width / this.height; }
-	get pixelRatio() { return this.#pixelRatio; }
-	set pixelRatio(pixelRatio) { 
-		this.#pixelRatio = pixelRatio; 
-
-		this.#canvas.width = Math.floor(this.width * pixelRatio);
-		this.#canvas.height = Math.floor(this.height * pixelRatio);
-	}
-
 	get clientWidth() { return this.canvas.clientWidth; }
 	get clientHeight() { return this.canvas.clientHeight; }
 	get bufferWidth() { return this.canvas.width; }
@@ -143,22 +112,25 @@ export class Canvas extends ObjectBase { //GPUCanvasContext //RC canvas object (
 	}
 
 	updateSize() {
-		//set the internal size to match
-		//set the size of the drawing buffer
+		console.warn("CANVAS UPDATE");
+		// //set the internal size to match
+		// //set the size of the drawing buffer
 		
-		const width = this.canvas.clientWidth;
-		const height = this.canvas.clientHeight;
+		// const width = this.canvas.clientWidth;
+		// const height = this.canvas.clientHeight;
 
-		this.#viewport = { width: width, height: height };
+		// this.#viewport = { width: width, height: height };
 
-		this.#width = width;
-		this.#height = height;
+		// this.#width = width;
+		// this.#height = height;
 
-		this.#canvas.width = Math.floor(width * this.pixelRatio);
-		this.#canvas.height = Math.floor(height * this.pixelRatio);
+		// this.#canvas.width = Math.floor(width * this.pixelRatio);
+		// this.#canvas.height = Math.floor(height * this.pixelRatio);
 	}
 
 	getContext(contextType, contextAttributes) {
+		// const WebGL2 = canvas.getContext("webgl2", contextAttributes);
+		// const WebGPU = canvas.getContext("webgpu", contextAttributes);
 		return this.canvas.getContext(contextType, contextAttributes);
 	}
 

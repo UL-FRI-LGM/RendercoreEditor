@@ -1,9 +1,16 @@
-import { Canvas } from "../Canvas.js";
-import { CanvasConfiguration } from "../CanvasConfiguration.js";
-import { CanvasDescriptor } from "../PRIMITIVES/canvas rendering/CanvasDescriptor.js";
+import { Canvas } from "./Canvas.js";
+import { CanvasConfiguration } from "./CanvasConfiguration.js";
+import { ObjectBase } from "../core/ObjectBase.js";
+import { CanvasDescriptor } from "./CanvasDescriptor.js";
 
 
-export class CanvasManager { //RC canvas context manager
+export class CanvasManager extends ObjectBase { //RC canvas manager
+
+
+	static DEFAULT = {
+        NAME: "",
+		TYPE: "CanvasManager",
+    };
 
 
 	#api;
@@ -11,16 +18,21 @@ export class CanvasManager { //RC canvas context manager
 	#configuration;
 
 	#canvas;
-	// #context;
 
 
 	constructor(api, context, args = {}) {
+		super(
+			{
+				...args, 
+				name: (args.name !== undefined) ? args.name : CanvasManager.DEFAULT.NAME,
+				type: (args.type !== undefined) ? args.type : CanvasManager.DEFAULT.TYPE,
+			}
+		);
+
 		this.api = api;
 		this.descriptor = new CanvasDescriptor(api, args);
 		this.configuration = new CanvasConfiguration(context, args);
 
-		// this.canvas = this.descriptor.canvas;
-		// this.context = this.descriptor.context;
 		this.canvas = new Canvas(this.descriptor.api, this.descriptor);
 		this.canvas.configure(this.configuration);
 	}
@@ -30,13 +42,16 @@ export class CanvasManager { //RC canvas context manager
     set api(api) { this.#api = api; }
 	get descriptor() { return this.#descriptor; }
 	set descriptor(descriptor) { this.#descriptor = descriptor; }
+	get configuration() { return this.#configuration; }
+	set configuration(configuration) { this.#configuration = configuration; }
 
 	get canvas() { return this.#canvas; }
     set canvas(canvas) { this.#canvas = canvas; }
-	// get context() { return this.#context; }
-    // set context(context) { this.#context = context; }
 
-
+	
+	setup() {
+		
+	}
 	update() {
 		for (const [name, desc] of this.descriptor.dirtyCache) {
 			if (desc !== undefined) this.canvas[name] = desc;
