@@ -53,9 +53,14 @@ export class CanvasManager extends ObjectBase { //RC canvas manager
 		
 	}
 	update() {
-		for (const [name, desc] of this.descriptor.dirtyCache) {
-			if (desc !== undefined) this.canvas[name] = desc;
+		if (this.descriptor.dirtyCache.size > 0) {
+			// for (const [name, desc] of this.descriptor.dirtyCache) {
+			// 	if (desc !== undefined) this.canvas[name] = desc;
+			// }
+			this.descriptor.dirtyCache.forEach((value, name) => {
+				this.canvas[name] = value;
+			});
+			this.descriptor.dirtyCache.clear();
 		}
-        this.descriptor.dirtyCache.clear();
 	}
 };
