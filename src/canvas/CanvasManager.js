@@ -1,6 +1,5 @@
-import { Canvas } from "./Canvas.js";
-import { CanvasConfiguration } from "./CanvasConfiguration.js";
 import { ObjectBase } from "../core/ObjectBase.js";
+import { Canvas } from "./Canvas.js";
 import { CanvasDescriptor } from "./CanvasDescriptor.js";
 
 
@@ -8,19 +7,17 @@ export class CanvasManager extends ObjectBase { //RC canvas manager
 
 
 	static DEFAULT = {
-        NAME: "",
+		NAME: "",
 		TYPE: "CanvasManager",
-    };
+	};
 
 
 	#api;
 	#descriptor;
-	#configuration;
-
 	#canvas;
 
 
-	constructor(api, context, args = {}) {
+	constructor(api, args = {}) {
 		super(
 			{
 				...args, 
@@ -31,22 +28,16 @@ export class CanvasManager extends ObjectBase { //RC canvas manager
 
 		this.api = api;
 		this.descriptor = new CanvasDescriptor(api, args);
-		this.configuration = new CanvasConfiguration(context, args);
-
-		this.canvas = new Canvas(this.descriptor.api, this.descriptor);
-		this.canvas.configure(this.configuration);
+		this.canvas = new Canvas(this.descriptor);
 	}
 
 
 	get api() { return this.#api; }
-    set api(api) { this.#api = api; }
+	set api(api) { this.#api = api; }
 	get descriptor() { return this.#descriptor; }
 	set descriptor(descriptor) { this.#descriptor = descriptor; }
-	get configuration() { return this.#configuration; }
-	set configuration(configuration) { this.#configuration = configuration; }
-
 	get canvas() { return this.#canvas; }
-    set canvas(canvas) { this.#canvas = canvas; }
+	set canvas(canvas) { this.#canvas = canvas; }
 
 	
 	setup() {
@@ -58,6 +49,7 @@ export class CanvasManager extends ObjectBase { //RC canvas manager
 			// 	if (desc !== undefined) this.canvas[name] = desc;
 			// }
 			this.descriptor.dirtyCache.forEach((value, name) => {
+				if (!value) console.warn(`Setting: canvas[${name}] = [${value}]`);
 				this.canvas[name] = value;
 			});
 			this.descriptor.dirtyCache.clear();

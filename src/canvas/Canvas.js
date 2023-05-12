@@ -1,18 +1,7 @@
-// A GPUCanvasContext object is created via the getContext() method of an HTMLCanvasElement instance by passing the string literal 'webgpu' as its contextType argument.
-
-
 import { ObjectBase } from '../core/ObjectBase.js';
 
 
-export class Canvas extends ObjectBase { //RC canvas wrapper //GPUCanvasContext
-
-
-	// readonly attribute (HTMLCanvasElement or OffscreenCanvas) canvas;
-
-    // undefined configure(GPUCanvasConfiguration configuration);
-    // undefined unconfigure();
-
-    // GPUTexture getCurrentTexture();
+export class Canvas extends ObjectBase { //RC canvas wrapper
 
 
 	static DEFAULT = {
@@ -25,39 +14,33 @@ export class Canvas extends ObjectBase { //RC canvas wrapper //GPUCanvasContext
 		HEIGHT: 720,
 
 		CANVAS: Canvas.#generateCanvas(),
-
-		CONTEXT: null,
 	};
 
 
-	// readonly attribute (HTMLCanvasElement or OffscreenCanvas) canvas;
 	#canvas = Canvas.DEFAULT.CANVAS.cloneNode(true);
 
-	#parent;
+	#parent = Canvas.DEFAULT.PARENT;
 
 	#width = Canvas.DEFAULT.WIDTH;
 	#height = Canvas.DEFAULT.HEIGHT;
 
-	#context;
 
-
-	constructor(contextType, args = {}) {
+	constructor(args = {}) {
 		super(
 			{
 				...args,
+				
 				name: (args.name !== undefined) ? args.name : Canvas.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : Canvas.DEFAULT.TYPE,
 			}
 		);
 
-		this.canvas = (args.canvas !== undefined) ? args.canvas : this.canvas;
+		this.canvas = (args.canvas !== undefined) ? args.canvas : Canvas.DEFAULT.CANVAS.cloneNode(true);
 
 		this.parent = (args.parent !== undefined) ? args.parent : Canvas.DEFAULT.PARENT;
 		
-		this.width = (args.width !== undefined) ? args.width : this.width;
-        this.height = (args.height !== undefined) ? args.height : this.height;
-
-		this.context = (contextType !== undefined) ? this.getContext(contextType, args.contextAttributes) : Canvas.DEFAULT.CONTEXT;
+		this.width = (args.width !== undefined) ? args.width : Canvas.DEFAULT.WIDTH;
+		this.height = (args.height !== undefined) ? args.height : Canvas.DEFAULT.HEIGHT;
 	}
 
 
@@ -91,9 +74,6 @@ export class Canvas extends ObjectBase { //RC canvas wrapper //GPUCanvasContext
 	get clientHeight() { return this.canvas.clientHeight; }
 	get bufferWidth() { return this.canvas.width; }
 	get bufferHeight() { return this.canvas.height; }
-
-	get context() { return this.#context; }
-	set context(context) { this.#context = context; }
 
 	
 	static #generateCanvas() {
@@ -131,20 +111,10 @@ export class Canvas extends ObjectBase { //RC canvas wrapper //GPUCanvasContext
 	getContext(contextType, contextAttributes) {
 		// const WebGL2 = canvas.getContext("webgl2", contextAttributes);
 		// const WebGPU = canvas.getContext("webgpu", contextAttributes);
-		return this.canvas.getContext(contextType, contextAttributes);
-	}
+		const context = this.canvas.getContext(contextType, contextAttributes);
+		if (context === null) throw new Error(`Error creating [${contextType}] context`);
 
-	// undefined configure(GPUCanvasConfiguration configuration);
-	configure(configuration) {
-		this.context.configure(configuration);
-	}
-	 // undefined unconfigure();
-    unconfigure() {
-		this.context.unconfigure();
-	}
 
-	// GPUTexture getCurrentTexture();
-	getCurrentTexture() {
-		return this.context.getCurrentTexture();
+		return context;
 	}
 };
