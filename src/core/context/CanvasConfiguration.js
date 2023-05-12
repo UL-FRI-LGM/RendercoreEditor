@@ -1,7 +1,7 @@
-import { GPUCanvasAlphaMode } from "../core/ENUM/GPUCanvasAlphaMode.js";
-import { PredefinedColorSpace } from "../core/ENUM/PredefinedColorSpace.js";
-import { GPUTextureUsage } from "../core/NAMESPACE/GPUTextureUsage.js";
-import { DescriptorBase } from "../core/RC/DescriptorBase.js";
+import { GPUCanvasAlphaMode } from "../ENUM/GPUCanvasAlphaMode.js";
+import { PredefinedColorSpace } from "../ENUM/PredefinedColorSpace.js";
+import { GPUTextureUsage } from "../NAMESPACE/GPUTextureUsage.js";
+import { DescriptorBase } from "../RC/DescriptorBase.js";
 
 
 export class CanvasConfiguration extends DescriptorBase { //RC Canvas configuration descriptor
