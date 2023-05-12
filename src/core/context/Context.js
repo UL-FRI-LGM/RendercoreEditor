@@ -1,4 +1,4 @@
-import { API, CONSTANTS } from "../RenderCore.js";
+import { API, CONSTANTS } from "../../RenderCore.js";
 import { GL2Context } from "./GL2/GL2Context.js";
 import { GPUContext } from "./GPU/GPUContext.js";
 

@@ -1,9 +1,9 @@
-import { ObjectBase } from "./ObjectBase.js";
-import { BufferManager } from "./RC/buffers/BufferManager.js";
+import { ObjectBase } from "../ObjectBase.js";
+import { BufferManager } from "../RC/buffers/BufferManager.js";
 import { Context } from "./Context.js";
 import { ContextDescriptor } from "./ContextDescriptor.js";
-import { TextureManager } from "./RC/textures/TextureManager.js";
-import { CanvasManager } from "../canvas/CanvasManager.js";
+import { TextureManager } from "../RC/textures/TextureManager.js";
+import { CanvasManager } from "../../canvas/CanvasManager.js";
 
 
 export class ContextManager extends ObjectBase { //RC context manager //mapping (RC context descriptor -> context)

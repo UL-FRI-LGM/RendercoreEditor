@@ -1,7 +1,7 @@
 // A GPUCanvasContext object is created via the getContext() method of an HTMLCanvasElement instance by passing the string literal 'webgpu' as its contextType argument.
 
 
-import { CanvasConfiguration } from "../../canvas/CanvasConfiguration.js";
+import { CanvasConfiguration } from "../../../canvas/CanvasConfiguration.js";
 import { GPU } from "./GPU.js";
 import { GPUAdapter } from "./GPUAdapter.js";
 import { GPUDevice } from "./GPUDevice.js";

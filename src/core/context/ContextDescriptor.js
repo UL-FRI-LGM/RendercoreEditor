@@ -1,4 +1,4 @@
-import { DescriptorBase } from "./RC/DescriptorBase.js";
+import { DescriptorBase } from "../RC/DescriptorBase.js";
 
 
 export class ContextDescriptor extends DescriptorBase { //RC context descriptor (canvas descriptor + device descriptor)
