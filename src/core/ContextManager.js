@@ -1,8 +1,9 @@
-import { BufferManager } from "./BufferManager.js";
+import { ObjectBase } from "./ObjectBase.js";
+import { BufferManager } from "./RC/buffers/BufferManager.js";
 import { Context } from "./Context.js";
 import { ContextDescriptor } from "./ContextDescriptor.js";
-import { ObjectBase } from "./ObjectBase.js";
-import { TextureManager } from "./TextureManager.js";
+import { TextureManager } from "./RC/textures/TextureManager.js";
+import { CanvasManager } from "../canvas/CanvasManager.js";
 
 
 export class ContextManager extends ObjectBase { //RC context manager //mapping (RC context descriptor -> context)
@@ -10,11 +11,15 @@ export class ContextManager extends ObjectBase { //RC context manager //mapping 
     
     static DEFAULT = {
         NAME: "",
-		TYPE: "ContextManager",
+        TYPE: "ContextManager",
     };
 
 
     #api;
+
+    #canvasManager;
+    #canvas;
+
     #contextDescriptor;
     #context;
 
@@ -26,33 +31,43 @@ export class ContextManager extends ObjectBase { //RC context manager //mapping 
         return (async () => {
             super(
                 {
-                    ...args, 
+                    ...args,
+
                     name: (args.name !== undefined) ? args.name : ContextManager.DEFAULT.NAME,
                     type: (args.type !== undefined) ? args.type : ContextManager.DEFAULT.TYPE,
                 }
             );
 
             this.api = api;
-            this.contextDescriptor = new ContextDescriptor(args);
-            this.context = (await new Context(api, this.contextDescriptor)).context;
-            this.context.lost.then((info) => {
-                console.error(`Context was lost: ${info.message}`);
-                console.error(info);
-        
-                this.context = null;
-        
-                // Many causes for lost devices are transient, so applications should try getting a
-                // new device once a previous one has been lost unless the loss was caused by the
-                // application intentionally destroying the device. Note that any WebGPU resources
-                // created with the previous device (buffers, textures, etc) will need to be
-                // re-created with the new one.
-                if (info.reason !== "destroyed") {
-                    // initialize
+
+            this.canvasManager = new CanvasManager(api, args);
+            this.canvas = this.canvasManager.canvas;
+
+            this.contextDescriptor = new ContextDescriptor(
+                {
+                    canvas: this.canvas,
+
+                    powerPreference: args.powerPreference,
+                    forceFallbackAdapter: args.forceFallbackAdapter,
+            
+                    requiredFeatures: args.requiredFeatures,
+                    requiredLimits: args.requiredLimits,
+                    defaultQueue: args.defaultQueue,
+                
+                    configuration: {
+                        format: args.format,
+                        usage: args.usage,
+                        viewFormats: args.viewFormats,
+                        colorSpace: args.colorSpace,
+                        alphaMode: args.alphaMode,
+                    },
                 }
-            });
+            );
+            this.CONTEXT = (await new Context(api, this.contextDescriptor)); //this will be final version of context
+            this.context = this.CONTEXT.renderContext; //this is currently webgpu device, this will get replaced by the this.CONTEXT
 
             this.bufferManager = new BufferManager(this.context, {});
-			this.textureManager = new TextureManager(this.context, {});
+            this.textureManager = new TextureManager(this.context, {});
 
 
             return this;
@@ -62,6 +77,12 @@ export class ContextManager extends ObjectBase { //RC context manager //mapping 
     
     get api() { return this.#api; }
     set api(api) { this.#api = api; }
+
+    get canvasManager() { return this.#canvasManager; }
+	set canvasManager(canvasManager) { this.#canvasManager = canvasManager; }
+    get canvas() { return this.#canvas; }
+    set canvas(canvas) { this.#canvas = canvas; }
+
     get contextDescriptor() { return this.#contextDescriptor; }
     set contextDescriptor(contextDescriptor) { this.#contextDescriptor = contextDescriptor; }
     get context() { return this.#context; }
@@ -84,5 +105,8 @@ export class ContextManager extends ObjectBase { //RC context manager //mapping 
     }
     deleteContext() {
 
+    }
+    update() {
+        this.canvasManager.update();
     }
 };

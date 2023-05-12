@@ -1,4 +1,4 @@
-import { API } from "../RenderCore.js";
+import { API, CONSTANTS } from "../RenderCore.js";
 import { GL2Context } from "./GL2/GL2Context.js";
 import { GPUContext } from "./GPU/GPUContext.js";
 
@@ -6,9 +6,14 @@ import { GPUContext } from "./GPU/GPUContext.js";
 export class Context { //RC context wrapper
 
 
-    static API = new Map([
-        ["webgl2", async (args) => { return await new GL2Context(args); }],
-        ["webgpu", async (args) => { return await new GPUContext(args); }]
+    static API = {
+        WEBGL1: "webgl1",
+        WEBGL2: "webgl2",
+        WEBGPU: "webgpu",
+    };
+    static #API = new Map([
+        [Context.API.WEBGL2, async (args) => { return await new GL2Context(args); }],
+        [Context.API.WEBGPU, async (args) => { return await new GPUContext(args); }],
     ]);
 
 
@@ -35,7 +40,7 @@ export class Context { //RC context wrapper
 
             // return this;
             // return (api === API.WEBGL2) ? (await new GL2Context(args)) : ((api === API.WEBGPU) ? (await new GPUContext(args)) : null);
-            return await Context.API.get(api)(args);
+            return await Context.#API.get(api)(args);
         })();
     }
 

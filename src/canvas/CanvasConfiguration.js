@@ -23,10 +23,10 @@ export class CanvasConfiguration extends DescriptorBase { //RC Canvas configurat
     #alphaMode = GPUCanvasAlphaMode.OPAQUE;
 
 
-    constructor(context, args = {}) {
+    constructor(device, args = {}) {
         super(args);
 
-        this.device = (context !== undefined) ? context : this.device;
+        this.device = (device !== undefined) ? device : this.device;
         this.format = (args.format !== undefined) ? args.format : this.format;
         this.usage = (args.usage !== undefined) ? args.usage : this.usage;
         this.viewFormats = (args.viewFormats !== undefined) ? args.viewFormats : this.viewFormats;

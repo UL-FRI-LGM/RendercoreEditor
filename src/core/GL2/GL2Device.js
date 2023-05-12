@@ -5,9 +5,9 @@ export class GL2Device { //GL device wrapper
 
 
     constructor() {
-        return (async () => {
+        return (async (canvas, args = {}) => {
 
-            this.device = null;
+            this.device = canvas.getContext(args.contextType = "webgl2", args.contextAttributes);
 
 
             return this;
