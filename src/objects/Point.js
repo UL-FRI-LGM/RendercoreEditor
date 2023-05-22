@@ -1,11 +1,13 @@
-import { GPUPrimitiveTopology } from "../core/ENUM/GPUPrimitiveTopology.js";
 import { Mesh } from "./Mesh.js";
 import { PointGeometry } from "./PointGeometry.js";
 import { Vector3 } from "../math/Vector3.js";
 import { PointBasicMaterial } from "../materials/PointBasicMaterial.js";
+import { PrimitiveTopology } from "../core/RC/pipeline/primitive state/PrimitiveTopology.js";
 
 
 export class Point extends Mesh {
+
+	
     static DEFAULT = {
 		NAME: "",
 		TYPE: "Point",
@@ -23,7 +25,7 @@ export class Point extends Mesh {
         ),
 		MATERIAL: new PointBasicMaterial(),
 		PICKABLE: false,
-        PRIMITIVE: GPUPrimitiveTopology.POINT_LIST,
+        PRIMITIVE: PrimitiveTopology.POINT_LIST,
 	};
 
 

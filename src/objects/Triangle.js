@@ -1,11 +1,13 @@
-import { GPUPrimitiveTopology } from "../core/ENUM/GPUPrimitiveTopology.js";
 import { Mesh } from "./Mesh.js";
 import { Vector3 } from "../math/Vector3.js";
 import { TriangleGeometry } from "./TriangleGeometry.js";
 import { TriangleBasicMaterial } from "../materials/TriangleBasicMaterial.js";
+import { PrimitiveTopology } from "../core/RC/pipeline/primitive state/PrimitiveTopology.js";
 
 
 export class Triangle extends Mesh {
+
+	
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "Triangle",
@@ -23,7 +25,7 @@ export class Triangle extends Mesh {
 		),
 		MATERIAL: new TriangleBasicMaterial(),
 		PICKABLE: false,
-		PRIMITIVE: GPUPrimitiveTopology.TRIANGLE_LIST,
+		PRIMITIVE: PrimitiveTopology.TRIANGLE_LIST,
 	};
 
 

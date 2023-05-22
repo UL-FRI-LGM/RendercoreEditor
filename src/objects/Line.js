@@ -1,11 +1,13 @@
-import { GPUPrimitiveTopology } from "../core/ENUM/GPUPrimitiveTopology.js";
 import { Mesh } from "./Mesh.js";
 import { Vector3 } from "../math/Vector3.js";
 import { LineGeometry } from "./LineGeometry.js";
 import { LineBasicMaterial } from "../materials/LineBasicMaterial.js";
+import { PrimitiveTopology } from "../core/RC/pipeline/primitive state/PrimitiveTopology.js";
 
 
 export class Line extends Mesh {
+
+
 	static DEFAULT = {
 		NAME: "",
 		TYPE: "Line",
@@ -23,7 +25,7 @@ export class Line extends Mesh {
 		),
 		MATERIAL: new LineBasicMaterial(),
 		PICKABLE: false,
-		PRIMITIVE: GPUPrimitiveTopology.LINE_LIST,
+		PRIMITIVE: PrimitiveTopology.LINE_LIST,
 	};
 
 
