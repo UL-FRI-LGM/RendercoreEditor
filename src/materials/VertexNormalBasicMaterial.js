@@ -7,8 +7,8 @@ export class VertexNormalBasicMaterial extends MeshBasicMaterial {
 		NAME: "",
 		TYPE: "VertexNormalBasicMaterial",
 
-		SHADER_PATH: "/src/shaders/basic/",
-		PROGRAM_NAME: "basic_flat_vn",
+		SHADER_PATH: "/src/shaders/basic/vn/",
+		PROGRAM_NAME: "basic_vn_flat",
 
 		EMISSIVE: new Color4(0, 0, 0, 0),
 		DIFFUSE: new Color4(Math.random(), Math.random(), Math.random(), Math.random()),
