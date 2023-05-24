@@ -155,7 +155,7 @@ export class UniformGroupManager extends ObjectBase { //RC uniform group manager
                 this.resourceBindingManager.setResourceBindingValue(resourceBinding);
             });
         }
-        if (resourceBindingsExternal.sie > 0) {
+        if (resourceBindingsExternal.size > 0) {
             resourceBindingsExternal.forEach((resourceBinding, number) => {
                 this.resourceBindingManager.setResourceBindingValue(resourceBinding);
             });
