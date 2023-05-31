@@ -14,6 +14,7 @@ import { GPUBufferBindingType } from "../core/ENUM/GPUBufferBindingType.js";
 import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
 import { RCBufferBindingResource } from "../core/RCBufferBindingResource.js";
 import { ResourcePack } from "../core/data layouts/ResourcePack.js";
+import { Box3, Vector3 } from "../RenderCore.js";
 
 
 export class Object3D extends ObjectBase {
@@ -337,7 +338,7 @@ export class Object3D extends ObjectBase {
 			this.g_MMat = this.g_MMat.multiplyMatrices(this.parent.g_MMat, this.l_MMat);
 		}
 
-		if (updateChildren === true) {
+		if (updateChildren) {
 			for (const child of this.children) {
 				child.updateMatrixWorld(false, true);
 			}
@@ -444,7 +445,7 @@ export class Object3D extends ObjectBase {
 	}
 
 	computeBoundingSphere() {
-		const boundingSpheres = [];
+		const boundingSpheres = new Array();
 
 		// Fetch bounding spheres of all of the children
 		this.traverse((object) => {
@@ -460,21 +461,49 @@ export class Object3D extends ObjectBase {
 		if (boundingSpheres.length > 0) {
 			return _Math.computeSpheresBoundingSphere(boundingSpheres);
 		} else {
-			return new Sphere();
+			return new Sphere(new Vector3(0, 0, 0), Infinity);
+		}
+	}
+	computeBoundingBox() {
+		const boundingBoxes = new Array();
+
+		// Fetch bounding boxes of all of the children
+		this.traverse((object) => {
+			if (object.geometry) {
+				const boundingBox = object.geometry.boundingBox;
+
+				boundingBoxes.push(boundingBox);
+			}
+		});
+
+		if (boundingBoxes.length > 0) {
+			const min = new Vector3(+Infinity, +Infinity, +Infinity);
+			const max = new Vector3(-Infinity, -Infinity, -Infinity);
+
+			for (let i = 0; i < boundingBoxes.length; i++) {
+				const boundingBox = boundingBoxes[i];
+				
+				min.min(boundingBox.min);
+				max.max(boundingBox.max);
+			}
+
+			return new Box3(min, max);
+		} else {
+			return new Box3(new Vector3(-Infinity, -Infinity, -Infinity), new Vector3(+Infinity, +Infinity, +Infinity));
 		}
 	}
 	#updateBounding() {
 		this.bounding.sphere.worldspace.copy(this.bounding.sphere.objectspace);
 		this.bounding.sphere.worldspace.applyMatrix4(this.g_MMat);
 
-		// TODO, do the same for bounding box
-		// this.bounding.box.worldspace.copy(this.bounding.box.objectspace);
-		// this.bounding.box.worldspace.applyMatrix4(this.g_MMat);
+		this.bounding.box.worldspace.copy(this.bounding.box.objectspace);
+		this.bounding.box.worldspace.applyMatrix4(this.g_MMat);
 	}
 	computeBounding() {
 		const boundingSphere_objectspace = this.computeBoundingSphere();
 		const boundingSphere_worldspace = new Sphere().copy(boundingSphere_objectspace).applyMatrix4(this.g_MMat);
-		// const boundingBox_objectspace = this.computeBoundingBox(); // TODO
+		const boundingBox_objectspace = this.computeBoundingBox();
+		const boundingBox_worldspace = new Box3().copy(boundingBox_objectspace).applyMatrix4(this.g_MMat);
 
 		const bounding = new Bounding(
 			{
@@ -482,7 +511,10 @@ export class Object3D extends ObjectBase {
 					objectspace: boundingSphere_objectspace,
 					worldspace: boundingSphere_worldspace,
 				},
-				box: undefined
+				box: {
+					objectspace: boundingBox_objectspace,
+					worldspace: boundingBox_worldspace,
+				},
 			}
 		);
 
