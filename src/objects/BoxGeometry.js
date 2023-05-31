@@ -126,7 +126,7 @@ export class BoxGeometry extends MeshGeometry {
 
 					bufferDescriptor: new BufferDescriptor(
 						{
-							label: "cube indices buffer",
+							label: "box indices buffer",
 							size: indicesArrayBuffer.length,
 							usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
 							mappedAtCreation: false
@@ -151,10 +151,10 @@ export class BoxGeometry extends MeshGeometry {
 				}
 			);
 			indicesAttributeLocation.setValue(
-				"cube indices",
+				"box indices",
 				new BufferSetInstruction(
 					{
-						label: "cube indices",
+						label: "box indices",
 	
 						number: null,
 	
@@ -296,7 +296,7 @@ export class BoxGeometry extends MeshGeometry {
 
 				bufferDescriptor: new BufferDescriptor(
 					{
-						label: "cube vertices buffer",
+						label: "box vertices buffer",
 						size: verticesArrayBuffer.length,
 						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
 						mappedAtCreation: false
@@ -320,10 +320,10 @@ export class BoxGeometry extends MeshGeometry {
 			}
 		);
 		verticesAttributeLocation.setValue(
-			"cube vertices",
+			"box vertices",
 			new BufferSetInstruction(
 				{
-					label: "cube vertices",
+					label: "box vertices",
 
 					number: 0,
 
@@ -441,7 +441,7 @@ export class BoxGeometry extends MeshGeometry {
 				arrayBuffer: normalsArrayBuffer,
 				bufferDescriptor: new BufferDescriptor(
 					{
-						label: "cube normals buffer",
+						label: "box normals buffer",
 						size: normalsArrayBuffer.length,
 						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
 						mappedAtCreation: false
@@ -466,10 +466,10 @@ export class BoxGeometry extends MeshGeometry {
 		);
 		// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
 		normalsAttributeLocation.setValue(
-			"cube normals",
+			"box normals",
 			new BufferSetInstruction(
 				{
-					label: "cube normals",
+					label: "box normals",
 
 					number: 1,
 
@@ -587,7 +587,7 @@ export class BoxGeometry extends MeshGeometry {
 				arrayBuffer: uvsArrayBuffer,
 				bufferDescriptor: new BufferDescriptor(
 					{
-						label: "cube uvs buffer",
+						label: "box uvs buffer",
 						size: uvsArrayBuffer.length,
 						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
 						mappedAtCreation: false
@@ -611,10 +611,10 @@ export class BoxGeometry extends MeshGeometry {
 			}
 		);
 		uvsAttributeLocation.setValue(
-			"cube uvs",
+			"box uvs",
 			new BufferSetInstruction(
 				{
-					label: "cube uvs",
+					label: "box uvs",
 
 					number: 2,
 
