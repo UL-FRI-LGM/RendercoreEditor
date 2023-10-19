@@ -991,8 +991,6 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		// Create new bounding box using the vertices
 		if (this.vertices) {
 			this.boundingBox.setFromArray(this.vertices.arrayBuffer);
-		} else {
-			this.boundingBox.makeEmpty();
 		}
 
 		if (isNaN(this.boundingBox.min.x) || isNaN(this.boundingBox.min.y) || isNaN(this.boundingBox.min.z)) {
