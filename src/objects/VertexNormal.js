@@ -10,8 +10,8 @@ export class VertexNormal extends Mesh {
 
 
 	static DEFAULT = {
-		NAME: "",
 		TYPE: "VertexNormal",
+		NAME: "",
 
 		VISIBLE: true,
 		FRUSTUM_CULLED: true,
@@ -34,9 +34,10 @@ export class VertexNormal extends Mesh {
 	constructor(args = {}) {
 		super(
 			{
-				...args, 
-				name: (args.name !== undefined) ? args.name : VertexNormal.DEFAULT.NAME,
+				...args,
+			
 				type: (args.type !== undefined) ? args.type : VertexNormal.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : VertexNormal.DEFAULT.NAME,
 			
 				visible: (args.visible !== undefined) ? args.visible : VertexNormal.DEFAULT.VISIBLE,
 				frustumCulled: (args.frustumCulled !== undefined) ? args.frustumCulled : VertexNormal.DEFAULT.FRUSTUM_CULLED,

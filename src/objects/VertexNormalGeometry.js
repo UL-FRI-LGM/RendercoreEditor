@@ -28,8 +28,8 @@ export class VertexNormalGeometry extends MeshGeometry {
 			{
 				...args,
 
-				name: (args.name !== undefined) ? args.name : VertexNormalGeometry.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : VertexNormalGeometry.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : VertexNormalGeometry.DEFAULT.NAME,
 
 				indexed: (args.indexed !== undefined) ? args.indexed : VertexNormalGeometry.DEFAULT.INDEXED,
 

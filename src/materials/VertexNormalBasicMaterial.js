@@ -3,9 +3,11 @@ import { Color4 } from "../math/Color4.js";
 
 
 export class VertexNormalBasicMaterial extends MeshBasicMaterial {
+
+
 	static DEFAULT = {
-		NAME: "",
 		TYPE: "VertexNormalBasicMaterial",
+		NAME: "",
 
 		SHADER_PATH: "/src/shaders/basic/vn/",
 		PROGRAM_NAME: "basic_vn_flat",
@@ -19,8 +21,9 @@ export class VertexNormalBasicMaterial extends MeshBasicMaterial {
 		super(
 			{
 				...args,
-				name: (args.name !== undefined) ? args.name : VertexNormalBasicMaterial.DEFAULT.NAME,
+
 				type: (args.type !== undefined) ? args.type : VertexNormalBasicMaterial.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : VertexNormalBasicMaterial.DEFAULT.NAME,
 
 				shaderPath: VertexNormalBasicMaterial.DEFAULT.SHADER_PATH,
 				programName: VertexNormalBasicMaterial.DEFAULT.PROGRAM_NAME,
