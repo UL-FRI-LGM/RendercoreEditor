@@ -8,29 +8,29 @@ export class Bounding {
 
 	static DEFAULT = {
 		SPHERE: {
-			objectspace: new Sphere(new Vector3(0, 0, 0), Infinity),
-			worldspace: new Sphere(new Vector3(0, 0, 0), Infinity),
+			objectspace: new Sphere(new Vector3(0, 0, 0), 0),
+			worldspace: new Sphere(new Vector3(0, 0, 0), 0),
 		},
 		BOX: {
-			objectspace: new Box3(new Vector3(-Infinity, -Infinity, -Infinity), new Vector3(+Infinity, +Infinity, +Infinity)),
-			worldspace: new Box3(new Vector3(-Infinity, -Infinity, -Infinity), new Vector3(+Infinity, +Infinity, +Infinity)),
+			objectspace: new Box3(new Vector3(+Infinity, +Infinity, +Infinity), new Vector3(-Infinity, -Infinity, -Infinity)),
+			worldspace: new Box3(new Vector3(+Infinity, +Infinity, +Infinity), new Vector3(-Infinity, -Infinity, -Infinity)),
 		}
 	};
 
 
 	#sphere = {
-		objectspace: new Sphere(new Vector3(0, 0, 0), Infinity),
-		worldspace: new Sphere(new Vector3(0, 0, 0), Infinity),
+		objectspace: new Sphere(new Vector3(0, 0, 0), 0),
+		worldspace: new Sphere(new Vector3(0, 0, 0), 0),
 	};
 	#box = {
-		objectspace: new Box3(new Vector3(-Infinity, -Infinity, -Infinity), new Vector3(+Infinity, +Infinity, +Infinity)),
-		worldspace: new Box3(new Vector3(-Infinity, -Infinity, -Infinity), new Vector3(+Infinity, +Infinity, +Infinity)),
+		objectspace: new Box3(new Vector3(+Infinity, +Infinity, +Infinity), new Vector3(-Infinity, -Infinity, -Infinity)),
+		worldspace: new Box3(new Vector3(+Infinity, +Infinity, +Infinity), new Vector3(-Infinity, -Infinity, -Infinity)),
 	};
 
 
 	constructor (args = {}) {
-		this.sphere = (args.sphere !== undefined) ? args.sphere : Bounding.DEFAULT.SPHERE;
-		this.box = (args.box !== undefined) ? args.box : Bounding.DEFAULT.BOX;
+		this.sphere = (args.sphere !== undefined) ? args.sphere : { objectspace: new Sphere(new Vector3(0, 0, 0), 0), worldspace: new Sphere(new Vector3(0, 0, 0), 0) };
+		this.box = (args.box !== undefined) ? args.box : { objectspace: new Box3(new Vector3(+Infinity, +Infinity, +Infinity), new Vector3(-Infinity, -Infinity, -Infinity)), worldspace: new Box3(new Vector3(+Infinity, +Infinity, +Infinity), new Vector3(-Infinity, -Infinity, -Infinity)) };
 	}
 
 
