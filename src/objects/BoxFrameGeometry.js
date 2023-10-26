@@ -100,7 +100,7 @@ export class BoxFrameGeometry extends MeshGeometry {
 
 					bufferDescriptor: new BufferDescriptor(
 						{
-							label: "bounding box indices buffer",
+							label: "box frame indices buffer",
 							size: indicesArrayBuffer.length,
 							usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
 							mappedAtCreation: false
@@ -125,10 +125,10 @@ export class BoxFrameGeometry extends MeshGeometry {
 				}
 			);
 			indicesAttributeLocation.setValue(
-				"bounding box indices",
+				"box frame indices",
 				new BufferSetInstruction(
 					{
-						label: "bounding box indices",
+						label: "box frame indices",
 	
 						number: null,
 	
@@ -246,7 +246,7 @@ export class BoxFrameGeometry extends MeshGeometry {
 
 				bufferDescriptor: new BufferDescriptor(
 					{
-						label: "bounding box vertices buffer",
+						label: "box frame vertices buffer",
 						size: verticesArrayBuffer.length,
 						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
 						mappedAtCreation: false
@@ -270,10 +270,10 @@ export class BoxFrameGeometry extends MeshGeometry {
 			}
 		);
 		verticesAttributeLocation.setValue(
-			"bounding box vertices",
+			"box frame vertices",
 			new BufferSetInstruction(
 				{
-					label: "bounding box vertices",
+					label: "box frame vertices",
 
 					number: 0,
 
@@ -367,7 +367,7 @@ export class BoxFrameGeometry extends MeshGeometry {
 				arrayBuffer: normalsArrayBuffer,
 				bufferDescriptor: new BufferDescriptor(
 					{
-						label: "bounding box normals buffer",
+						label: "box frame normals buffer",
 						size: normalsArrayBuffer.length,
 						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
 						mappedAtCreation: false
@@ -392,10 +392,10 @@ export class BoxFrameGeometry extends MeshGeometry {
 		);
 		// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
 		normalsAttributeLocation.setValue(
-			"bounding box normals",
+			"box frame normals",
 			new BufferSetInstruction(
 				{
-					label: "bounding box normals",
+					label: "box frame normals",
 
 					number: 1,
 
@@ -489,7 +489,7 @@ export class BoxFrameGeometry extends MeshGeometry {
 				arrayBuffer: uvsArrayBuffer,
 				bufferDescriptor: new BufferDescriptor(
 					{
-						label: "bounding box uvs buffer",
+						label: "box frame uvs buffer",
 						size: uvsArrayBuffer.length,
 						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
 						mappedAtCreation: false
@@ -513,10 +513,10 @@ export class BoxFrameGeometry extends MeshGeometry {
 			}
 		);
 		uvsAttributeLocation.setValue(
-			"bounding box uvs",
+			"box frame uvs",
 			new BufferSetInstruction(
 				{
-					label: "bounding box uvs",
+					label: "box frame uvs",
 
 					number: 2,
 
