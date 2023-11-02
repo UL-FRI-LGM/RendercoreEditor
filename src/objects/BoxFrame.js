@@ -22,7 +22,6 @@ export class BoxFrame extends Mesh {
 				baseGeometry: {
 					positions: [new Vector3(0, 0, 0)],
 					dimensions: [{ min: new Vector3(-1, -1, -1), max: new Vector3(+1, +1, +1)}],
-					mesh: new Cube(),
 				}
 			}
 		),
