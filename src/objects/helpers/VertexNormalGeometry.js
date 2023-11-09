@@ -67,8 +67,88 @@ export class VertexNormalGeometry extends MeshGeometry {
 		const instanceIndexStride = (2) * 1;
 		const instanceVertexStride = (2) * 1;
 
+		const indicesArray = new Array();
 
-		return null;
+
+		if (indexed) {
+			const array = new Array(instanceIndexStride);
+
+
+			for (let p = 0; p < positions.length; p++) {
+				const instanceOffset = instanceStride * p;
+
+
+				array[0] = instanceOffset+0; //vertex 0
+				array[1] = instanceOffset+1; //vertex 1
+
+
+				indicesArray.push(...array);
+			}
+		} else {
+			//noop
+		}
+
+
+		const indicesArrayBuffer = new Uint32Array(indicesArray);
+		const indicesAttributeLocation = new AttributeLocation(
+			{
+				number: null,
+				itemSize: 1,
+				arrayBuffer: indicesArrayBuffer,
+
+				bufferDescriptor: new BufferDescriptor(
+					{
+						label: "vertex normal indices buffer",
+						size: indicesArrayBuffer.length,
+						usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
+						mappedAtCreation: false
+					}
+				),
+				// vertexBufferLayoutDescriptor: new VertexBufferLayout(
+				// 	{
+				// 		arrayStride: 1 * 4,
+				// 		stepMode: VertexStepMode.VERTEX,
+				// 		attributes: [
+				// 			new VertexAttribute(
+				// 				{
+				// 					format: VertexFormat.UINT_32,
+				// 					offset: 0,
+				// 					shaderLocation: 0,
+				// 				}
+				// 			)
+				// 		],			
+				// 	}
+				// )
+				vertexBufferLayoutDescriptor: null
+			}
+		);
+		indicesAttributeLocation.setValue(
+			"vertex normal indices",
+			new BufferSetInstruction(
+				{
+					label: "vertex normal indices",
+
+					number: null,
+
+					source: {
+						arrayBuffer: indicesArrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0)
+						}
+					},
+					size: indicesArrayBuffer.length
+				}
+			)
+		);
+
+
+		return indexed ? indicesAttributeLocation : null;
 	}
 	static assembleVertices(args = {}) {
 		const indexed = args.indexed;
@@ -82,20 +162,40 @@ export class VertexNormalGeometry extends MeshGeometry {
 		const instanceVertexStride = (2) * 3;
 
 		const verticesArray = new Array();
-		const array = new Array(instanceVertexStride);
 
 
-		for (let p = 0; p < attributeLocation.count(); p++) {
-			array[0] = arrayBuffer[p*3 + 0];
-			array[1] = arrayBuffer[p*3 + 1];
-			array[2] = arrayBuffer[p*3 + 2]; //vertex 0
-			
-			array[3] = arrayBuffer[p*3 + 0];
-			array[4] = arrayBuffer[p*3 + 1];
-			array[5] = arrayBuffer[p*3 + 2]; //vertex 1
+		if (indexed) {
+			const array = new Array(instanceIndexStride);
 
 
-			verticesArray.push(...array);
+			for (let p = 0; p < attributeLocation.count(); p++) {
+				array[0] = arrayBuffer[p*3 + 0];
+				array[1] = arrayBuffer[p*3 + 1];
+				array[2] = arrayBuffer[p*3 + 2]; //vertex 0
+				
+				array[3] = arrayBuffer[p*3 + 0];
+				array[4] = arrayBuffer[p*3 + 1];
+				array[5] = arrayBuffer[p*3 + 2]; //vertex 1
+	
+	
+				verticesArray.push(...array);
+			}
+		} else {
+			const array = new Array(instanceVertexStride);
+
+
+			for (let p = 0; p < attributeLocation.count(); p++) {
+				array[0] = arrayBuffer[p*3 + 0];
+				array[1] = arrayBuffer[p*3 + 1];
+				array[2] = arrayBuffer[p*3 + 2]; //vertex 0
+				
+				array[3] = arrayBuffer[p*3 + 0];
+				array[4] = arrayBuffer[p*3 + 1];
+				array[5] = arrayBuffer[p*3 + 2]; //vertex 1
+	
+	
+				verticesArray.push(...array);
+			}
 		}
 
 
@@ -169,20 +269,40 @@ export class VertexNormalGeometry extends MeshGeometry {
 		const instanceVertexStride = (2) * 3;
 
 		const normalsArray = new Array();
-		const array = new Array(instanceVertexStride);
 
 
-		for (let p = 0; p < attributeLocation.count(); p++) {
-			array[0] = arrayBuffer[p*3 + 0];
-			array[1] = arrayBuffer[p*3 + 1];
-			array[2] = arrayBuffer[p*3 + 2]; //vertex 0
-			
-			array[3] = arrayBuffer[p*3 + 0];
-			array[4] = arrayBuffer[p*3 + 1];
-			array[5] = arrayBuffer[p*3 + 2]; //vertex 1
+		if (indexed) {
+			const array = new Array(instanceIndexStride);
 
 
-			normalsArray.push(...array);
+			for (let p = 0; p < attributeLocation.count(); p++) {
+				array[0] = arrayBuffer[p*3 + 0];
+				array[1] = arrayBuffer[p*3 + 1];
+				array[2] = arrayBuffer[p*3 + 2]; //vertex 0
+				
+				array[3] = arrayBuffer[p*3 + 0];
+				array[4] = arrayBuffer[p*3 + 1];
+				array[5] = arrayBuffer[p*3 + 2]; //vertex 1
+	
+	
+				normalsArray.push(...array);
+			}
+		} else {
+			const array = new Array(instanceVertexStride);
+
+
+			for (let p = 0; p < attributeLocation.count(); p++) {
+				array[0] = arrayBuffer[p*3 + 0];
+				array[1] = arrayBuffer[p*3 + 1];
+				array[2] = arrayBuffer[p*3 + 2]; //vertex 0
+				
+				array[3] = arrayBuffer[p*3 + 0];
+				array[4] = arrayBuffer[p*3 + 1];
+				array[5] = arrayBuffer[p*3 + 2]; //vertex 1
+	
+	
+				normalsArray.push(...array);
+			}
 		}
 
 
@@ -257,18 +377,36 @@ export class VertexNormalGeometry extends MeshGeometry {
 		const instanceVertexStride = (2) * 2;
 
 		const uvsArray = new Array();
-		const array = new Array(instanceVertexStride);
 
 
-		for (let p = 0; p < attributeLocation.count(); p++) {
-			array[0] = arrayBuffer[p*2 + 0];
-			array[1] = arrayBuffer[p*2 + 1]; //vertex 0
-			
-			array[2] = arrayBuffer[p*2 + 0];
-			array[3] = arrayBuffer[p*2 + 1]; //vertex 1
+		if (indexed) {
+			const array = new Array(instanceIndexStride);
 
 
-			uvsArray.push(...array);
+			for (let p = 0; p < attributeLocation.count(); p++) {
+				array[0] = arrayBuffer[p*2 + 0];
+				array[1] = arrayBuffer[p*2 + 1]; //vertex 0
+				
+				array[2] = arrayBuffer[p*2 + 0];
+				array[3] = arrayBuffer[p*2 + 1]; //vertex 1
+	
+	
+				uvsArray.push(...array);
+			}
+		} else {
+			const array = new Array(instanceVertexStride);
+
+
+			for (let p = 0; p < attributeLocation.count(); p++) {
+				array[0] = arrayBuffer[p*2 + 0];
+				array[1] = arrayBuffer[p*2 + 1]; //vertex 0
+				
+				array[2] = arrayBuffer[p*2 + 0];
+				array[3] = arrayBuffer[p*2 + 1]; //vertex 1
+	
+	
+				uvsArray.push(...array);
+			}
 		}
 
 
@@ -343,16 +481,32 @@ export class VertexNormalGeometry extends MeshGeometry {
 		const instanceVertexStride = (2) * 1;
 
 		const indicatorsArray = new Array();
-		const array = new Array(instanceVertexStride);
 
 
-		for (let p = 0; p < attributeLocation.count(); p++) {
-			array[0] = 0; //vertex 0
-			
-			array[1] = 1; //vertex 1
+		if (indexed) {
+			const array = new Array(instanceIndexStride);
 
 
-			indicatorsArray.push(...array);
+			for (let p = 0; p < attributeLocation.count(); p++) {
+				array[0] = 0; //vertex 0
+				
+				array[1] = 1; //vertex 1
+	
+	
+				indicatorsArray.push(...array);
+			}
+		} else {
+			const array = new Array(instanceVertexStride);
+
+
+			for (let p = 0; p < attributeLocation.count(); p++) {
+				array[0] = 0; //vertex 0
+				
+				array[1] = 1; //vertex 1
+	
+	
+				indicatorsArray.push(...array);
+			}
 		}
 
 
