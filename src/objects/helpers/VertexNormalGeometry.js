@@ -1,12 +1,12 @@
-import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
-import { MeshGeometry } from "./MeshGeometry.js";
-import { AttributeLocation } from "../core/data layouts/AttributeLocation.js";
-import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
-import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
-import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
-import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
-import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
-import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
+import { BufferDescriptor } from "../../core/RC/buffers/BufferDescriptor.js";
+import { MeshGeometry } from "../MeshGeometry.js";
+import { AttributeLocation } from "../../core/data layouts/AttributeLocation.js";
+import { VertexBufferLayout } from "../../core/RC/pipeline/vertex state/VertexBufferLayout.js";
+import { VertexStepMode } from "../../core/RC/pipeline/vertex state/VertexStepMode.js";
+import { VertexAttribute } from "../../core/RC/pipeline/vertex state/VertexAttribute.js";
+import { VertexFormat } from "../../core/RC/pipeline/vertex state/VertexFormat.js";
+import { BufferUsage } from "../../core/RC/buffers/BufferUsage.js";
+import { BufferSetInstruction } from "../../core/data layouts/BufferSetInstruction.js";
 
 
 export class VertexNormalGeometry extends MeshGeometry {

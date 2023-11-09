@@ -1,5 +1,5 @@
-import { MeshBasicMaterial } from "./MeshBasicMaterial.js";
-import { Color4 } from "../math/Color4.js";
+import { MeshBasicMaterial } from "../MeshBasicMaterial.js";
+import { Color4 } from "../../math/Color4.js";
 
 
 export class VertexNormalBasicMaterial extends MeshBasicMaterial {

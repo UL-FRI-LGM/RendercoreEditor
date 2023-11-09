@@ -1,9 +1,9 @@
-import { Mesh } from "./Mesh.js";
-import { Vector3 } from "../math/Vector3.js";
-import { PrimitiveTopology } from "../core/RC/pipeline/primitive state/PrimitiveTopology.js";
+import { Mesh } from "../Mesh.js";
+import { Vector3 } from "../../math/Vector3.js";
+import { PrimitiveTopology } from "../../core/RC/pipeline/primitive state/PrimitiveTopology.js";
 import { VertexNormalGeometry } from "./VertexNormalGeometry.js";
-import { VertexNormalBasicMaterial } from "../materials/VertexNormalBasicMaterial.js";
-import { Cube } from "./Cube.js";
+import { VertexNormalBasicMaterial } from "../../materials/helpers/VertexNormalBasicMaterial.js";
+import { Cube } from "../Cube.js";
 
 
 export class VertexNormal extends Mesh {
