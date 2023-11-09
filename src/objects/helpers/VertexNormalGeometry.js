@@ -60,6 +60,12 @@ export class VertexNormalGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const mesh = baseGeometry.mesh;
+		const attributeLocation = mesh.geometry.normals;
+		const arrayBuffer = attributeLocation.arrayBuffer;
+
+		const instanceStride = 2;
+		const instanceIndexStride = (2) * 1;
+		const instanceVertexStride = (2) * 1;
 
 
 		return null;
@@ -69,20 +75,24 @@ export class VertexNormalGeometry extends MeshGeometry {
 		const baseGeometry = args.baseGeometry;
 		const mesh = baseGeometry.mesh;
 		const attributeLocation = mesh.geometry.vertices;
-		const ArrayBuffer = attributeLocation.arrayBuffer;
+		const arrayBuffer = attributeLocation.arrayBuffer;
+
+		const instanceStride = 2;
+		const instanceIndexStride = (2) * 3;
+		const instanceVertexStride = (2) * 3;
 
 		const verticesArray = new Array();
-		const array = new Array(2 * 3);
+		const array = new Array(instanceVertexStride);
 
 
 		for (let p = 0; p < attributeLocation.count(); p++) {
-			array[0] = ArrayBuffer[p*3 + 0];
-			array[1] = ArrayBuffer[p*3 + 1];
-			array[2] = ArrayBuffer[p*3 + 2]; //vertex 0
+			array[0] = arrayBuffer[p*3 + 0];
+			array[1] = arrayBuffer[p*3 + 1];
+			array[2] = arrayBuffer[p*3 + 2]; //vertex 0
 			
-			array[3] = ArrayBuffer[p*3 + 0];
-			array[4] = ArrayBuffer[p*3 + 1];
-			array[5] = ArrayBuffer[p*3 + 2]; //vertex 1
+			array[3] = arrayBuffer[p*3 + 0];
+			array[4] = arrayBuffer[p*3 + 1];
+			array[5] = arrayBuffer[p*3 + 2]; //vertex 1
 
 
 			verticesArray.push(...array);
@@ -152,20 +162,24 @@ export class VertexNormalGeometry extends MeshGeometry {
 		const baseGeometry = args.baseGeometry;
 		const mesh = baseGeometry.mesh;
 		const attributeLocation = mesh.geometry.normals;
-		const ArrayBuffer = attributeLocation.arrayBuffer;
+		const arrayBuffer = attributeLocation.arrayBuffer;
+
+		const instanceStride = 2;
+		const instanceIndexStride = (2) * 3;
+		const instanceVertexStride = (2) * 3;
 
 		const normalsArray = new Array();
-		const array = new Array(2 * 3);
+		const array = new Array(instanceVertexStride);
 
 
 		for (let p = 0; p < attributeLocation.count(); p++) {
-			array[0] = ArrayBuffer[p*3 + 0];
-			array[1] = ArrayBuffer[p*3 + 1];
-			array[2] = ArrayBuffer[p*3 + 2]; //vertex 0
+			array[0] = arrayBuffer[p*3 + 0];
+			array[1] = arrayBuffer[p*3 + 1];
+			array[2] = arrayBuffer[p*3 + 2]; //vertex 0
 			
-			array[3] = ArrayBuffer[p*3 + 0];
-			array[4] = ArrayBuffer[p*3 + 1];
-			array[5] = ArrayBuffer[p*3 + 2]; //vertex 1
+			array[3] = arrayBuffer[p*3 + 0];
+			array[4] = arrayBuffer[p*3 + 1];
+			array[5] = arrayBuffer[p*3 + 2]; //vertex 1
 
 
 			normalsArray.push(...array);
@@ -236,18 +250,22 @@ export class VertexNormalGeometry extends MeshGeometry {
 		const baseGeometry = args.baseGeometry;
 		const mesh = baseGeometry.mesh;
 		const attributeLocation = mesh.geometry.uvs;
-		const ArrayBuffer = attributeLocation.arrayBuffer;
+		const arrayBuffer = attributeLocation.arrayBuffer;
+
+		const instanceStride = 2;
+		const instanceIndexStride = (2) * 2;
+		const instanceVertexStride = (2) * 2;
 
 		const uvsArray = new Array();
-		const array = new Array(2 * 2);
+		const array = new Array(instanceVertexStride);
 
 
 		for (let p = 0; p < attributeLocation.count(); p++) {
-			array[0] = ArrayBuffer[p*2 + 0];
-			array[1] = ArrayBuffer[p*2 + 1]; //vertex 0
+			array[0] = arrayBuffer[p*2 + 0];
+			array[1] = arrayBuffer[p*2 + 1]; //vertex 0
 			
-			array[2] = ArrayBuffer[p*2 + 0];
-			array[3] = ArrayBuffer[p*2 + 1]; //vertex 1
+			array[2] = arrayBuffer[p*2 + 0];
+			array[3] = arrayBuffer[p*2 + 1]; //vertex 1
 
 
 			uvsArray.push(...array);
@@ -318,11 +336,14 @@ export class VertexNormalGeometry extends MeshGeometry {
 		const baseGeometry = args.baseGeometry;
 		const mesh = baseGeometry.mesh;
 		const attributeLocation = mesh.geometry.vertices;
-		const ArrayBuffer = attributeLocation.arrayBuffer;
+		const arrayBuffer = attributeLocation.arrayBuffer;
 
+		const instanceStride = 2;
+		const instanceIndexStride = (2) * 1;
+		const instanceVertexStride = (2) * 1;
 
 		const indicatorsArray = new Array();
-		const array = new Array(2 * 1);
+		const array = new Array(instanceVertexStride);
 
 
 		for (let p = 0; p < attributeLocation.count(); p++) {

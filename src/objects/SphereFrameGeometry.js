@@ -46,8 +46,8 @@ export class SphereFrameGeometry extends MeshGeometry {
 
 
 	static assembleIndices(args = {}) {
-		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
+		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
 		const centers = baseGeometry.centers;
 		const radiuses = baseGeometry.radiuses;
@@ -175,8 +175,8 @@ export class SphereFrameGeometry extends MeshGeometry {
 		return indexed ? indicesAttributeLocation : null;
 	}
 	static assembleVertices(args = {}) {
-		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
+		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
 		const centers = baseGeometry.centers;
 		const radiuses = baseGeometry.radiuses;
@@ -392,8 +392,8 @@ export class SphereFrameGeometry extends MeshGeometry {
 		return verticesAttributeLocation;
 	}
 	static assembleNormals(args = {}) {
-		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
+		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
 		const centers = baseGeometry.centers;
 		const radiuses = baseGeometry.radiuses;
@@ -608,8 +608,8 @@ export class SphereFrameGeometry extends MeshGeometry {
 		return normalsAttributeLocation;
 	}
 	static assembleUVs(args = {}) {
-		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
+		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
 		const centers = baseGeometry.centers;
 		const radiuses = baseGeometry.radiuses;

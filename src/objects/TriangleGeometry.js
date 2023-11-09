@@ -46,21 +46,23 @@ export class TriangleGeometry extends MeshGeometry {
 
 
 	static assembleIndices(args = {}) {
-		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
+		const baseGeometry = args.baseGeometry;
+		const positions = baseGeometry.positions;
 
-		const instanceIndexSize = 3;
-		const instanceVertexSize = 3 * 1;
+		const instanceStride = 3;
+		const instanceIndexStride = (3) * 1;
+		const instanceVertexStride = (3) * 1;
 
 		const indicesArray = new Array();
 
 
 		if (indexed) {
-			const array = new Array(instanceVertexSize);
+			const array = new Array(instanceIndexStride);
 
 
 			for (let p = 0; p < positions.length; p++) {
-				const instanceOffset = instanceIndexSize * p;
+				const instanceOffset = instanceStride * p;
 
 
 				array[0] = instanceOffset+0; //vertex 0
@@ -137,15 +139,19 @@ export class TriangleGeometry extends MeshGeometry {
 		return indexed ? indicesAttributeLocation : null;
 	}
 	static assembleVertices(args = {}) {
-		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
+		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
+
+		const instanceStride = 3;
+		const instanceIndexStride = (3) * 3;
+		const instanceVertexStride = (3) * 3;
 
 		const verticesArray = new Array();
 
 
 		if (indexed) {
-			const array = new Array(3 * 3);
+			const array = new Array(instanceIndexStride);
 
 
 			for (let p = 0; p < positions.length; p+=3) {
@@ -162,7 +168,7 @@ export class TriangleGeometry extends MeshGeometry {
 				verticesArray.push(...array);
 			}
 		} else {
-			const array = new Array(3 * 3);
+			const array = new Array(instanceVertexStride);
 
 
 			for (let p = 0; p < positions.length; p+=3) {
@@ -240,9 +246,13 @@ export class TriangleGeometry extends MeshGeometry {
 		return verticesAttributeLocation;
 	}
 	static assembleNormals(args = {}) {
-		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
+		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
+
+		const instanceStride = 3;
+		const instanceIndexStride = (3) * 3;
+		const instanceVertexStride = (3) * 3;
 
 		const normalsArray = new Array();
 
@@ -252,7 +262,7 @@ export class TriangleGeometry extends MeshGeometry {
 
 
 		if (indexed) {
-			const array = new Array(3 * 3);
+			const array = new Array(instanceIndexStride);
 
 
 			for (let p = 0; p < positions.length; p+=3) {
@@ -273,7 +283,7 @@ export class TriangleGeometry extends MeshGeometry {
 				normalsArray.push(...array);
 			}
 		} else {
-			const array = new Array(3 * 3);
+			const array = new Array(instanceVertexStride);
 
 
 			for (let p = 0; p < positions.length; p+=3) {
@@ -356,15 +366,19 @@ export class TriangleGeometry extends MeshGeometry {
 		return normalsAttributeLocation;
 	}
 	static assembleUVs(args = {}) {
-		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
+		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
+
+		const instanceStride = 3;
+		const instanceIndexStride = (3) * 2;
+		const instanceVertexStride = (3) * 2;
 
 		const uvsArray = new Array();
 
 
 		if (indexed) {
-			const array = new Array(3 * 2);
+			const array = new Array(instanceIndexStride);
 
 
 			for (let p = 0; p < positions.length; p+=3) {
@@ -376,7 +390,7 @@ export class TriangleGeometry extends MeshGeometry {
 				uvsArray.push(...array);
 			}
 		} else {
-			const array = new Array(3 * 2);
+			const array = new Array(instanceVertexStride);
 
 
 			for (let p = 0; p < positions.length; p+=3) {

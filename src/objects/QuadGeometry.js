@@ -45,22 +45,24 @@ export class QuadGeometry extends MeshGeometry {
 
 
 	static assembleIndices(args = {}) {
-		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
+		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
+		const sizes = baseGeometry.sizes;
 
-		const instanceIndexSize = 4;
-		const instanceVertexSize = 1 * 2 * 3 * 1;
+		const instanceStride = 4;
+		const instanceIndexStride = (2 * 3) * 1;
+		const instanceVertexStride = (2 * 3) * 1;
 
 		const indicesArray = new Array();
 
 
 		if (indexed) {
-			const array = new Array(instanceVertexSize);
+			const array = new Array(instanceVertexStride);
 
 
 			for (let p = 0; p < positions.length; p++) {
-				const instanceOffset = instanceIndexSize * p;
+				const instanceOffset = instanceStride * p;
 
 
 				array[0] = instanceOffset+0; //vertex 0
@@ -141,16 +143,20 @@ export class QuadGeometry extends MeshGeometry {
 		return indexed ? indicesAttributeLocation : null;
 	}
 	static assembleVertices(args = {}) {
-		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
+		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
 		const sizes = baseGeometry.sizes;
+
+		const instanceStride = 4;
+		const instanceIndexStride = (4) * 3;
+		const instanceVertexStride = (2 * 3) * 3;
 
 		const verticesArray = new Array();
 
 
 		if (indexed) {
-			const array = new Array(4 * 3);
+			const array = new Array(instanceIndexStride);
 
 
 			for (let p = 0; p < positions.length; p++) {
@@ -173,7 +179,7 @@ export class QuadGeometry extends MeshGeometry {
 				verticesArray.push(...array);
 			}
 		} else {
-			const array = new Array(2 * 3 * 3);
+			const array = new Array(instanceVertexStride);
 
 
 			for (let p = 0; p < positions.length; p++) {
@@ -260,15 +266,20 @@ export class QuadGeometry extends MeshGeometry {
 		return verticesAttributeLocation;
 	}
 	static assembleNormals(args = {}) {
-		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
+		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
+		const sizes = baseGeometry.sizes;
+
+		const instanceStride = 4;
+		const instanceIndexStride = (4) * 3;
+		const instanceVertexStride = (2 * 3) * 3;
 
 		const normalsArray = new Array();
 
 
 		if (indexed) {
-			const array = new Array(4 * 3);
+			const array = new Array(instanceIndexStride);
 
 
 			for (let p = 0; p < positions.length; p++) {
@@ -281,7 +292,7 @@ export class QuadGeometry extends MeshGeometry {
 				verticesArray.push(...array);
 			}
 		} else {
-			const array = new Array(2 * 3 * 3);
+			const array = new Array(instanceVertexStride);
 
 
 			for (let p = 0; p < positions.length; p++) {
@@ -359,15 +370,20 @@ export class QuadGeometry extends MeshGeometry {
 		return normalsAttributeLocation;
 	}
 	static assembleUVs(args = {}) {
-		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
+		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
+		const sizes = baseGeometry.sizes;
+
+		const instanceStride = 4;
+		const instanceIndexStride = (4) * 2;
+		const instanceVertexStride = (2 * 3) * 2;
 
 		const uvsArray = new Array();
 
 
 		if (indexed) {
-			const array = new Array(4 * 2);
+			const array = new Array(instanceIndexStride);
 
 
 			for (let p = 0; p < positions.length; p++) {
@@ -380,7 +396,7 @@ export class QuadGeometry extends MeshGeometry {
 				uvsArray.push(...array);
 			}
 		} else {
-			const array = new Array(2 * 3 * 2);
+			const array = new Array(instanceVertexStride);
 
 
 			for (let p = 0; p < positions.length; p++) {
