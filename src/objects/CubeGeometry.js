@@ -52,7 +52,7 @@ export class CubeGeometry extends MeshGeometry {
 		const instanceIndexSize = 8;
 		const instanceVertexSize = 6 * 2 * 3 * 1;
 
-		let indicesArray = new Array();
+		const indicesArray = new Array();
 
 
 		if (indexed) {
@@ -117,7 +117,7 @@ export class CubeGeometry extends MeshGeometry {
 				array[35] = instanceOffset+1; //vertex 1
 
 
-				indicesArray = indicesArray.concat(array);
+				indicesArray.push(...array);
 			}
 		} else {
 			//noop
@@ -190,7 +190,7 @@ export class CubeGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
-		let verticesArray = new Array();
+		const verticesArray = new Array();
 
 
 		if (indexed) {
@@ -214,7 +214,7 @@ export class CubeGeometry extends MeshGeometry {
 				array[21 ] = px+1; array[22 ] = py+1; array[23 ] = pz-1; //vertex 7
 
 
-				verticesArray = verticesArray.concat(array);
+				verticesArray.push(...array);
 			}
 		} else {
 			const array = new Array(6 * 2 * 3 * 3);
@@ -281,7 +281,7 @@ export class CubeGeometry extends MeshGeometry {
 				array[105] = px+1; array[106] = py-1; array[107] = pz+1; //vertex 1
 
 
-				verticesArray = verticesArray.concat(array);
+				verticesArray.push(...array);
 			}
 		}
 
@@ -351,7 +351,7 @@ export class CubeGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
-		let normalsArray = new Array();
+		const normalsArray = new Array();
 
 
 		if (indexed) {
@@ -369,7 +369,7 @@ export class CubeGeometry extends MeshGeometry {
 				array[21 ] = +1/Math.sqrt(3); array[22 ] = +1/Math.sqrt(3); array[23 ] = -1/Math.sqrt(3); //vertex 7
 
 
-				normalsArray = normalsArray.concat(array);
+				normalsArray.push(...array);
 			}
 		} else {
 			const array = new Array(6 * 2 * 3 * 3);
@@ -430,7 +430,7 @@ export class CubeGeometry extends MeshGeometry {
 				array[105] = +0; array[106] = -1; array[107] = +0; //vertex 1
 
 
-				normalsArray = normalsArray.concat(array);
+				normalsArray.push(...array);
 			}
 		}
 
@@ -499,7 +499,7 @@ export class CubeGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
-		let uvsArray = new Array();
+		const uvsArray = new Array();
 
 
 		if (indexed) {
@@ -517,7 +517,7 @@ export class CubeGeometry extends MeshGeometry {
 				array[14 ] = +1; array[15 ] = +1; //vertex 7
 
 
-				uvsArray = uvsArray.concat(array);
+				uvsArray.push(...array);
 			}
 		} else {
 			const array = new Array(6 * 2 * 3 * 2);
@@ -578,7 +578,7 @@ export class CubeGeometry extends MeshGeometry {
 				array[70 ] = +1; array[71 ] = +1; //vertex 1
 
 
-				uvsArray = uvsArray.concat(array);
+				uvsArray.push(...array);
 			}
 		}
 

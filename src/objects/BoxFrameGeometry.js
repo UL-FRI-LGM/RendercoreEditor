@@ -45,8 +45,8 @@ export class BoxFrameGeometry extends MeshGeometry {
 
 
 	static assembleIndices(args = {}) {
-		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
+		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
 		const dimensions = baseGeometry.dimensions;
 
@@ -162,8 +162,8 @@ export class BoxFrameGeometry extends MeshGeometry {
 		return indexed ? indicesAttributeLocation : null;
 	}
 	static assembleVertices(args = {}) {
-		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
+		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
 		const dimensions = baseGeometry.dimensions;
 
@@ -310,8 +310,8 @@ export class BoxFrameGeometry extends MeshGeometry {
 		return verticesAttributeLocation;
 	}
 	static assembleNormals(args = {}) {
-		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
+		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
 		const dimensions = baseGeometry.dimensions;
 
@@ -439,8 +439,8 @@ export class BoxFrameGeometry extends MeshGeometry {
 		return normalsAttributeLocation;
 	}
 	static assembleUVs(args = {}) {
-		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
+		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
 		const dimensions = baseGeometry.dimensions;
 

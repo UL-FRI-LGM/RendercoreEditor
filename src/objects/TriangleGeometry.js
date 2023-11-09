@@ -52,7 +52,7 @@ export class TriangleGeometry extends MeshGeometry {
 		const instanceIndexSize = 3;
 		const instanceVertexSize = 3 * 1;
 
-		let indicesArray = new Array();
+		const indicesArray = new Array();
 
 
 		if (indexed) {
@@ -68,7 +68,7 @@ export class TriangleGeometry extends MeshGeometry {
 				array[2] = instanceOffset+2; //vertex 2
 
 
-				indicesArray = indicesArray.concat(array);
+				indicesArray.push(...array);
 			}
 		} else {
 			//noop
@@ -141,12 +141,14 @@ export class TriangleGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
-		let verticesArray = new Array();
+		const verticesArray = new Array();
 
 
 		if (indexed) {
+			const array = new Array(3 * 3);
+
+
 			for (let p = 0; p < positions.length; p+=3) {
-				const array = new Array(3 * 3);
 				const p1 = positions[p + 0];
 				const p2 = positions[p + 1];
 				const p3 = positions[p + 2];
@@ -157,11 +159,13 @@ export class TriangleGeometry extends MeshGeometry {
 				array[6] = p3.x; array[7] = p3.y; array[8] = p3.z; //vertex 2
 
 
-				verticesArray = verticesArray.concat(array);
+				verticesArray.push(...array);
 			}
 		} else {
+			const array = new Array(3 * 3);
+
+
 			for (let p = 0; p < positions.length; p+=3) {
-				const array = new Array(3 * 3);
 				const p1 = positions[p + 0];
 				const p2 = positions[p + 1];
 				const p3 = positions[p + 2];
@@ -172,7 +176,7 @@ export class TriangleGeometry extends MeshGeometry {
 				array[6] = p3.x; array[7] = p3.y; array[8] = p3.z; //vertex 2
 
 
-				verticesArray = verticesArray.concat(array);
+				verticesArray.push(...array);
 			}
 		}
 
@@ -240,15 +244,18 @@ export class TriangleGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
-		let normalsArray = new Array();
+		const normalsArray = new Array();
+
 		const a = new Vector3();
 		const b = new Vector3();
 		const n = new Vector3();
 
 
 		if (indexed) {
+			const array = new Array(3 * 3);
+
+
 			for (let p = 0; p < positions.length; p+=3) {
-				const array = new Array(3 * 3);
 				const p1 = positions[p + 0];
 				const p2 = positions[p + 1];
 				const p3 = positions[p + 2];
@@ -263,11 +270,13 @@ export class TriangleGeometry extends MeshGeometry {
 				array[6] = n.x; array[7] = n.y; array[8] = n.z; //vertex 2
 
 
-				normalsArray = normalsArray.concat(array);
+				normalsArray.push(...array);
 			}
 		} else {
+			const array = new Array(3 * 3);
+
+
 			for (let p = 0; p < positions.length; p+=3) {
-				const array = new Array(3 * 3);
 				const p1 = positions[p + 0];
 				const p2 = positions[p + 1];
 				const p3 = positions[p + 2];
@@ -282,7 +291,7 @@ export class TriangleGeometry extends MeshGeometry {
 				array[6] = n.x; array[7] = n.y; array[8] = n.z; //vertex 2
 
 
-				normalsArray = normalsArray.concat(array);
+				normalsArray.push(...array);
 			}
 		}
 
@@ -351,32 +360,32 @@ export class TriangleGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
-		let uvsArray = new Array();
+		const uvsArray = new Array();
 
 
 		if (indexed) {
+			const array = new Array(3 * 2);
+
+
 			for (let p = 0; p < positions.length; p+=3) {
-				const array = new Array(3 * 2);
-
-
 				array[0] = +0; array[1] = +1; //vertex 0
 				array[2] = +0; array[3] = +0; //vertex 1
 				array[4] = +1; array[5] = +0; //vertex 2
 
 
-				uvsArray = uvsArray.concat(array);
+				uvsArray.push(...array);
 			}
 		} else {
+			const array = new Array(3 * 2);
+
+
 			for (let p = 0; p < positions.length; p+=3) {
-				const array = new Array(3 * 2);
-
-
 				array[0] = +0; array[1] = +1; //vertex 0
 				array[2] = +0; array[3] = +0; //vertex 1
 				array[4] = +1; array[5] = +0; //vertex 2
 
 
-				uvsArray = uvsArray.concat(array);
+				uvsArray.push(...array);
 			}
 		}
 

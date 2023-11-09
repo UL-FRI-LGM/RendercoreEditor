@@ -51,7 +51,7 @@ export class LineGeometry extends MeshGeometry {
 		const instanceIndexSize = 2;
 		const instanceVertexSize = 2 * 1;
 
-		let indicesArray = new Array();
+		const indicesArray = new Array();
 
 
 		if (indexed) {
@@ -66,7 +66,7 @@ export class LineGeometry extends MeshGeometry {
 				array[1] = instanceOffset+1; //vertex 1
 
 
-				indicesArray = indicesArray.concat(array);
+				indicesArray.push(...array);
 			}
 		} else {
 			//noop
@@ -139,12 +139,14 @@ export class LineGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
-		let verticesArray = new Array();
+		const verticesArray = new Array();
 
 
 		if (indexed) {
+			const array = new Array(2 * 3);
+
+
 			for (let p = 0; p < positions.length; p+=2) {
-				const array = new Array(2 * 3);
 				const position1 = positions[p];
 				const position2 = positions[p + 1];
 				const px1 = position1.x;
@@ -159,11 +161,13 @@ export class LineGeometry extends MeshGeometry {
 				array[3] = px2; array[4] = py2; array[5] = pz2; //vertex 1
 
 
-				verticesArray = verticesArray.concat(array);
+				verticesArray.push(...array);
 			}
 		} else {
+			const array = new Array(2 * 3);
+
+
 			for (let p = 0; p < positions.length; p+=2) {
-				const array = new Array(2 * 3);
 				const position1 = positions[p];
 				const position2 = positions[p + 1];
 				const px1 = position1.x;
@@ -178,7 +182,7 @@ export class LineGeometry extends MeshGeometry {
 				array[3] = px2; array[4] = py2; array[5] = pz2; //vertex 1
 
 
-				verticesArray = verticesArray.concat(array);
+				verticesArray.push(...array);
 			}
 		}
 
@@ -246,30 +250,30 @@ export class LineGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
-		let normalsArray = new Array();
+		const normalsArray = new Array();
 
 
 		if (indexed) {
+			const array = new Array(2 * 3);
+
+
 			for (let p = 0; p < positions.length; p+=2) {
-				const array = new Array(2 * 3);
-
-
 				array[0] = +0; array[1] = +0; array[2] = +1; //vertex 0
 				array[3] = +0; array[4] = +0; array[5] = +1; //vertex 1
 
 
-				normalsArray = normalsArray.concat(array);
+				normalsArray.push(...array);
 			}
 		} else {
+			const array = new Array(2 * 3);
+
+
 			for (let p = 0; p < positions.length; p+=2) {
-				const array = new Array(2 * 3);
-
-
 				array[0] = +0; array[1] = +0; array[2] = +1; //vertex 0
 				array[3] = +0; array[4] = +0; array[5] = +1; //vertex 1
 
 
-				normalsArray = normalsArray.concat(array);
+				normalsArray.push(...array);
 			}
 		}
 
@@ -338,30 +342,30 @@ export class LineGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
-		let uvsArray = new Array();
+		const uvsArray = new Array();
 
 
 		if (indexed) {
+			const array = new Array(2 * 2);
+
+
 			for (let p = 0; p < positions.length; p+=2) {
-				const array = new Array(2 * 2);
-
-
 				array[0] = +0; array[1] = +0; //vertex 0
 				array[2] = +0; array[3] = +0; //vertex 1
 
 
-				uvsArray = uvsArray.concat(array);
+				uvsArray.push(...array);
 			}
 		} else {
+			const array = new Array(2 * 2);
+
+
 			for (let p = 0; p < positions.length; p+=2) {
-				const array = new Array(2 * 2);
-
-
 				array[0] = +0; array[1] = +0; //vertex 0
 				array[2] = +0; array[3] = +0; //vertex 1
 
 
-				uvsArray = uvsArray.concat(array);
+				uvsArray.push(...array);
 			}
 		}
 

@@ -51,7 +51,7 @@ export class PointGeometry extends MeshGeometry {
 		const instanceIndexSize = 1;
 		const instanceVertexSize = 1 * 1;
 
-		let indicesArray = new Array();
+		const indicesArray = new Array();
 
 
 		if (indexed) {
@@ -65,7 +65,7 @@ export class PointGeometry extends MeshGeometry {
 				array[0] = instanceOffset+0; //vertex 0
 
 
-				indicesArray = indicesArray.concat(array);
+				indicesArray.push(...array);
 			}
 		} else {
 			//noop
@@ -138,12 +138,14 @@ export class PointGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
-		let verticesArray = new Array();
+		const verticesArray = new Array();
 
 
 		if (indexed) {
+			const array = new Array(1 * 3);
+
+
 			for (let p = 0; p < positions.length; p++) {
-				const array = new Array(1 * 3);
 				const position = positions[p];
 				const px = position.x;
 				const py = position.y;
@@ -153,11 +155,13 @@ export class PointGeometry extends MeshGeometry {
 				array[0] = px; array[1] = py; array[2] = pz; //vertex 0
 
 
-				verticesArray = verticesArray.concat(array);
+				verticesArray.push(...array);
 			}
 		} else {
+			const array = new Array(1 * 3);
+
+
 			for (let p = 0; p < positions.length; p++) {
-				const array = new Array(1 * 3);
 				const position = positions[p];
 				const px = position.x;
 				const py = position.y;
@@ -167,7 +171,7 @@ export class PointGeometry extends MeshGeometry {
 				array[0] = px; array[1] = py; array[2] = pz; //vertex 0
 
 
-				verticesArray = verticesArray.concat(array);
+				verticesArray.push(...array);
 			}
 		}
 
@@ -235,28 +239,28 @@ export class PointGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
-		let normalsArray = new Array();
+		const normalsArray = new Array();
 
 
 		if (indexed) {
+			const array = new Array(1 * 3);
+
+
 			for (let p = 0; p < positions.length; p++) {
-				const array = new Array(1 * 3);
-
-
 				array[0] = +0; array[1] = +0; array[2] = +1; //vertex 0
 
 
-				normalsArray = normalsArray.concat(array);
+				normalsArray.push(...array);
 			}
 		} else {
+			const array = new Array(1 * 3);
+
+
 			for (let p = 0; p < positions.length; p++) {
-				const array = new Array(1 * 3);
-
-
 				array[0] = +0; array[1] = +0; array[2] = +1; //vertex 0
 
 
-				normalsArray = normalsArray.concat(array);
+				normalsArray.push(...array);
 			}
 		}
 
@@ -325,28 +329,28 @@ export class PointGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
-		let uvsArray = new Array();
+		const uvsArray = new Array();
 
 
 		if (indexed) {
+			const array = new Array(1 * 2);
+
+
 			for (let p = 0; p < positions.length; p++) {
-				const array = new Array(1 * 2);
-
-
 				array[0] = +0; array[1] = +0; //vertex 0
 
 
-				uvsArray = uvsArray.concat(array);
+				uvsArray.push(...array);
 			}
 		} else {
+			const array = new Array(1 * 2);
+
+
 			for (let p = 0; p < positions.length; p++) {
-				const array = new Array(1 * 2);
-
-
 				array[0] = +0; array[1] = +0; //vertex 0
 
 
-				uvsArray = uvsArray.concat(array);
+				uvsArray.push(...array);
 			}
 		}
 

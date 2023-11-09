@@ -52,7 +52,7 @@ export class QuadGeometry extends MeshGeometry {
 		const instanceIndexSize = 4;
 		const instanceVertexSize = 1 * 2 * 3 * 1;
 
-		let indicesArray = new Array();
+		const indicesArray = new Array();
 
 
 		if (indexed) {
@@ -72,7 +72,7 @@ export class QuadGeometry extends MeshGeometry {
 				array[5] = instanceOffset+3; //vertex 3
 
 
-				indicesArray = indicesArray.concat(array);
+				indicesArray.push(...array);
 			}
 		} else {
 			//noop
@@ -146,12 +146,14 @@ export class QuadGeometry extends MeshGeometry {
 		const positions = baseGeometry.positions;
 		const sizes = baseGeometry.sizes;
 
-		let verticesArray = new Array();
+		const verticesArray = new Array();
 
 
 		if (indexed) {
+			const array = new Array(4 * 3);
+
+
 			for (let p = 0; p < positions.length; p++) {
-				const array = new Array(4 * 3);
 				const position = positions[p];
 				const px = position.x;
 				const py = position.y;
@@ -168,11 +170,13 @@ export class QuadGeometry extends MeshGeometry {
 				array[9  ] = px+sx; array[10 ] = py+sy; array[11 ] = pz+sz; //vertex 3
 		
 		
-				verticesArray = verticesArray.concat(array);
+				verticesArray.push(...array);
 			}
 		} else {
+			const array = new Array(2 * 3 * 3);
+
+
 			for (let p = 0; p < positions.length; p++) {
-				const array = new Array(2 * 3 * 3);
 				const position = positions[p];
 				const px = position.x;
 				const py = position.y;
@@ -192,7 +196,7 @@ export class QuadGeometry extends MeshGeometry {
 				array[15 ] = px+sx; array[16 ] = py+sy; array[17 ] = pz+sz; //vertex 3
 		
 		
-				verticesArray = verticesArray.concat(array);
+				verticesArray.push(...array);
 			}
 		}
 
@@ -260,27 +264,27 @@ export class QuadGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
-		let normalsArray = new Array();
+		const normalsArray = new Array();
 
 
 		if (indexed) {
+			const array = new Array(4 * 3);
+
+
 			for (let p = 0; p < positions.length; p++) {
-				const array = new Array(4 * 3);
-
-
 				array[0  ] = +0; array[1  ] = +0; array[2  ] = +1; //vertex 0
 				array[3  ] = +0; array[4  ] = +0; array[5  ] = +1; //vertex 1
 				array[6  ] = +0; array[7  ] = +0; array[8  ] = +1; //vertex 2
 				array[9  ] = +0; array[10 ] = +0; array[11 ] = +1; //vertex 3
 		
 		
-				verticesArray = verticesArray.concat(array);
+				verticesArray.push(...array);
 			}
 		} else {
+			const array = new Array(2 * 3 * 3);
+
+
 			for (let p = 0; p < positions.length; p++) {
-				const array = new Array(2 * 3 * 3);
-
-
 				array[0  ] = +0; array[1  ] = +0; array[2  ] = +1; //vertex 0
 				array[3  ] = +0; array[4  ] = +0; array[5  ] = +1; //vertex 1
 				array[6  ] = +0; array[7  ] = +0; array[8  ] = +1; //vertex 2
@@ -290,7 +294,7 @@ export class QuadGeometry extends MeshGeometry {
 				array[15 ] = +0; array[16 ] = +0; array[17 ] = +1; //vertex 3
 		
 		
-				normalsArray = normalsArray.concat(array);
+				normalsArray.push(...array);
 			}
 		}
 
@@ -359,27 +363,27 @@ export class QuadGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
-		let uvsArray = new Array();
+		const uvsArray = new Array();
 
 
 		if (indexed) {
+			const array = new Array(4 * 2);
+
+
 			for (let p = 0; p < positions.length; p++) {
-				const array = new Array(4 * 2);
-
-
 				array[0  ] = +0; array[1  ] = +0; //vertex 0
 				array[2  ] = +1; array[3  ] = +0; //vertex 1
 				array[4  ] = +0; array[5  ] = +1; //vertex 2
 				array[6  ] = +1; array[7  ] = +1; //vertex 3
 		
 		
-				uvsArray = uvsArray.concat(array);
+				uvsArray.push(...array);
 			}
 		} else {
+			const array = new Array(2 * 3 * 2);
+
+
 			for (let p = 0; p < positions.length; p++) {
-				const array = new Array(2 * 3 * 2);
-
-
 				array[0  ] = +0; array[1  ] = +0; //vertex 0
 				array[2  ] = +1; array[3  ] = +0; //vertex 1
 				array[4  ] = +0; array[5  ] = +1; //vertex 2
@@ -389,7 +393,7 @@ export class QuadGeometry extends MeshGeometry {
 				array[10 ] = +1; array[11 ] = +1; //vertex 3
 		
 		
-				uvsArray = uvsArray.concat(array);
+				uvsArray.push(...array);
 			}
 		}
 
