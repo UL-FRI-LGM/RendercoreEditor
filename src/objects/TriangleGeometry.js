@@ -26,8 +26,8 @@ export class TriangleGeometry extends MeshGeometry {
 			{
 				...args,
 
-				name: (args.name !== undefined) ? args.name : TriangleGeometry.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : TriangleGeometry.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : TriangleGeometry.DEFAULT.NAME,
 
 				indexed: (args.indexed !== undefined) ? args.indexed : TriangleGeometry.DEFAULT.INDEXED,
 
@@ -49,14 +49,18 @@ export class TriangleGeometry extends MeshGeometry {
 		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
 
+		const instanceIndexSize = 3;
+		const instanceVertexSize = 3 * 1;
+
+		let indicesArray = new Array();
+
+
 		if (indexed) {
-			let indicesArray = new Array();
+			const array = new Array(instanceVertexSize);
+
 
 			for (let p = 0; p < positions.length; p++) {
-				const instanceIndexSize = 3;
-				const instanceVertexSize = 3 * 1;
 				const instanceOffset = instanceIndexSize * p;
-				const array = new Array(instanceVertexSize);
 
 
 				array[0] = instanceOffset+0; //vertex 0
@@ -66,71 +70,71 @@ export class TriangleGeometry extends MeshGeometry {
 
 				indicesArray = indicesArray.concat(array);
 			}
-
-
-			const indicesArrayBuffer = new Uint32Array(indicesArray);
-			const indicesAttributeLocation = new AttributeLocation(
-				{
-					number: null,
-					itemSize: 1,
-					arrayBuffer: indicesArrayBuffer,
-
-					bufferDescriptor: new BufferDescriptor(
-						{
-							label: "triangle indices buffer",
-							size: indicesArrayBuffer.length,
-							usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
-							mappedAtCreation: false
-						}
-					),
-					// vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					// 	{
-					// 		arrayStride: 1 * 4,
-					// 		stepMode: VertexStepMode.VERTEX,
-					// 		attributes: [
-					// 			new VertexAttribute(
-					// 				{
-					// 					format: VertexFormat.UINT_32,
-					// 					offset: 0,
-					// 					shaderLocation: 0,
-					// 				}
-					// 			)
-					// 		],			
-					// 	}
-					// )
-					vertexBufferLayoutDescriptor: null
-				}
-			);
-			indicesAttributeLocation.setValue(
-				"triangle indices",
-				new BufferSetInstruction(
-					{
-						label: "triangle indices",
-	
-						number: null,
-	
-						source: {
-							arrayBuffer: indicesArrayBuffer,
-							layout: {
-								offset: (0),
-							}
-						},
-						destination: {
-							buffer: null,
-							layout: {
-								offset: (0)
-							}
-						},
-						size: indicesArrayBuffer.length
-					}
-				)
-			);
-
-
-			return indicesAttributeLocation;
 		} else {
-			return null;
+			//noop
 		}
+
+
+		const indicesArrayBuffer = new Uint32Array(indicesArray);
+		const indicesAttributeLocation = new AttributeLocation(
+			{
+				number: null,
+				itemSize: 1,
+				arrayBuffer: indicesArrayBuffer,
+
+				bufferDescriptor: new BufferDescriptor(
+					{
+						label: "triangle indices buffer",
+						size: indicesArrayBuffer.length,
+						usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
+						mappedAtCreation: false
+					}
+				),
+				// vertexBufferLayoutDescriptor: new VertexBufferLayout(
+				// 	{
+				// 		arrayStride: 1 * 4,
+				// 		stepMode: VertexStepMode.VERTEX,
+				// 		attributes: [
+				// 			new VertexAttribute(
+				// 				{
+				// 					format: VertexFormat.UINT_32,
+				// 					offset: 0,
+				// 					shaderLocation: 0,
+				// 				}
+				// 			)
+				// 		],			
+				// 	}
+				// )
+				vertexBufferLayoutDescriptor: null
+			}
+		);
+		indicesAttributeLocation.setValue(
+			"triangle indices",
+			new BufferSetInstruction(
+				{
+					label: "triangle indices",
+
+					number: null,
+
+					source: {
+						arrayBuffer: indicesArrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0)
+						}
+					},
+					size: indicesArrayBuffer.length
+				}
+			)
+		);
+
+
+		return indexed ? indicesAttributeLocation : null;
 	}
 	static assembleVertices(args = {}) {
 		const baseGeometry = args.baseGeometry;

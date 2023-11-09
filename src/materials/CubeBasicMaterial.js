@@ -3,9 +3,11 @@ import { Color4 } from "../math/Color4.js";
 
 
 export class CubeBasicMaterial extends MeshBasicMaterial {
+	
+	
 	static DEFAULT = {
-		NAME: "",
 		TYPE: "CubeBasicMaterial",
+		NAME: "",
 
 		SHADER_PATH: "/src/shaders/basic/",
 		PROGRAM_NAME: "basic_flat",
@@ -19,8 +21,9 @@ export class CubeBasicMaterial extends MeshBasicMaterial {
 		super(
 			{
 				...args,
-				name: (args.name !== undefined) ? args.name : CubeBasicMaterial.DEFAULT.NAME,
+
 				type: (args.type !== undefined) ? args.type : CubeBasicMaterial.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : CubeBasicMaterial.DEFAULT.NAME,
 
 				shaderPath: CubeBasicMaterial.DEFAULT.SHADER_PATH,
 				programName: CubeBasicMaterial.DEFAULT.PROGRAM_NAME,

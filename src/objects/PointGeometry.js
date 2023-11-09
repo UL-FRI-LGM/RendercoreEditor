@@ -25,8 +25,8 @@ export class PointGeometry extends MeshGeometry {
 			{
 				...args,
 
-				name: (args.name !== undefined) ? args.name : PointGeometry.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : PointGeometry.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : PointGeometry.DEFAULT.NAME,
 
 				indexed: (args.indexed !== undefined) ? args.indexed : PointGeometry.DEFAULT.INDEXED,
 
@@ -48,14 +48,18 @@ export class PointGeometry extends MeshGeometry {
 		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
 
+		const instanceIndexSize = 1;
+		const instanceVertexSize = 1 * 1;
+
+		let indicesArray = new Array();
+
+
 		if (indexed) {
-			let indicesArray = new Array();
+			const array = new Array(instanceVertexSize);
+
 
 			for (let p = 0; p < positions.length; p++) {
-				const instanceIndexSize = 1;
-				const instanceVertexSize = 1 * 1;
 				const instanceOffset = instanceIndexSize * p;
-				const array = new Array(instanceVertexSize);
 
 
 				array[0] = instanceOffset+0; //vertex 0
@@ -63,71 +67,71 @@ export class PointGeometry extends MeshGeometry {
 
 				indicesArray = indicesArray.concat(array);
 			}
-
-
-			const indicesArrayBuffer = new Uint32Array(indicesArray);
-			const indicesAttributeLocation = new AttributeLocation(
-				{
-					number: null,
-					itemSize: 1,
-					arrayBuffer: indicesArrayBuffer,
-
-					bufferDescriptor: new BufferDescriptor(
-						{
-							label: "point indices buffer",
-							size: indicesArrayBuffer.length,
-							usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
-							mappedAtCreation: false
-						}
-					),
-					// vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					// 	{
-					// 		arrayStride: 1 * 4,
-					// 		stepMode: VertexStepMode.VERTEX,
-					// 		attributes: [
-					// 			new VertexAttribute(
-					// 				{
-					// 					format: VertexFormat.UINT_32,
-					// 					offset: 0,
-					// 					shaderLocation: 0,
-					// 				}
-					// 			)
-					// 		],			
-					// 	}
-					// )
-					vertexBufferLayoutDescriptor: null
-				}
-			);
-			indicesAttributeLocation.setValue(
-				"point indices",
-				new BufferSetInstruction(
-					{
-						label: "point indices",
-	
-						number: null,
-	
-						source: {
-							arrayBuffer: indicesArrayBuffer,
-							layout: {
-								offset: (0),
-							}
-						},
-						destination: {
-							buffer: null,
-							layout: {
-								offset: (0)
-							}
-						},
-						size: indicesArrayBuffer.length
-					}
-				)
-			);
-
-
-			return indicesAttributeLocation;
 		} else {
-			return null;
+			//noop
 		}
+
+
+		const indicesArrayBuffer = new Uint32Array(indicesArray);
+		const indicesAttributeLocation = new AttributeLocation(
+			{
+				number: null,
+				itemSize: 1,
+				arrayBuffer: indicesArrayBuffer,
+
+				bufferDescriptor: new BufferDescriptor(
+					{
+						label: "point indices buffer",
+						size: indicesArrayBuffer.length,
+						usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
+						mappedAtCreation: false
+					}
+				),
+				// vertexBufferLayoutDescriptor: new VertexBufferLayout(
+				// 	{
+				// 		arrayStride: 1 * 4,
+				// 		stepMode: VertexStepMode.VERTEX,
+				// 		attributes: [
+				// 			new VertexAttribute(
+				// 				{
+				// 					format: VertexFormat.UINT_32,
+				// 					offset: 0,
+				// 					shaderLocation: 0,
+				// 				}
+				// 			)
+				// 		],			
+				// 	}
+				// )
+				vertexBufferLayoutDescriptor: null
+			}
+		);
+		indicesAttributeLocation.setValue(
+			"point indices",
+			new BufferSetInstruction(
+				{
+					label: "point indices",
+
+					number: null,
+
+					source: {
+						arrayBuffer: indicesArrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0)
+						}
+					},
+					size: indicesArrayBuffer.length
+				}
+			)
+		);
+
+
+		return indexed ? indicesAttributeLocation : null;
 	}
 	static assembleVertices(args = {}) {
 		const baseGeometry = args.baseGeometry;

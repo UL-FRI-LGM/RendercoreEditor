@@ -25,8 +25,8 @@ export class LineGeometry extends MeshGeometry {
 			{
 				...args,
 
-				name: (args.name !== undefined) ? args.name : LineGeometry.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : LineGeometry.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : LineGeometry.DEFAULT.NAME,
 
 				indexed: (args.indexed !== undefined) ? args.indexed : LineGeometry.DEFAULT.INDEXED,
 
@@ -48,14 +48,18 @@ export class LineGeometry extends MeshGeometry {
 		const baseGeometry = args.baseGeometry;
 		const indexed = args.indexed;
 
+		const instanceIndexSize = 2;
+		const instanceVertexSize = 2 * 1;
+
+		let indicesArray = new Array();
+
+
 		if (indexed) {
-			let indicesArray = new Array();
+			const array = new Array(instanceVertexSize);
+
 
 			for (let p = 0; p < positions.length; p++) {
-				const instanceIndexSize = 2;
-				const instanceVertexSize = 2 * 1;
 				const instanceOffset = instanceIndexSize * p;
-				const array = new Array(instanceVertexSize);
 
 
 				array[0] = instanceOffset+0; //vertex 0
@@ -64,70 +68,71 @@ export class LineGeometry extends MeshGeometry {
 
 				indicesArray = indicesArray.concat(array);
 			}
-
-			const indicesArrayBuffer = new Uint32Array(indicesArray);
-			const indicesAttributeLocation = new AttributeLocation(
-				{
-					number: null,
-					itemSize: 1,
-					arrayBuffer: indicesArrayBuffer,
-
-					bufferDescriptor: new BufferDescriptor(
-						{
-							label: "line indices buffer",
-							size: indicesArrayBuffer.length,
-							usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
-							mappedAtCreation: false
-						}
-					),
-					// vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					// 	{
-					// 		arrayStride: 1 * 4,
-					// 		stepMode: VertexStepMode.VERTEX,
-					// 		attributes: [
-					// 			new VertexAttribute(
-					// 				{
-					// 					format: VertexFormat.UINT_32,
-					// 					offset: 0,
-					// 					shaderLocation: 0,
-					// 				}
-					// 			)
-					// 		],			
-					// 	}
-					// )
-					vertexBufferLayoutDescriptor: null
-				}
-			);
-			indicesAttributeLocation.setValue(
-				"line indices",
-				new BufferSetInstruction(
-					{
-						label: "line indices",
-	
-						number: null,
-	
-						source: {
-							arrayBuffer: indicesArrayBuffer,
-							layout: {
-								offset: (0),
-							}
-						},
-						destination: {
-							buffer: null,
-							layout: {
-								offset: (0)
-							}
-						},
-						size: indicesArrayBuffer.length
-					}
-				)
-			);
-
-
-			return indicesAttributeLocation;
 		} else {
-			return null;
+			//noop
 		}
+
+
+		const indicesArrayBuffer = new Uint32Array(indicesArray);
+		const indicesAttributeLocation = new AttributeLocation(
+			{
+				number: null,
+				itemSize: 1,
+				arrayBuffer: indicesArrayBuffer,
+
+				bufferDescriptor: new BufferDescriptor(
+					{
+						label: "line indices buffer",
+						size: indicesArrayBuffer.length,
+						usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
+						mappedAtCreation: false
+					}
+				),
+				// vertexBufferLayoutDescriptor: new VertexBufferLayout(
+				// 	{
+				// 		arrayStride: 1 * 4,
+				// 		stepMode: VertexStepMode.VERTEX,
+				// 		attributes: [
+				// 			new VertexAttribute(
+				// 				{
+				// 					format: VertexFormat.UINT_32,
+				// 					offset: 0,
+				// 					shaderLocation: 0,
+				// 				}
+				// 			)
+				// 		],			
+				// 	}
+				// )
+				vertexBufferLayoutDescriptor: null
+			}
+		);
+		indicesAttributeLocation.setValue(
+			"line indices",
+			new BufferSetInstruction(
+				{
+					label: "line indices",
+
+					number: null,
+
+					source: {
+						arrayBuffer: indicesArrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0)
+						}
+					},
+					size: indicesArrayBuffer.length
+				}
+			)
+		);
+
+
+		return indexed ? indicesAttributeLocation : null;
 	}
 	static assembleVertices(args = {}) {
 		const baseGeometry = args.baseGeometry;

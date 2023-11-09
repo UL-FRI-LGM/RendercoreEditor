@@ -6,8 +6,8 @@ export class QuadBasicMaterial extends MeshBasicMaterial {
 
 
 	static DEFAULT = {
-		NAME: "",
 		TYPE: "QuadBasicMaterial",
+		NAME: "",
 
 		SHADER_PATH: "/src/shaders/basic/",
 		PROGRAM_NAME: "basic_flat",
@@ -22,8 +22,8 @@ export class QuadBasicMaterial extends MeshBasicMaterial {
 			{
 				...args,
 
-				name: (args.name !== undefined) ? args.name : QuadBasicMaterial.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : QuadBasicMaterial.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : QuadBasicMaterial.DEFAULT.NAME,
 
 				shaderPath: QuadBasicMaterial.DEFAULT.SHADER_PATH,
 				programName: QuadBasicMaterial.DEFAULT.PROGRAM_NAME,

@@ -8,9 +8,9 @@ import { PrimitiveTopology } from "../core/RC/pipeline/primitive state/Primitive
 export class Quad extends Mesh {
 
 
-    static DEFAULT = {
-		NAME: "",
+	static DEFAULT = {
 		TYPE: "Quad",
+		NAME: "",
 
 		VISIBLE: true,
 		FRUSTUM_CULLED: true,
@@ -20,7 +20,7 @@ export class Quad extends Mesh {
 				indexed: false,
 				baseGeometry: {
 					positions: [new Vector3(0, 0, 0)],
-                    sizes: [new Vector2(1, 1)],
+					sizes: [new Vector2(1, 1)],
 				}
 			}
 		),
@@ -35,8 +35,8 @@ export class Quad extends Mesh {
 			{
 				...args,
 				
-				name: (args.name !== undefined) ? args.name : Quad.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : Quad.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : Quad.DEFAULT.NAME,
 			
 				visible: (args.visible !== undefined) ? args.visible : Quad.DEFAULT.VISIBLE,
 				frustumCulled: (args.frustumCulled !== undefined) ? args.frustumCulled : Quad.DEFAULT.FRUSTUM_CULLED,

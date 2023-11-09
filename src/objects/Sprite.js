@@ -8,9 +8,9 @@ import { PrimitiveTopology } from "../core/RC/pipeline/primitive state/Primitive
 export class Sprite extends Mesh {
 
 
-    static DEFAULT = {
-		NAME: "",
+	static DEFAULT = {
 		TYPE: "Sprite",
+		NAME: "",
 
 		VISIBLE: true,
 		FRUSTUM_CULLED: true,
@@ -34,8 +34,8 @@ export class Sprite extends Mesh {
 			{
 				...args,
 				
-				name: (args.name !== undefined) ? args.name : Sprite.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : Sprite.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : Sprite.DEFAULT.NAME,
 			
 				visible: (args.visible !== undefined) ? args.visible : Sprite.DEFAULT.VISIBLE,
 				frustumCulled: (args.frustumCulled !== undefined) ? args.frustumCulled : Sprite.DEFAULT.FRUSTUM_CULLED,

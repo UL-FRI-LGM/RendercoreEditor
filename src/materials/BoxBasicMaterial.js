@@ -6,8 +6,8 @@ export class BoxBasicMaterial extends MeshBasicMaterial {
 
 	
 	static DEFAULT = {
-		NAME: "",
 		TYPE: "BoxBasicMaterial",
+		NAME: "",
 
 		SHADER_PATH: "/src/shaders/basic/",
 		PROGRAM_NAME: "basic_flat",
@@ -21,8 +21,9 @@ export class BoxBasicMaterial extends MeshBasicMaterial {
 		super(
 			{
 				...args,
-				name: (args.name !== undefined) ? args.name : BoxBasicMaterial.DEFAULT.NAME,
+
 				type: (args.type !== undefined) ? args.type : BoxBasicMaterial.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : BoxBasicMaterial.DEFAULT.NAME,
 
 				shaderPath: BoxBasicMaterial.DEFAULT.SHADER_PATH,
 				programName: BoxBasicMaterial.DEFAULT.PROGRAM_NAME,

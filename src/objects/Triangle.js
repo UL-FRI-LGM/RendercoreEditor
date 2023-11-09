@@ -9,8 +9,8 @@ export class Triangle extends Mesh {
 
 	
 	static DEFAULT = {
-		NAME: "",
 		TYPE: "Triangle",
+		NAME: "",
 
 		VISIBLE: true,
 		FRUSTUM_CULLED: true,
@@ -32,9 +32,10 @@ export class Triangle extends Mesh {
 	constructor(args = {}) {
 		super(
 			{
-				...args, 
-				name: (args.name !== undefined) ? args.name : Triangle.DEFAULT.NAME,
+				...args,
+
 				type: (args.type !== undefined) ? args.type : Triangle.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : Triangle.DEFAULT.NAME,
 			
 				visible: (args.visible !== undefined) ? args.visible : Triangle.DEFAULT.VISIBLE,
 				frustumCulled: (args.frustumCulled !== undefined) ? args.frustumCulled : Triangle.DEFAULT.FRUSTUM_CULLED,

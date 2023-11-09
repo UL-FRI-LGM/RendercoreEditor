@@ -9,8 +9,8 @@ export class Box extends Mesh {
 
 
 	static DEFAULT = {
-		NAME: "",
 		TYPE: "Box",
+		NAME: "",
 
 		VISIBLE: true,
 		FRUSTUM_CULLED: true,
@@ -36,8 +36,8 @@ export class Box extends Mesh {
 			{
 				...args,
 				
-				name: (args.name !== undefined) ? args.name : Box.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : Box.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : Box.DEFAULT.NAME,
 			
 				visible: (args.visible !== undefined) ? args.visible : Box.DEFAULT.VISIBLE,
 				frustumCulled: (args.frustumCulled !== undefined) ? args.frustumCulled : Box.DEFAULT.FRUSTUM_CULLED,

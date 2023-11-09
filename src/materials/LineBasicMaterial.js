@@ -3,9 +3,11 @@ import { Color4 } from "../math/Color4.js";
 
 
 export class LineBasicMaterial extends MeshBasicMaterial {
+	
+	
 	static DEFAULT = {
-		NAME: "",
 		TYPE: "LineBasicMaterial",
+		NAME: "",
 
 		SHADER_PATH: "/src/shaders/basic/",
 		PROGRAM_NAME: "basic_flat",
@@ -19,8 +21,9 @@ export class LineBasicMaterial extends MeshBasicMaterial {
 		super(
 			{
 				...args,
-				name: (args.name !== undefined) ? args.name : LineBasicMaterial.DEFAULT.NAME,
+
 				type: (args.type !== undefined) ? args.type : LineBasicMaterial.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : LineBasicMaterial.DEFAULT.NAME,
 
 				shaderPath: LineBasicMaterial.DEFAULT.SHADER_PATH,
 				programName: LineBasicMaterial.DEFAULT.PROGRAM_NAME,

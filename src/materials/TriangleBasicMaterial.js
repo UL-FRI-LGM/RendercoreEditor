@@ -3,9 +3,11 @@ import { Color4 } from "../math/Color4.js";
 
 
 export class TriangleBasicMaterial extends MeshBasicMaterial {
+	
+	
 	static DEFAULT = {
-		NAME: "",
 		TYPE: "TriangleBasicMaterial",
+		NAME: "",
 
 		SHADER_PATH: "/src/shaders/basic/",
 		PROGRAM_NAME: "basic_flat",
@@ -19,8 +21,9 @@ export class TriangleBasicMaterial extends MeshBasicMaterial {
 		super(
 			{
 				...args,
-				name: (args.name !== undefined) ? args.name : TriangleBasicMaterial.DEFAULT.NAME,
+
 				type: (args.type !== undefined) ? args.type : TriangleBasicMaterial.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : TriangleBasicMaterial.DEFAULT.NAME,
 
 				shaderPath: TriangleBasicMaterial.DEFAULT.SHADER_PATH,
 				programName: TriangleBasicMaterial.DEFAULT.PROGRAM_NAME,

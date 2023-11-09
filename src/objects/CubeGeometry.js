@@ -25,8 +25,8 @@ export class CubeGeometry extends MeshGeometry {
 			{
 				...args,
 
-				name: (args.name !== undefined) ? args.name : CubeGeometry.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : CubeGeometry.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : CubeGeometry.DEFAULT.NAME,
 
 				indexed: (args.indexed !== undefined) ? args.indexed : CubeGeometry.DEFAULT.INDEXED,
 
@@ -49,14 +49,18 @@ export class CubeGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
+		const instanceIndexSize = 8;
+		const instanceVertexSize = 6 * 2 * 3 * 1;
+
+		let indicesArray = new Array();
+
+
 		if (indexed) {
-			let indicesArray = new Array();
+			const array = new Array(instanceVertexSize);
+
 
 			for (let p = 0; p < positions.length; p++) {
-				const instanceIndexSize = 8;
-				const instanceVertexSize = 6 * 2 * 3 * 1;
 				const instanceOffset = instanceIndexSize * p;
-				const array = new Array(instanceVertexSize);
 
 
 				array[0 ] = instanceOffset+0; //vertex 0 //front
@@ -115,71 +119,71 @@ export class CubeGeometry extends MeshGeometry {
 
 				indicesArray = indicesArray.concat(array);
 			}
-
-
-			const indicesArrayBuffer = new Uint32Array(indicesArray);
-			const indicesAttributeLocation = new AttributeLocation(
-				{
-					number: null,
-					itemSize: 1,
-					arrayBuffer: indicesArrayBuffer,
-
-					bufferDescriptor: new BufferDescriptor(
-						{
-							label: "cube indices buffer",
-							size: indicesArrayBuffer.length,
-							usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
-							mappedAtCreation: false
-						}
-					),
-					// vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					// 	{
-					// 		arrayStride: 1 * 4,
-					// 		stepMode: VertexStepMode.VERTEX,
-					// 		attributes: [
-					// 			new VertexAttribute(
-					// 				{
-					// 					format: VertexFormat.UINT_32,
-					// 					offset: 0,
-					// 					shaderLocation: 0,
-					// 				}
-					// 			)
-					// 		],			
-					// 	}
-					// )
-					vertexBufferLayoutDescriptor: null
-				}
-			);
-			indicesAttributeLocation.setValue(
-				"cube indices",
-				new BufferSetInstruction(
-					{
-						label: "cube indices",
-	
-						number: null,
-	
-						source: {
-							arrayBuffer: indicesArrayBuffer,
-							layout: {
-								offset: (0),
-							}
-						},
-						destination: {
-							buffer: null,
-							layout: {
-								offset: (0)
-							}
-						},
-						size: indicesArrayBuffer.length
-					}
-				)
-			);
-
-
-			return indicesAttributeLocation;
 		} else {
-			return null;
+			//noop
 		}
+
+
+		const indicesArrayBuffer = new Uint32Array(indicesArray);
+		const indicesAttributeLocation = new AttributeLocation(
+			{
+				number: null,
+				itemSize: 1,
+				arrayBuffer: indicesArrayBuffer,
+
+				bufferDescriptor: new BufferDescriptor(
+					{
+						label: "cube indices buffer",
+						size: indicesArrayBuffer.length,
+						usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
+						mappedAtCreation: false
+					}
+				),
+				// vertexBufferLayoutDescriptor: new VertexBufferLayout(
+				// 	{
+				// 		arrayStride: 1 * 4,
+				// 		stepMode: VertexStepMode.VERTEX,
+				// 		attributes: [
+				// 			new VertexAttribute(
+				// 				{
+				// 					format: VertexFormat.UINT_32,
+				// 					offset: 0,
+				// 					shaderLocation: 0,
+				// 				}
+				// 			)
+				// 		],			
+				// 	}
+				// )
+				vertexBufferLayoutDescriptor: null
+			}
+		);
+		indicesAttributeLocation.setValue(
+			"cube indices",
+			new BufferSetInstruction(
+				{
+					label: "cube indices",
+
+					number: null,
+
+					source: {
+						arrayBuffer: indicesArrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0)
+						}
+					},
+					size: indicesArrayBuffer.length
+				}
+			)
+		);
+
+
+		return indexed ? indicesAttributeLocation : null;
 	}
 	static assembleVertices(args = {}) {
 		const baseGeometry = args.baseGeometry;
@@ -190,8 +194,10 @@ export class CubeGeometry extends MeshGeometry {
 
 
 		if (indexed) {
+			const array = new Array(8 * 3);
+
+
 			for (let p = 0; p < positions.length; p++) {
-				const array = new Array(8 * 3);
 				const position = positions[p];
 				const px = position.x;
 				const py = position.y;
@@ -211,8 +217,10 @@ export class CubeGeometry extends MeshGeometry {
 				verticesArray = verticesArray.concat(array);
 			}
 		} else {
+			const array = new Array(6 * 2 * 3 * 3);
+
+
 			for (let p = 0; p < positions.length; p++) {
-				const array = new Array(6 * 2 * 3 * 3);
 				const position = positions[p];
 				const px = position.x;
 				const py = position.y;
@@ -347,10 +355,10 @@ export class CubeGeometry extends MeshGeometry {
 
 
 		if (indexed) {
+			const array = new Array(8 * 3);
+
+
 			for (let p = 0; p < positions.length; p++) {
-				const array = new Array(8 * 3);
-
-
 				array[0  ] = -1/Math.sqrt(3); array[1  ] = -1/Math.sqrt(3); array[2  ] = +1/Math.sqrt(3); //vertex 0
 				array[3  ] = +1/Math.sqrt(3); array[4  ] = -1/Math.sqrt(3); array[5  ] = +1/Math.sqrt(3); //vertex 1
 				array[6  ] = -1/Math.sqrt(3); array[7  ] = +1/Math.sqrt(3); array[8  ] = +1/Math.sqrt(3); //vertex 2
@@ -364,10 +372,10 @@ export class CubeGeometry extends MeshGeometry {
 				normalsArray = normalsArray.concat(array);
 			}
 		} else {
+			const array = new Array(6 * 2 * 3 * 3);
+
+
 			for (let p = 0; p < positions.length; p++) {
-				const array = new Array(6 * 2 * 3 * 3);
-
-
 				array[0  ] = +0; array[1  ] = +0; array[2  ] = +1; //vertex 0 //front
 				array[3  ] = +0; array[4  ] = +0; array[5  ] = +1; //vertex 1
 				array[6  ] = +0; array[7  ] = +0; array[8  ] = +1; //vertex 2
@@ -495,10 +503,10 @@ export class CubeGeometry extends MeshGeometry {
 
 
 		if (indexed) {
+			const array = new Array(8 * 2);
+
+
 			for (let p = 0; p < positions.length; p++) {
-				const array = new Array(8 * 2);
-
-
 				array[0  ] = +0; array[1  ] = +0; //vertex 0 //front
 				array[2  ] = +1; array[3  ] = +0; //vertex 1
 				array[4  ] = +0; array[5  ] = +1; //vertex 2
@@ -512,10 +520,10 @@ export class CubeGeometry extends MeshGeometry {
 				uvsArray = uvsArray.concat(array);
 			}
 		} else {
+			const array = new Array(6 * 2 * 3 * 2);
+
+
 			for (let p = 0; p < positions.length; p++) {
-				const array = new Array(6 * 2 * 3 * 2);
-
-
 				array[0  ] = +0; array[1  ] = +0; //vertex 0 //front
 				array[2  ] = +1; array[3  ] = +0; //vertex 1
 				array[4  ] = +0; array[5  ] = +1; //vertex 2

@@ -3,9 +3,11 @@ import { Color4 } from "../math/Color4.js";
 
 
 export class PointBasicMaterial extends MeshBasicMaterial {
+	
+	
 	static DEFAULT = {
-		NAME: "",
 		TYPE: "PointBasicMaterial",
+		NAME: "",
 
 		SHADER_PATH: "/src/shaders/basic/",
 		PROGRAM_NAME: "basic_flat",
@@ -19,8 +21,9 @@ export class PointBasicMaterial extends MeshBasicMaterial {
 		super(
 			{
 				...args,
-				name: (args.name !== undefined) ? args.name : PointBasicMaterial.DEFAULT.NAME,
+
 				type: (args.type !== undefined) ? args.type : PointBasicMaterial.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : PointBasicMaterial.DEFAULT.NAME,
 
 				shaderPath: PointBasicMaterial.DEFAULT.SHADER_PATH,
 				programName: PointBasicMaterial.DEFAULT.PROGRAM_NAME,

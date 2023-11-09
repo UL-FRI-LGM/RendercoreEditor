@@ -9,8 +9,8 @@ export class Line extends Mesh {
 
 
 	static DEFAULT = {
-		NAME: "",
 		TYPE: "Line",
+		NAME: "",
 
 		VISIBLE: true,
 		FRUSTUM_CULLED: true,
@@ -32,9 +32,10 @@ export class Line extends Mesh {
 	constructor(args = {}) {
 		super(
 			{
-				...args, 
-				name: (args.name !== undefined) ? args.name : Line.DEFAULT.NAME,
+				...args,
+
 				type: (args.type !== undefined) ? args.type : Line.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : Line.DEFAULT.NAME,
 			
 				visible: (args.visible !== undefined) ? args.visible : Line.DEFAULT.VISIBLE,
 				frustumCulled: (args.frustumCulled !== undefined) ? args.frustumCulled : Line.DEFAULT.FRUSTUM_CULLED,

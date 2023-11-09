@@ -6,8 +6,8 @@ export class SpriteBasicMaterial extends MeshBasicMaterial {
 
 
 	static DEFAULT = {
-		NAME: "",
 		TYPE: "SpriteBasicMaterial",
+		NAME: "",
 
 		SHADER_PATH: "/src/shaders/basic/sprite/",
 		PROGRAM_NAME: "basic_sprite_smooth",
@@ -22,8 +22,8 @@ export class SpriteBasicMaterial extends MeshBasicMaterial {
 			{
 				...args,
 
-				name: (args.name !== undefined) ? args.name : SpriteBasicMaterial.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : SpriteBasicMaterial.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : SpriteBasicMaterial.DEFAULT.NAME,
 
 				shaderPath: SpriteBasicMaterial.DEFAULT.SHADER_PATH,
 				programName: SpriteBasicMaterial.DEFAULT.PROGRAM_NAME,

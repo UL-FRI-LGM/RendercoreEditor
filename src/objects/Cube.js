@@ -9,8 +9,8 @@ export class Cube extends Mesh {
 
 
 	static DEFAULT = {
-		NAME: "",
 		TYPE: "Cube",
+		NAME: "",
 
 		VISIBLE: true,
 		FRUSTUM_CULLED: true,
@@ -34,8 +34,8 @@ export class Cube extends Mesh {
 			{
 				...args,
 				
-				name: (args.name !== undefined) ? args.name : Cube.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : Cube.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : Cube.DEFAULT.NAME,
 			
 				visible: (args.visible !== undefined) ? args.visible : Cube.DEFAULT.VISIBLE,
 				frustumCulled: (args.frustumCulled !== undefined) ? args.frustumCulled : Cube.DEFAULT.FRUSTUM_CULLED,

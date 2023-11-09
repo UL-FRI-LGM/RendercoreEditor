@@ -25,8 +25,8 @@ export class BoxGeometry extends MeshGeometry {
 			{
 				...args,
 
-				name: (args.name !== undefined) ? args.name : BoxGeometry.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : BoxGeometry.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : BoxGeometry.DEFAULT.NAME,
 
 				indexed: (args.indexed !== undefined) ? args.indexed : BoxGeometry.DEFAULT.INDEXED,
 
@@ -49,14 +49,18 @@ export class BoxGeometry extends MeshGeometry {
 		const indexed = args.indexed;
 		const positions = baseGeometry.positions;
 
+		const instanceIndexSize = 8;
+		const instanceVertexSize = 6 * 2 * 3 * 1;
+
+		const indicesArray = new Array();
+
+
 		if (indexed) {
-			const indicesArray = new Array();
+			const array = new Array(instanceVertexSize);
+
 
 			for (let p = 0; p < positions.length; p++) {
-				const instanceIndexSize = 8;
-				const instanceVertexSize = 6 * 2 * 3 * 1;
 				const instanceOffset = instanceIndexSize * p;
-				const array = new Array(instanceVertexSize);
 
 
 				array[0 ] = instanceOffset+0; //vertex 0 //front
@@ -115,71 +119,71 @@ export class BoxGeometry extends MeshGeometry {
 
 				indicesArray.push(...array);
 			}
-
-
-			const indicesArrayBuffer = new Uint32Array(indicesArray);
-			const indicesAttributeLocation = new AttributeLocation(
-				{
-					number: null,
-					itemSize: 1,
-					arrayBuffer: indicesArrayBuffer,
-
-					bufferDescriptor: new BufferDescriptor(
-						{
-							label: "box indices buffer",
-							size: indicesArrayBuffer.length,
-							usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
-							mappedAtCreation: false
-						}
-					),
-					// vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					// 	{
-					// 		arrayStride: 1 * 4,
-					// 		stepMode: VertexStepMode.VERTEX,
-					// 		attributes: [
-					// 			new VertexAttribute(
-					// 				{
-					// 					format: VertexFormat.UINT_32,
-					// 					offset: 0,
-					// 					shaderLocation: 0,
-					// 				}
-					// 			)
-					// 		],			
-					// 	}
-					// )
-					vertexBufferLayoutDescriptor: null
-				}
-			);
-			indicesAttributeLocation.setValue(
-				"box indices",
-				new BufferSetInstruction(
-					{
-						label: "box indices",
-	
-						number: null,
-	
-						source: {
-							arrayBuffer: indicesArrayBuffer,
-							layout: {
-								offset: (0),
-							}
-						},
-						destination: {
-							buffer: null,
-							layout: {
-								offset: (0)
-							}
-						},
-						size: indicesArrayBuffer.length
-					}
-				)
-			);
-
-
-			return indicesAttributeLocation;
 		} else {
-			return null;
+			//noop
 		}
+
+
+		const indicesArrayBuffer = new Uint32Array(indicesArray);
+		const indicesAttributeLocation = new AttributeLocation(
+			{
+				number: null,
+				itemSize: 1,
+				arrayBuffer: indicesArrayBuffer,
+
+				bufferDescriptor: new BufferDescriptor(
+					{
+						label: "box indices buffer",
+						size: indicesArrayBuffer.length,
+						usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
+						mappedAtCreation: false
+					}
+				),
+				// vertexBufferLayoutDescriptor: new VertexBufferLayout(
+				// 	{
+				// 		arrayStride: 1 * 4,
+				// 		stepMode: VertexStepMode.VERTEX,
+				// 		attributes: [
+				// 			new VertexAttribute(
+				// 				{
+				// 					format: VertexFormat.UINT_32,
+				// 					offset: 0,
+				// 					shaderLocation: 0,
+				// 				}
+				// 			)
+				// 		],			
+				// 	}
+				// )
+				vertexBufferLayoutDescriptor: null
+			}
+		);
+		indicesAttributeLocation.setValue(
+			"box indices",
+			new BufferSetInstruction(
+				{
+					label: "box indices",
+
+					number: null,
+
+					source: {
+						arrayBuffer: indicesArrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0)
+						}
+					},
+					size: indicesArrayBuffer.length
+				}
+			)
+		);
+
+
+		return indexed ? indicesAttributeLocation : null;
 	}
 	static assembleVertices(args = {}) {
 		const baseGeometry = args.baseGeometry;
@@ -192,6 +196,7 @@ export class BoxGeometry extends MeshGeometry {
 
 		if (indexed) {
 			const array = new Array(8 * 3);
+
 
 			for (let p = 0; p < positions.length; p++) {
 				const position = positions[p];
@@ -217,6 +222,7 @@ export class BoxGeometry extends MeshGeometry {
 			}
 		} else {
 			const array = new Array(6 * 2 * 3 * 3);
+
 
 			for (let p = 0; p < positions.length; p++) {
 				const position = positions[p];
@@ -358,6 +364,7 @@ export class BoxGeometry extends MeshGeometry {
 		if (indexed) {
 			const array = new Array(8 * 3);
 
+
 			for (let p = 0; p < positions.length; p++) {
 				array[0  ] = -1/Math.sqrt(3); array[1  ] = -1/Math.sqrt(3); array[2  ] = +1/Math.sqrt(3); //vertex 0
 				array[3  ] = +1/Math.sqrt(3); array[4  ] = -1/Math.sqrt(3); array[5  ] = +1/Math.sqrt(3); //vertex 1
@@ -373,6 +380,7 @@ export class BoxGeometry extends MeshGeometry {
 			}
 		} else {
 			const array = new Array(6 * 2 * 3 * 3);
+
 
 			for (let p = 0; p < positions.length; p++) {
 				array[0  ] = +0; array[1  ] = +0; array[2  ] = +1; //vertex 0 //front
@@ -504,6 +512,7 @@ export class BoxGeometry extends MeshGeometry {
 		if (indexed) {
 			const array = new Array(8 * 2);
 
+
 			for (let p = 0; p < positions.length; p++) {
 				array[0  ] = +0; array[1  ] = +0; //vertex 0 //front
 				array[2  ] = +1; array[3  ] = +0; //vertex 1
@@ -520,6 +529,7 @@ export class BoxGeometry extends MeshGeometry {
 		} else {
 			const array = new Array(6 * 2 * 3 * 2);
 
+			
 			for (let p = 0; p < positions.length; p++) {
 				array[0  ] = +0; array[1  ] = +0; //vertex 0 //front
 				array[2  ] = +1; array[3  ] = +0; //vertex 1
