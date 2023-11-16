@@ -24,7 +24,14 @@ export class Mesh extends Group {
 		VISIBLE: true,
 		FRUSTUM_CULLED: true,
 
-		GEOMETRY: new MeshGeometry(),
+		GEOMETRY: new MeshGeometry(
+			{
+				indexed: false,
+				baseGeometry: {
+
+				}
+			}
+		),
 		MATERIAL: null,
 		PICKABLE: false,
 		PRIMITIVE: PrimitiveTopology.TRIANGLE_LIST,
