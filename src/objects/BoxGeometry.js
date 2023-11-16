@@ -7,6 +7,7 @@ import { AttributeLocation } from "../core/data layouts/AttributeLocation.js";
 import { MeshGeometry } from "./MeshGeometry.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
+import { Vector3 } from "../math/Vector3.js";
 
 
 export class BoxGeometry extends MeshGeometry {
@@ -17,6 +18,11 @@ export class BoxGeometry extends MeshGeometry {
 		NAME: "",
 
 		INDEXED: false,
+		BASE_GEOMETRY: {
+			positions: [new Vector3(0, 0, 0)],
+
+			dimensions: [{ min: new Vector3(-1, -1, -1), max: new Vector3(+1, +1, +1)}],
+		},
 	};
 	
 

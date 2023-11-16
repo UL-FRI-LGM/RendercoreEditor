@@ -8,6 +8,7 @@ import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 import { _Math } from "../RenderCore.js";
+import { Vector3 } from "../math/Vector3.js";
 
 
 export class SphereFrameGeometry extends MeshGeometry {
@@ -18,6 +19,12 @@ export class SphereFrameGeometry extends MeshGeometry {
 		NAME: "",
 
 		INDEXED: false,
+		BASE_GEOMETRY: {
+			positions: [new Vector3(0, 0, 0)],
+			centers: [new Vector3(0, 0, 0)],
+			radiuses: [1],
+			nPoints: 32,
+		},
 	};
 	
 

@@ -8,6 +8,7 @@ import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBuffe
 import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
+import { Vector3 } from "../math/Vector3.js";
 
 
 export class TriangleGeometry extends MeshGeometry {
@@ -18,6 +19,9 @@ export class TriangleGeometry extends MeshGeometry {
 		NAME: "",
 
 		INDEXED: false,
+		BASE_GEOMETRY: {
+			positions: [new Vector3(0, 1, 0), new Vector3(-1, -1, 0), new Vector3(1, -1, 0)],
+		},
 	};
 	
 

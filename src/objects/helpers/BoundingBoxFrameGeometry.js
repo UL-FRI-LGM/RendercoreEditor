@@ -11,6 +11,10 @@ export class BoundingBoxFrameGeometry extends BoxFrameGeometry {
 		NAME: "",
 
 		INDEXED: false,
+		BASE_GEOMETRY: {
+			// positions: [new Vector3(0, 0, 0)],
+			mesh: new Cube(),
+		},
 	};
 	
 

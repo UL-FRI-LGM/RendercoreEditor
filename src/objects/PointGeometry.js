@@ -7,6 +7,7 @@ import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribut
 import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
+import { Vector3 } from "../math/Vector3.js";
 
 
 export class PointGeometry extends MeshGeometry {
@@ -17,6 +18,9 @@ export class PointGeometry extends MeshGeometry {
 		NAME: "",
 
 		INDEXED: false,
+		BASE_GEOMETRY: {
+			positions: [new Vector3(0, 0, 0)],
+		},
 	};
 	
 

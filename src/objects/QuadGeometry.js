@@ -7,6 +7,8 @@ import { AttributeLocation } from "../core/data layouts/AttributeLocation.js";
 import { MeshGeometry } from "./MeshGeometry.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
+import { Vector2 } from "../math/Vector2.js";
+import { Vector3 } from "../math/Vector3.js";
 
 
 export class QuadGeometry extends MeshGeometry {
@@ -17,6 +19,10 @@ export class QuadGeometry extends MeshGeometry {
 		NAME: "",
 
 		INDEXED: false,
+		BASE_GEOMETRY: {
+			positions: [new Vector3(0, 0, 0)],
+			sizes: [new Vector2(1, 1)],
+		},
 	};
 	
 

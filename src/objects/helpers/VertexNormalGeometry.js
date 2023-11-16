@@ -7,6 +7,8 @@ import { VertexAttribute } from "../../core/RC/pipeline/vertex state/VertexAttri
 import { VertexFormat } from "../../core/RC/pipeline/vertex state/VertexFormat.js";
 import { BufferUsage } from "../../core/RC/buffers/BufferUsage.js";
 import { BufferSetInstruction } from "../../core/data layouts/BufferSetInstruction.js";
+import { Vector3 } from "../../math/Vector3.js";
+import { Cube } from "../Cube.js";
 
 
 export class VertexNormalGeometry extends MeshGeometry {
@@ -17,6 +19,11 @@ export class VertexNormalGeometry extends MeshGeometry {
 		NAME: "",
 
 		INDEXED: false,
+		INDEXED: false,
+		BASE_GEOMETRY: {
+			// positions: [new Vector3(0, 0, 0)],
+			mesh: new Cube(),
+		},
 	};
 	
 

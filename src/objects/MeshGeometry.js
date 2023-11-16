@@ -21,6 +21,9 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		NAME: "",
 
 		INDEXED: false,
+		BASE_GEOMETRY: {
+
+		},
 	};
 
 
