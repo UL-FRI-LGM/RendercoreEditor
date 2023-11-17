@@ -8,7 +8,6 @@ import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBuffe
 import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
-import { Vector3 } from "../math/Vector3.js";
 
 
 export class TriangleGeometry extends MeshGeometry {

@@ -19,7 +19,6 @@ export class VertexNormalGeometry extends MeshGeometry {
 		NAME: "",
 
 		INDEXED: false,
-		INDEXED: false,
 		BASE_GEOMETRY: {
 			// positions: [new Vector3(0, 0, 0)],
 			mesh: new Cube(),
