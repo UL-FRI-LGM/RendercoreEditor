@@ -1,13 +1,13 @@
+import { MeshGeometry } from "./MeshGeometry.js";
+import { Vector3 } from "../math/Vector3.js";
 import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
 import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
 import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
 import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
 import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
 import { AttributeLocation } from "../core/data layouts/AttributeLocation.js";
-import { MeshGeometry } from "./MeshGeometry.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
-import { Vector3 } from "../math/Vector3.js";
 
 
 export class SpriteGeometry extends MeshGeometry {
@@ -60,7 +60,7 @@ export class SpriteGeometry extends MeshGeometry {
 	}
 
 
-	static assembleIndices(args = {}) {
+	static createIndicesArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -96,68 +96,39 @@ export class SpriteGeometry extends MeshGeometry {
 		}
 
 
-		const indicesArrayBuffer = new Uint32Array(indicesArray);
-		const indicesAttributeLocation = new AttributeLocation(
+		return new Uint32Array(indicesArray);
+	}
+	static createIndicesAttributeLocation(indicesArrayBuffer, args = {}) {
+		return super.createIndicesAttributeLocation(
+			indicesArrayBuffer,
 			{
-				number: null,
-				itemSize: 1,
-				arrayBuffer: indicesArrayBuffer,
+				...args,
 
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "sprite indices buffer",
-						size: indicesArrayBuffer.length,
-						usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				// vertexBufferLayoutDescriptor: new VertexBufferLayout(
-				// 	{
-				// 		arrayStride: 1 * 4,
-				// 		stepMode: VertexStepMode.VERTEX,
-				// 		attributes: [
-				// 			new VertexAttribute(
-				// 				{
-				// 					format: VertexFormat.UINT_32,
-				// 					offset: 0,
-				// 					shaderLocation: 0,
-				// 				}
-				// 			)
-				// 		],			
-				// 	}
-				// )
-				vertexBufferLayoutDescriptor: null
+				label: (args.label !== undefined) ? args.label : "sprite indices buffer",
 			}
 		);
-		indicesAttributeLocation.setValue(
-			"sprite indices",
-			new BufferSetInstruction(
-				{
-					label: "sprite indices",
-
-					number: null,
-
-					source: {
-						arrayBuffer: indicesArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: indicesArrayBuffer.length
-				}
-			)
-		);
-
-
-		return indexed ? indicesAttributeLocation : null;
 	}
-	static assembleVertices(args = {}) {
+	static setValueIndices(indicesAttributeLocation, indicesArrayBuffer, args = {}) {
+		super.setValueIndices(
+			indicesAttributeLocation,
+			indicesArrayBuffer,
+			{
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "sprite indices",
+			}
+			);
+	}
+	static assembleIndices(args = {}) {
+		const indicesArrayBuffer = SpriteGeometry.createIndicesArrayBuffer(args);
+		const indicesAttributeLocation = SpriteGeometry.createIndicesAttributeLocation(indicesArrayBuffer, args);
+		SpriteGeometry.setValueIndices(indicesAttributeLocation, indicesArrayBuffer, args);
+
+
+		return args.indexed ? indicesAttributeLocation : null;
+	}
+
+	static createVerticesArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -213,65 +184,39 @@ export class SpriteGeometry extends MeshGeometry {
 		}
 
 
-		const verticesArrayBuffer = new Float32Array(verticesArray);
-		const verticesAttributeLocation = new AttributeLocation(
+		return new Float32Array(verticesArray);
+	}
+	static createVerticesAttributeLocation(verticesArrayBuffer, args = {}) {
+		return super.createVerticesAttributeLocation(
+			verticesArrayBuffer,
 			{
-				itemSize: 3,
-				arrayBuffer: verticesArrayBuffer,
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "sprite vertices buffer",
-						size: verticesArrayBuffer.length,
-						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					{
-						arrayStride: 3 * 4,
-						stepMode: VertexStepMode.VERTEX,
-						attributes: [
-							new VertexAttribute(
-								{
-									format: VertexFormat.FLOAT_32x3,
-									offset: 0,
-									shaderLocation: 0,
-								}
-							)
-						],						
-					}
-				)
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "sprite vertices buffer",
 			}
 		);
-		verticesAttributeLocation.setValue(
-			"sprite vertices",
-			new BufferSetInstruction(
-				{
-					label: "sprite vertices",
+	}
+	static setValueVertices(verticesAttributeLocation, verticesArrayBuffer, args = {}) {
+		super.setValueVertices(
+			verticesAttributeLocation,
+			verticesArrayBuffer,
+			args = {
+				...args,
 
-					number: 0,
-
-					source: {
-						arrayBuffer: verticesArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: verticesArrayBuffer.length
-				}
-			)
+				label: (args.label !== undefined) ? args.label : "sprite vertices",
+			}
 		);
+	}
+	static assembleVertices(args = {}) {
+		const verticesArrayBuffer = SpriteGeometry.createVerticesArrayBuffer(args);
+		const verticesAttributeLocation = SpriteGeometry.createVerticesAttributeLocation(verticesArrayBuffer, args);
+		SpriteGeometry.setValueVertices(verticesAttributeLocation, verticesArrayBuffer, args);
 
 
 		return verticesAttributeLocation;
 	}
-	static assembleNormals(args = {}) {
+
+	static createNormalsArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -315,66 +260,39 @@ export class SpriteGeometry extends MeshGeometry {
 		}
 
 
-		const normalsArrayBuffer = new Float32Array(normalsArray);
-		const normalsAttributeLocation = new AttributeLocation(
+		return new Float32Array(normalsArray);
+	}
+	static createNormalsAttributeLocation(normalsArrayBuffer, args = {}) {
+		return super.createNormalsAttributeLocation(
+			normalsArrayBuffer,
 			{
-				itemSize: 3,
-				arrayBuffer: normalsArrayBuffer,
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "sprite normals buffer",
-						size: normalsArrayBuffer.length,
-						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					{
-						arrayStride: 3 * 4,
-						stepMode: VertexStepMode.VERTEX,
-						attributes: [
-							new VertexAttribute(
-								{
-									format: VertexFormat.FLOAT_32x3,
-									offset: 0,
-									shaderLocation: 1,
-								}
-							)
-						],						
-					}
-				)
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "sprite normals buffer",
 			}
 		);
-		// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
-		normalsAttributeLocation.setValue(
-			"sprite normals",
-			new BufferSetInstruction(
-				{
-					label: "sprite normals",
+	}
+	static setValueNormals(normalsAttributeLocation, normalsArrayBuffer, args = {}) {
+		super.setValueNormals(
+			normalsAttributeLocation,
+			normalsArrayBuffer,
+			{
+				...args,
 
-					number: 1,
-
-					source: {
-						arrayBuffer: normalsArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: normalsArrayBuffer.length
-				}
-			)
+				label: (args.label !== undefined) ? args.label : "sprite normals",
+			}
 		);
+	}
+	static assembleNormals(args = {}) {
+		const normalsArrayBuffer = SpriteGeometry.createNormalsArrayBuffer(args);
+		const normalsAttributeLocation = SpriteGeometry.createNormalsAttributeLocation(normalsArrayBuffer, args);
+		SpriteGeometry.setValueNormals(normalsAttributeLocation, normalsArrayBuffer, args);
 
 
 		return normalsAttributeLocation;
 	}
-	static assembleUVs(args = {}) {
+	
+	static createUVsArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -418,66 +336,39 @@ export class SpriteGeometry extends MeshGeometry {
 		}
 
 
-		const uvsArrayBuffer = new Float32Array(uvsArray);
-		const uvsAttributeLocation = new AttributeLocation(
+		return new Float32Array(uvsArray);
+	}
+	static createUVsAttributeLocation(uvsArrayBuffer, args = {}) {
+		return super.createUVsAttributeLocation(
+			uvsArrayBuffer,
 			{
-				itemSize: 2,
-				arrayBuffer: uvsArrayBuffer,
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "sprite uvs buffer",
-						size: uvsArrayBuffer.length,
-						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					{
-						arrayStride: 2 * 4,
-						stepMode: VertexStepMode.VERTEX,
-						attributes: [
-							new VertexAttribute(
-								{
-									format: VertexFormat.FLOAT_32x2,
-									offset: 0,
-									shaderLocation: 2,
-								}
-							)
-						],						
-					}
-				)
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "sprite uvs buffer",
 			}
 		);
-		uvsAttributeLocation.setValue(
-			"sprite uvs",
-			new BufferSetInstruction(
-				{
-					label: "sprite uvs",
+	}
+	static setValueUVs(uvsAttributeLocation, uvsArrayBuffer, args = {}) {
+		super.setValueUVs(
+			uvsAttributeLocation,
+			uvsArrayBuffer,
+			{
+				...args,
 
-					number: 2,
-
-					source: {
-						arrayBuffer: uvsArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: uvsArrayBuffer.length
-				}
-			)
+				label: (args.label !== undefined) ? args.label : "sprite uvs",
+			}
 		);
+	}
+	static assembleUVs(args = {}) {
+		const uvsArrayBuffer = SpriteGeometry.createUVsArrayBuffer(args);
+		const uvsAttributeLocation = SpriteGeometry.createUVsAttributeLocation(uvsArrayBuffer, args);
+		SpriteGeometry.setValueUVs(uvsAttributeLocation, uvsArrayBuffer, args);
 
 
 		return uvsAttributeLocation;
 	}
 
-	static assembleDirections(args = {}) {
+	static createDirectionsArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -533,14 +424,19 @@ export class SpriteGeometry extends MeshGeometry {
 		}
 
 
-		const directionsArrayBuffer = new Float32Array(directionsArray);
-		const directionsAttributeLocation = new AttributeLocation(
+		return new Float32Array(directionsArray);
+	}
+	static createDirectionsAttributeLocation(directionsArrayBuffer, args = {}) {
+		const label = (args.label !== undefined) ? args.label : "sprite directions buffer";
+
+
+		return new AttributeLocation(
 			{
 				itemSize: 2,
 				arrayBuffer: directionsArrayBuffer,
 				bufferDescriptor: new BufferDescriptor(
 					{
-						label: "sprite directions buffer",
+						label: label,
 						size: directionsArrayBuffer.length,
 						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
 						mappedAtCreation: false
@@ -563,11 +459,16 @@ export class SpriteGeometry extends MeshGeometry {
 				)
 			}
 		);
+	}
+	static setValueDirections(directionsAttributeLocation, directionsArrayBuffer, args = {}) {
+		const label = (args.label !== undefined) ? args.label : "sprite directions";
+
+
 		directionsAttributeLocation.setValue(
-			"sprite vertices",
+			label,
 			new BufferSetInstruction(
 				{
-					label: "sprite vertices",
+					label: label,
 
 					number: 3,
 
@@ -587,6 +488,11 @@ export class SpriteGeometry extends MeshGeometry {
 				}
 			)
 		);
+	}
+	static assembleDirections(args = {}) {
+		const directionsArrayBuffer = SpriteGeometry.createDirectionsArrayBuffer(args);
+		const directionsAttributeLocation = SpriteGeometry.createDirectionsAttributeLocation(directionsArrayBuffer, args);
+		SpriteGeometry.setValueDirections(directionsAttributeLocation, directionsArrayBuffer, args);
 
 
 		return directionsAttributeLocation;

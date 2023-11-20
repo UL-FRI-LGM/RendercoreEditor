@@ -1037,4 +1037,290 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 			console.error("Geometry error: Bounding sphere radius is NaN.");
 		}
 	}
+
+	static createIndicesArrayBuffer(args = {}) {
+		return super.createIndicesArrayBuffer(args);
+	}
+	static createIndicesAttributeLocation(indicesArrayBuffer, args = {}) {
+		const label = (args.label !== undefined) ? args.label : "mesh indices buffer";
+
+
+		return new AttributeLocation(
+			{
+				number: null,
+				itemSize: 1,
+				arrayBuffer: indicesArrayBuffer,
+
+				bufferDescriptor: new BufferDescriptor(
+					{
+						label: label,
+						size: indicesArrayBuffer.length,
+						usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
+						mappedAtCreation: false
+					}
+				),
+				// vertexBufferLayoutDescriptor: new VertexBufferLayout(
+				// 	{
+				// 		arrayStride: 1 * 4,
+				// 		stepMode: VertexStepMode.VERTEX,
+				// 		attributes: [
+				// 			new VertexAttribute(
+				// 				{
+				// 					format: VertexFormat.UINT_32,
+				// 					offset: 0,
+				// 					shaderLocation: 0,
+				// 				}
+				// 			)
+				// 		],			
+				// 	}
+				// )
+				vertexBufferLayoutDescriptor: null
+			}
+		);
+	}
+	static setValueIndices(indicesAttributeLocation, indicesArrayBuffer, args = {}) {
+		const label = (args.label !== undefined) ? args.label : "mesh indices";
+
+
+		indicesAttributeLocation.setValue(
+			label,
+			new BufferSetInstruction(
+				{
+					label: label,
+
+					number: null,
+
+					source: {
+						arrayBuffer: indicesArrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0)
+						}
+					},
+					size: indicesArrayBuffer.length
+				}
+			)
+		);
+	}
+	static assembleIndices(args = {}) {
+		return super.assembleIndices(args);
+	}
+
+	static createVerticesArrayBuffer(args = {}) {
+		return super.createVerticesArrayBuffer(args);
+	}
+	static createVerticesAttributeLocation(verticesArrayBuffer, args = {}) {
+		const label = (args.label !== undefined) ? args.label : "mesh vertices buffer";
+
+
+		return new AttributeLocation(
+			{
+				number: 0,
+				itemSize: 3,
+				arrayBuffer: verticesArrayBuffer,
+
+				bufferDescriptor: new BufferDescriptor(
+					{
+						label: label,
+						size: verticesArrayBuffer.length,
+						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+						mappedAtCreation: false
+					}
+				),
+				vertexBufferLayoutDescriptor: new VertexBufferLayout(
+					{
+						arrayStride: 3 * 4,
+						stepMode: VertexStepMode.VERTEX,
+						attributes: [
+							new VertexAttribute(
+								{
+									format: VertexFormat.FLOAT_32x3,
+									offset: 0,
+									shaderLocation: 0,
+								}
+							)
+						],
+					}
+				)
+			}
+		);
+	}
+	static setValueVertices(verticesAttributeLocation, verticesArrayBuffer, args = {}) {
+		const label = (args.label !== undefined) ? args.label : "mesh vertices";
+
+
+		verticesAttributeLocation.setValue(
+			label,
+			new BufferSetInstruction(
+				{
+					label: label,
+
+					number: 0,
+
+					source: {
+						arrayBuffer: verticesArrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0)
+						}
+					},
+					size: verticesArrayBuffer.length
+				}
+			)
+		);
+	}
+	static assembleVertices(args = {}) {
+		return super.assembleVertices(args);
+	}
+
+	static createNormalsArrayBuffer(args = {}) {
+		return super.createNormalsArrayBuffer(args);
+	}
+	static createNormalsAttributeLocation(normalsArrayBuffer, args = {}) {
+		const label = (args.label !== undefined) ? args.label : "mesh normals buffer";
+
+		
+		return new AttributeLocation(
+			{
+				itemSize: 3,
+				arrayBuffer: normalsArrayBuffer,
+				bufferDescriptor: new BufferDescriptor(
+					{
+						label: label,
+						size: normalsArrayBuffer.length,
+						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+						mappedAtCreation: false
+					}
+				),
+				vertexBufferLayoutDescriptor: new VertexBufferLayout(
+					{
+						arrayStride: 3 * 4,
+						stepMode: VertexStepMode.VERTEX,
+						attributes: [
+							new VertexAttribute(
+								{
+									format: VertexFormat.FLOAT_32x3,
+									offset: 0,
+									shaderLocation: 1,
+								}
+							)
+						],						
+					}
+				)
+			}
+		);
+		// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
+	}
+	static setValueNormals(normalsAttributeLocation, normalsArrayBuffer, args = {}) {
+		const label = (args.label !== undefined) ? args.label : "mesh normals";
+
+
+		normalsAttributeLocation.setValue(
+			label,
+			new BufferSetInstruction(
+				{
+					label: label,
+
+					number: 1,
+
+					source: {
+						arrayBuffer: normalsArrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0)
+						}
+					},
+					size: normalsArrayBuffer.length
+				}
+			)
+		);
+	}
+	static assembleNormals(args = {}) {
+		return super.assembleNormals(args);
+	}
+
+	static createUVsArrayBuffer(args = {}) {
+		return super.createUVsArrayBuffer(args);
+	}
+	static createUVsAttributeLocation(uvsArrayBuffer, args = {}) {
+		const label = (args.label !== undefined) ? args.label : "mesh uvs buffer";
+
+		
+		return new AttributeLocation(
+			{
+				itemSize: 2,
+				arrayBuffer: uvsArrayBuffer,
+				bufferDescriptor: new BufferDescriptor(
+					{
+						label: label,
+						size: uvsArrayBuffer.length,
+						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
+						mappedAtCreation: false
+					}
+				),
+				vertexBufferLayoutDescriptor: new VertexBufferLayout(
+					{
+						arrayStride: 2 * 4,
+						stepMode: VertexStepMode.VERTEX,
+						attributes: [
+							new VertexAttribute(
+								{
+									format: VertexFormat.FLOAT_32x2,
+									offset: 0,
+									shaderLocation: 2,
+								}
+							)
+						],
+					}
+				)
+			}
+		);
+	}
+	static setValueUVs(uvsAttributeLocation, uvsArrayBuffer, args = {}) {
+		const label = (args.label !== undefined) ? args.label : "mesh uvs";
+
+
+		uvsAttributeLocation.setValue(
+			label,
+			new BufferSetInstruction(
+				{
+					label: label,
+
+					number: 2,
+
+					source: {
+						arrayBuffer: uvsArrayBuffer,
+						layout: {
+							offset: (0),
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (0)
+						}
+					},
+					size: uvsArrayBuffer.length
+				}
+			)
+		);
+	}
+	static assembleUVs(args = {}) {
+		return super.assembleUVs(args);
+	}
 };

@@ -43,13 +43,13 @@ export class BoundingBoxFrameGeometry extends BoxFrameGeometry {
 	}
 
 
-	static assembleIndices(args = {}) {
-		return super.assembleIndices(
+	static createIndicesArrayBuffer(args = {}) {
+		return super.createIndicesArrayBuffer(
 			{
 				...args,
 
-				indexed: (args.indexed !== undefined) ? args.indexed : false,
-				baseGeometry: {
+				indexed: (args.indexed !== undefined) ? args.indexed : BoxFrameGeometry.DEFAULT.INDEXED,
+				baseGeometry: (args.baseGeometry !== undefined) ? {
 					positions: [new Vector3(0, 0, 0)],
 					dimensions: [
 						{
@@ -57,17 +57,131 @@ export class BoundingBoxFrameGeometry extends BoxFrameGeometry {
 							max: args.baseGeometry.mesh.bounding.box.worldspace.max
 						}
 					],
-				},
+				} : BoxFrameGeometry.DEFAULT.BASE_GEOMETRY,
+			}
+		);
+	}
+	static createIndicesAttributeLocation(indicesArrayBuffer, args = {}) {
+		return super.createIndicesAttributeLocation(
+			indicesArrayBuffer,
+			{
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "bounding box frame indices buffer",
+			}
+		);
+	}
+	static setIndicesVertices(indicesAttributeLocation, indicesArrayBuffer, args = {}) {
+		super.setIndicesVertices(
+			indicesAttributeLocation,
+			indicesArrayBuffer,
+			args = {
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "bounding box frame indices",
+			}
+		);
+	}
+	static assembleIndices(args = {}) {
+		const indicesArrayBuffer = BoundingBoxFrameGeometry.createIndicesArrayBuffer(args);
+		const indicesAttributeLocation = BoundingBoxFrameGeometry.createIndicesAttributeLocation(indicesArrayBuffer, args);
+		BoundingBoxFrameGeometry.setValueIndices(indicesAttributeLocation, indicesArrayBuffer, args);
+
+
+		return args.indexed ? indicesAttributeLocation : null;
+	}
+	// static assembleIndices(args = {}) {
+	// 	return super.assembleIndices(
+	// 		{
+	// 			...args,
+
+	// 			indexed: (args.indexed !== undefined) ? args.indexed : BoxFrameGeometry.DEFAULT.INDEXED,
+	// 			baseGeometry: (args.baseGeometry !== undefined) ? {
+	// 				positions: [new Vector3(0, 0, 0)],
+	// 				dimensions: [
+	// 					{
+	// 						min: args.baseGeometry.mesh.bounding.box.worldspace.min,
+	// 						max: args.baseGeometry.mesh.bounding.box.worldspace.max
+	// 					}
+	// 				],
+	// 			} : BoxFrameGeometry.DEFAULT.BASE_GEOMETRY,
+	// 		}
+	// 	);
+	// }
+
+	static createVerticesArrayBuffer(args = {}) {
+		return super.createVerticesArrayBuffer(
+			{
+				...args,
+
+				indexed: (args.indexed !== undefined) ? args.indexed : BoxFrameGeometry.DEFAULT.INDEXED,
+				baseGeometry: (args.baseGeometry !== undefined) ? {
+					positions: [new Vector3(0, 0, 0)],
+					dimensions: [
+						{
+							min: args.baseGeometry.mesh.bounding.box.worldspace.min,
+							max: args.baseGeometry.mesh.bounding.box.worldspace.max
+						}
+					],
+				} : BoxFrameGeometry.DEFAULT.BASE_GEOMETRY,
+			}
+		);
+	}
+	static createVerticesAttributeLocation(verticesArrayBuffer, args = {}) {
+		return super.createVerticesAttributeLocation(
+			verticesArrayBuffer,
+			{
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "bounding box frame vertices buffer",
+			}
+		);
+	}
+	static setValueVertices(verticesAttributeLocation, verticesArrayBuffer, args = {}) {
+		super.setValueVertices(
+			verticesAttributeLocation,
+			verticesArrayBuffer,
+			args = {
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "bounding box frame vertices",
 			}
 		);
 	}
 	static assembleVertices(args = {}) {
-		return super.assembleVertices(
+		const verticesArrayBuffer = BoundingBoxFrameGeometry.createVerticesArrayBuffer(args);
+		const verticesAttributeLocation = BoundingBoxFrameGeometry.createVerticesAttributeLocation(verticesArrayBuffer, args);
+		BoundingBoxFrameGeometry.setValueVertices(verticesAttributeLocation, verticesArrayBuffer, args);
+
+
+		return verticesAttributeLocation;
+	}
+	// static assembleVertices(args = {}) {
+	// 	return super.assembleVertices(
+	// 		{
+	// 			...args,
+
+	// 			indexed: (args.indexed !== undefined) ? args.indexed : BoxFrameGeometry.DEFAULT.INDEXED,
+	// 			baseGeometry: (args.baseGeometry !== undefined) ? {
+	// 				positions: [new Vector3(0, 0, 0)],
+	// 				dimensions: [
+	// 					{
+	// 						min: args.baseGeometry.mesh.bounding.box.worldspace.min,
+	// 						max: args.baseGeometry.mesh.bounding.box.worldspace.max
+	// 					}
+	// 				],
+	// 			} : BoxFrameGeometry.DEFAULT.BASE_GEOMETRY,
+	// 		}
+	// 	);
+	// }
+
+	static createNormalsArrayBuffer(args = {}) {
+		return super.createNormalsArrayBuffer(
 			{
 				...args,
 
-				indexed: (args.indexed !== undefined) ? args.indexed : false,
-				baseGeometry: {
+				indexed: (args.indexed !== undefined) ? args.indexed : BoxFrameGeometry.DEFAULT.INDEXED,
+				baseGeometry: (args.baseGeometry !== undefined) ? {
 					positions: [new Vector3(0, 0, 0)],
 					dimensions: [
 						{
@@ -75,17 +189,65 @@ export class BoundingBoxFrameGeometry extends BoxFrameGeometry {
 							max: args.baseGeometry.mesh.bounding.box.worldspace.max
 						}
 					],
-				},
+				} : BoxFrameGeometry.DEFAULT.BASE_GEOMETRY,
+			}
+		);
+	}
+	static createNormalsAttributeLocation(normalsArrayBuffer, args = {}) {
+		return super.createNormalsAttributeLocation(
+			normalsArrayBuffer,
+			{
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "bounding box frame normals buffer",
+			}
+		);
+	}
+	static setValueNormals(normalsAttributeLocation, normalsArrayBuffer, args = {}) {
+		super.setValueNormals(
+			normalsAttributeLocation,
+			normalsArrayBuffer,
+			args = {
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "bounding box frame normals",
 			}
 		);
 	}
 	static assembleNormals(args = {}) {
-		return super.assembleNormals(
+		const normalsArrayBuffer = BoundingBoxFrameGeometry.createNormalsArrayBuffer(args);
+		const normalsAttributeLocation = BoundingBoxFrameGeometry.createNormalsAttributeLocation(normalsArrayBuffer, args);
+		BoundingBoxFrameGeometry.setValueNormals(normalsAttributeLocation, normalsArrayBuffer, args);
+
+
+		return normalsAttributeLocation;
+	}
+	// static assembleNormals(args = {}) {
+	// 	return super.assembleNormals(
+	// 		{
+	// 			...args,
+
+	// 			indexed: (args.indexed !== undefined) ? args.indexed : BoxFrameGeometry.DEFAULT.INDEXED,
+	// 			baseGeometry: (args.baseGeometry !== undefined) ? {
+	// 				positions: [new Vector3(0, 0, 0)],
+	// 				dimensions: [
+	// 					{
+	// 						min: args.baseGeometry.mesh.bounding.box.worldspace.min,
+	// 						max: args.baseGeometry.mesh.bounding.box.worldspace.max
+	// 					}
+	// 				],
+	// 			} : BoxFrameGeometry.DEFAULT.BASE_GEOMETRY,
+	// 		}
+	// 	);
+	// }
+
+	static createUVsArrayBuffer(args = {}) {
+		return super.createUVsArrayBuffer(
 			{
 				...args,
 
-				indexed: (args.indexed !== undefined) ? args.indexed : false,
-				baseGeometry: {
+				indexed: (args.indexed !== undefined) ? args.indexed : BoxFrameGeometry.DEFAULT.INDEXED,
+				baseGeometry: (args.baseGeometry !== undefined) ? {
 					positions: [new Vector3(0, 0, 0)],
 					dimensions: [
 						{
@@ -93,26 +255,55 @@ export class BoundingBoxFrameGeometry extends BoxFrameGeometry {
 							max: args.baseGeometry.mesh.bounding.box.worldspace.max
 						}
 					],
-				},
+				} : BoxFrameGeometry.DEFAULT.BASE_GEOMETRY,
+			}
+		);
+	}
+	static createUVsAttributeLocation(uvsArrayBuffer, args = {}) {
+		return super.createUVsAttributeLocation(
+			uvsArrayBuffer,
+			{
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "bounding box frame uvs buffer",
+			}
+		);
+	}
+	static setValueUVs(uvsAttributeLocation, uvsArrayBuffer, args = {}) {
+		super.setValueUVs(
+			uvsAttributeLocation,
+			uvsArrayBuffer,
+			args = {
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "bounding box frame uvs",
 			}
 		);
 	}
 	static assembleUVs(args = {}) {
-		return super.assembleUVs(
-			{
-				...args,
+		const uvsArrayBuffer = BoundingBoxFrameGeometry.createUVsArrayBuffer(args);
+		const uvsAttributeLocation = BoundingBoxFrameGeometry.createUVsAttributeLocation(uvsArrayBuffer, args);
+		BoundingBoxFrameGeometry.setValueUVs(uvsAttributeLocation, uvsArrayBuffer, args);
 
-				indexed: (args.indexed !== undefined) ? args.indexed : false,
-				baseGeometry: {
-					positions: [new Vector3(0, 0, 0)],
-					dimensions: [
-						{
-							min: args.baseGeometry.mesh.bounding.box.worldspace.min,
-							max: args.baseGeometry.mesh.bounding.box.worldspace.max
-						}
-					],
-				},
-			}
-		);
+
+		return uvsAttributeLocation;
 	}
+	// static assembleUVs(args = {}) {
+	// 	return super.assembleUVs(
+	// 		{
+	// 			...args,
+
+	// 			indexed: (args.indexed !== undefined) ? args.indexed : BoxFrameGeometry.DEFAULT.INDEXED,
+	// 			baseGeometry: (args.baseGeometry !== undefined) ? {
+	// 				positions: [new Vector3(0, 0, 0)],
+	// 				dimensions: [
+	// 					{
+	// 						min: args.baseGeometry.mesh.bounding.box.worldspace.min,
+	// 						max: args.baseGeometry.mesh.bounding.box.worldspace.max
+	// 					}
+	// 				],
+	// 			} : BoxFrameGeometry.DEFAULT.BASE_GEOMETRY,
+	// 		}
+	// 	);
+	// }
 };

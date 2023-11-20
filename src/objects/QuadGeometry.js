@@ -1,12 +1,4 @@
-import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
-import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
-import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
-import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
-import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
-import { AttributeLocation } from "../core/data layouts/AttributeLocation.js";
 import { MeshGeometry } from "./MeshGeometry.js";
-import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
-import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 import { Vector2 } from "../math/Vector2.js";
 import { Vector3 } from "../math/Vector3.js";
 
@@ -50,7 +42,7 @@ export class QuadGeometry extends MeshGeometry {
 	}
 
 
-	static assembleIndices(args = {}) {
+	static createIndicesArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -87,68 +79,39 @@ export class QuadGeometry extends MeshGeometry {
 		}
 
 
-		const indicesArrayBuffer = new Uint32Array(indicesArray);
-		const indicesAttributeLocation = new AttributeLocation(
+		return new Uint32Array(indicesArray);
+	}
+	static createIndicesAttributeLocation(indicesArrayBuffer, args = {}) {
+		return super.createIndicesAttributeLocation(
+			indicesArrayBuffer,
 			{
-				number: null,
-				itemSize: 1,
-				arrayBuffer: indicesArrayBuffer,
+				...args,
 
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "quad indices buffer",
-						size: indicesArrayBuffer.length,
-						usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				// vertexBufferLayoutDescriptor: new VertexBufferLayout(
-				// 	{
-				// 		arrayStride: 1 * 4,
-				// 		stepMode: VertexStepMode.VERTEX,
-				// 		attributes: [
-				// 			new VertexAttribute(
-				// 				{
-				// 					format: VertexFormat.UINT_32,
-				// 					offset: 0,
-				// 					shaderLocation: 0,
-				// 				}
-				// 			)
-				// 		],			
-				// 	}
-				// )
-				vertexBufferLayoutDescriptor: null
+				label: (args.label !== undefined) ? args.label : "quad indices buffer",
 			}
 		);
-		indicesAttributeLocation.setValue(
-			"quad indices",
-			new BufferSetInstruction(
-				{
-					label: "quad indices",
-
-					number: null,
-
-					source: {
-						arrayBuffer: indicesArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: indicesArrayBuffer.length
-				}
-			)
-		);
-
-
-		return indexed ? indicesAttributeLocation : null;
 	}
-	static assembleVertices(args = {}) {
+	static setValueIndices(indicesAttributeLocation, indicesArrayBuffer, args = {}) {
+		super.setValueIndices(
+			indicesAttributeLocation,
+			indicesArrayBuffer,
+			{
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "quad indices",
+			}
+			);
+	}
+	static assembleIndices(args = {}) {
+		const indicesArrayBuffer = QuadGeometry.createIndicesArrayBuffer(args);
+		const indicesAttributeLocation = QuadGeometry.createIndicesAttributeLocation(indicesArrayBuffer, args);
+		QuadGeometry.setValueIndices(indicesAttributeLocation, indicesArrayBuffer, args);
+
+
+		return args.indexed ? indicesAttributeLocation : null;
+	}
+
+	static createVerticesArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -213,65 +176,39 @@ export class QuadGeometry extends MeshGeometry {
 		}
 
 
-		const verticesArrayBuffer = new Float32Array(verticesArray);
-		const verticesAttributeLocation = new AttributeLocation(
+		return new Float32Array(verticesArray);
+	}
+	static createVerticesAttributeLocation(verticesArrayBuffer, args = {}) {
+		return super.createVerticesAttributeLocation(
+			verticesArrayBuffer,
 			{
-				itemSize: 3,
-				arrayBuffer: verticesArrayBuffer,
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "quad vertices buffer",
-						size: verticesArrayBuffer.length,
-						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					{
-						arrayStride: 3 * 4,
-						stepMode: VertexStepMode.VERTEX,
-						attributes: [
-							new VertexAttribute(
-								{
-									format: VertexFormat.FLOAT_32x3,
-									offset: 0,
-									shaderLocation: 0,
-								}
-							)
-						],						
-					}
-				)
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "quad vertices buffer",
 			}
 		);
-		verticesAttributeLocation.setValue(
-			"quad vertices",
-			new BufferSetInstruction(
-				{
-					label: "quad vertices",
+	}
+	static setValueVertices(verticesAttributeLocation, verticesArrayBuffer, args = {}) {
+		super.setValueVertices(
+			verticesAttributeLocation,
+			verticesArrayBuffer,
+			args = {
+				...args,
 
-					number: 0,
-
-					source: {
-						arrayBuffer: verticesArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: verticesArrayBuffer.length
-				}
-			)
+				label: (args.label !== undefined) ? args.label : "quad vertices",
+			}
 		);
+	}
+	static assembleVertices(args = {}) {
+		const verticesArrayBuffer = QuadGeometry.createVerticesArrayBuffer(args);
+		const verticesAttributeLocation = QuadGeometry.createVerticesAttributeLocation(verticesArrayBuffer, args);
+		QuadGeometry.setValueVertices(verticesAttributeLocation, verticesArrayBuffer, args);
 
 
 		return verticesAttributeLocation;
 	}
-	static assembleNormals(args = {}) {
+
+	static createNormalsArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -316,66 +253,39 @@ export class QuadGeometry extends MeshGeometry {
 		}
 
 
-		const normalsArrayBuffer = new Float32Array(normalsArray);
-		const normalsAttributeLocation = new AttributeLocation(
+		return new Float32Array(normalsArray);
+	}
+	static createNormalsAttributeLocation(normalsArrayBuffer, args = {}) {
+		return super.createNormalsAttributeLocation(
+			normalsArrayBuffer,
 			{
-				itemSize: 3,
-				arrayBuffer: normalsArrayBuffer,
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "quad normals buffer",
-						size: normalsArrayBuffer.length,
-						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					{
-						arrayStride: 3 * 4,
-						stepMode: VertexStepMode.VERTEX,
-						attributes: [
-							new VertexAttribute(
-								{
-									format: VertexFormat.FLOAT_32x3,
-									offset: 0,
-									shaderLocation: 1,
-								}
-							)
-						],						
-					}
-				)
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "quad normals buffer",
 			}
 		);
-		// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
-		normalsAttributeLocation.setValue(
-			"quad normals",
-			new BufferSetInstruction(
-				{
-					label: "quad normals",
+	}
+	static setValueNormals(normalsAttributeLocation, normalsArrayBuffer, args = {}) {
+		super.setValueNormals(
+			normalsAttributeLocation,
+			normalsArrayBuffer,
+			{
+				...args,
 
-					number: 1,
-
-					source: {
-						arrayBuffer: normalsArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: normalsArrayBuffer.length
-				}
-			)
+				label: (args.label !== undefined) ? args.label : "quad normals",
+			}
 		);
+	}
+	static assembleNormals(args = {}) {
+		const normalsArrayBuffer = QuadGeometry.createNormalsArrayBuffer(args);
+		const normalsAttributeLocation = QuadGeometry.createNormalsAttributeLocation(normalsArrayBuffer, args);
+		QuadGeometry.setValueNormals(normalsAttributeLocation, normalsArrayBuffer, args);
 
 
 		return normalsAttributeLocation;
 	}
-	static assembleUVs(args = {}) {
+	
+	static createUVsArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -420,60 +330,33 @@ export class QuadGeometry extends MeshGeometry {
 		}
 
 
-		const uvsArrayBuffer = new Float32Array(uvsArray);
-		const uvsAttributeLocation = new AttributeLocation(
+		return new Float32Array(uvsArray);
+	}
+	static createUVsAttributeLocation(uvsArrayBuffer, args = {}) {
+		return super.createUVsAttributeLocation(
+			uvsArrayBuffer,
 			{
-				itemSize: 2,
-				arrayBuffer: uvsArrayBuffer,
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "quad uvs buffer",
-						size: uvsArrayBuffer.length,
-						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					{
-						arrayStride: 2 * 4,
-						stepMode: VertexStepMode.VERTEX,
-						attributes: [
-							new VertexAttribute(
-								{
-									format: VertexFormat.FLOAT_32x2,
-									offset: 0,
-									shaderLocation: 2,
-								}
-							)
-						],						
-					}
-				)
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "quad uvs buffer",
 			}
 		);
-		uvsAttributeLocation.setValue(
-			"quad uvs",
-			new BufferSetInstruction(
-				{
-					label: "quad uvs",
+	}
+	static setValueUVs(uvsAttributeLocation, uvsArrayBuffer, args = {}) {
+		super.setValueUVs(
+			uvsAttributeLocation,
+			uvsArrayBuffer,
+			{
+				...args,
 
-					number: 2,
-
-					source: {
-						arrayBuffer: uvsArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: uvsArrayBuffer.length
-				}
-			)
+				label: (args.label !== undefined) ? args.label : "quad uvs",
+			}
 		);
+	}
+	static assembleUVs(args = {}) {
+		const uvsArrayBuffer = QuadGeometry.createUVsArrayBuffer(args);
+		const uvsAttributeLocation = QuadGeometry.createUVsAttributeLocation(uvsArrayBuffer, args);
+		QuadGeometry.setValueUVs(uvsAttributeLocation, uvsArrayBuffer, args);
 
 
 		return uvsAttributeLocation;

@@ -1,12 +1,4 @@
-import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
 import { MeshGeometry } from "./MeshGeometry.js";
-import { AttributeLocation } from "../core/data layouts/AttributeLocation.js";
-import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
-import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
-import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
-import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
-import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
-import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 import { Vector3 } from "../math/Vector3.js";
 
 
@@ -48,7 +40,7 @@ export class PointGeometry extends MeshGeometry {
 	}
 
 
-	static assembleIndices(args = {}) {
+	static createIndicesArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -78,68 +70,39 @@ export class PointGeometry extends MeshGeometry {
 		}
 
 
-		const indicesArrayBuffer = new Uint32Array(indicesArray);
-		const indicesAttributeLocation = new AttributeLocation(
+		return new Uint32Array(indicesArray);
+	}
+	static createIndicesAttributeLocation(indicesArrayBuffer, args = {}) {
+		return super.createIndicesAttributeLocation(
+			indicesArrayBuffer,
 			{
-				number: null,
-				itemSize: 1,
-				arrayBuffer: indicesArrayBuffer,
+				...args,
 
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "point indices buffer",
-						size: indicesArrayBuffer.length,
-						usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				// vertexBufferLayoutDescriptor: new VertexBufferLayout(
-				// 	{
-				// 		arrayStride: 1 * 4,
-				// 		stepMode: VertexStepMode.VERTEX,
-				// 		attributes: [
-				// 			new VertexAttribute(
-				// 				{
-				// 					format: VertexFormat.UINT_32,
-				// 					offset: 0,
-				// 					shaderLocation: 0,
-				// 				}
-				// 			)
-				// 		],			
-				// 	}
-				// )
-				vertexBufferLayoutDescriptor: null
+				label: (args.label !== undefined) ? args.label : "point indices buffer",
 			}
 		);
-		indicesAttributeLocation.setValue(
-			"point indices",
-			new BufferSetInstruction(
-				{
-					label: "point indices",
-
-					number: null,
-
-					source: {
-						arrayBuffer: indicesArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: indicesArrayBuffer.length
-				}
-			)
-		);
-
-
-		return indexed ? indicesAttributeLocation : null;
 	}
-	static assembleVertices(args = {}) {
+	static setValueIndices(indicesAttributeLocation, indicesArrayBuffer, args = {}) {
+		super.setValueIndices(
+			indicesAttributeLocation,
+			indicesArrayBuffer,
+			{
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "point indices",
+			}
+			);
+	}
+	static assembleIndices(args = {}) {
+		const indicesArrayBuffer = PointGeometry.createIndicesArrayBuffer(args);
+		const indicesAttributeLocation = PointGeometry.createIndicesAttributeLocation(indicesArrayBuffer, args);
+		PointGeometry.setValueIndices(indicesAttributeLocation, indicesArrayBuffer, args);
+
+
+		return args.indexed ? indicesAttributeLocation : null;
+	}
+
+	static createVerticesArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -186,65 +149,39 @@ export class PointGeometry extends MeshGeometry {
 		}
 
 
-		const verticesArrayBuffer = new Float32Array(verticesArray);
-			const verticesAttributeLocation = new AttributeLocation(
-				{
-					itemSize: 3,
-					arrayBuffer: verticesArrayBuffer,
-					bufferDescriptor: new BufferDescriptor(
-						{
-							label: "point vertices buffer",
-							size: verticesArrayBuffer.length,
-							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-							mappedAtCreation: false
-						}
-					),
-					vertexBufferLayoutDescriptor: new VertexBufferLayout(
-						{
-							arrayStride: 3 * 4,
-							stepMode: VertexStepMode.VERTEX,
-							attributes: [
-								new VertexAttribute(
-									{
-										format: VertexFormat.FLOAT_32x3,
-										offset: 0,
-										shaderLocation: 0,
-									}
-								)
-							],						
-						}
-					)
-				}
-			);
-			verticesAttributeLocation.setValue(
-				"point vertices",
-				new BufferSetInstruction(
-					{
-						label: "point vertices",
-	
-						number: 0,
-	
-						source: {
-							arrayBuffer: verticesArrayBuffer,
-							layout: {
-								offset: (0),
-							}
-						},
-						destination: {
-							buffer: null,
-							layout: {
-								offset: (0)
-							}
-						},
-						size: verticesArrayBuffer.length
-					}
-				)
-			);
-
-
-			return verticesAttributeLocation;
+		return new Float32Array(verticesArray);
 	}
-	static assembleNormals(args = {}) {
+	static createVerticesAttributeLocation(verticesArrayBuffer, args = {}) {
+		return super.createVerticesAttributeLocation(
+			verticesArrayBuffer,
+			{
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "point vertices buffer",
+			}
+		);
+	}
+	static setValueVertices(verticesAttributeLocation, verticesArrayBuffer, args = {}) {
+		super.setValueVertices(
+			verticesAttributeLocation,
+			verticesArrayBuffer,
+			args = {
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "point vertices",
+			}
+		);
+	}
+	static assembleVertices(args = {}) {
+		const verticesArrayBuffer = PointGeometry.createVerticesArrayBuffer(args);
+		const verticesAttributeLocation = PointGeometry.createVerticesAttributeLocation(verticesArrayBuffer, args);
+		PointGeometry.setValueVertices(verticesAttributeLocation, verticesArrayBuffer, args);
+
+
+		return verticesAttributeLocation;
+	}
+
+	static createNormalsArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -279,66 +216,39 @@ export class PointGeometry extends MeshGeometry {
 		}
 
 
-		const normalsArrayBuffer = new Float32Array(normalsArray);
-		const normalsAttributeLocation = new AttributeLocation(
+		return new Float32Array(normalsArray);
+	}
+	static createNormalsAttributeLocation(normalsArrayBuffer, args = {}) {
+		return super.createNormalsAttributeLocation(
+			normalsArrayBuffer,
 			{
-				itemSize: 3,
-				arrayBuffer: normalsArrayBuffer,
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "point normals buffer",
-						size: normalsArrayBuffer.length,
-						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					{
-						arrayStride: 3 * 4,
-						stepMode: VertexStepMode.VERTEX,
-						attributes: [
-							new VertexAttribute(
-								{
-									format: VertexFormat.FLOAT_32x3,
-									offset: 0,
-									shaderLocation: 1,
-								}
-							)
-						],						
-					}
-				)
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "point normals buffer",
 			}
 		);
-		// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
-		normalsAttributeLocation.setValue(
-			"point normals",
-			new BufferSetInstruction(
-				{
-					label: "point normals",
+	}
+	static setValueNormals(normalsAttributeLocation, normalsArrayBuffer, args = {}) {
+		super.setValueNormals(
+			normalsAttributeLocation,
+			normalsArrayBuffer,
+			{
+				...args,
 
-					number: 1,
-
-					source: {
-						arrayBuffer: normalsArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: normalsArrayBuffer.length
-				}
-			)
+				label: (args.label !== undefined) ? args.label : "point normals",
+			}
 		);
+	}
+	static assembleNormals(args = {}) {
+		const normalsArrayBuffer = PointGeometry.createNormalsArrayBuffer(args);
+		const normalsAttributeLocation = PointGeometry.createNormalsAttributeLocation(normalsArrayBuffer, args);
+		PointGeometry.setValueNormals(normalsAttributeLocation, normalsArrayBuffer, args);
 
 
 		return normalsAttributeLocation;
 	}
-	static assembleUVs(args = {}) {
+	
+	static createUVsArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -373,60 +283,33 @@ export class PointGeometry extends MeshGeometry {
 		}
 
 
-		const uvsArrayBuffer = new Float32Array(uvsArray);
-		const uvsAttributeLocation = new AttributeLocation(
+		return new Float32Array(uvsArray);
+	}
+	static createUVsAttributeLocation(uvsArrayBuffer, args = {}) {
+		return super.createUVsAttributeLocation(
+			uvsArrayBuffer,
 			{
-				itemSize: 2,
-				arrayBuffer: uvsArrayBuffer,
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "point uvs buffer",
-						size: uvsArrayBuffer.length,
-						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					{
-						arrayStride: 2 * 4,
-						stepMode: VertexStepMode.VERTEX,
-						attributes: [
-							new VertexAttribute(
-								{
-									format: VertexFormat.FLOAT_32x2,
-									offset: 0,
-									shaderLocation: 2,
-								}
-							)
-						],						
-					}
-				)
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "point uvs buffer",
 			}
 		);
-		uvsAttributeLocation.setValue(
-			"point uvs",
-			new BufferSetInstruction(
-				{
-					label: "point uvs",
+	}
+	static setValueUVs(uvsAttributeLocation, uvsArrayBuffer, args = {}) {
+		super.setValueUVs(
+			uvsAttributeLocation,
+			uvsArrayBuffer,
+			{
+				...args,
 
-					number: 2,
-
-					source: {
-						arrayBuffer: uvsArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: uvsArrayBuffer.length
-				}
-			)
+				label: (args.label !== undefined) ? args.label : "point uvs",
+			}
 		);
+	}
+	static assembleUVs(args = {}) {
+		const uvsArrayBuffer = PointGeometry.createUVsArrayBuffer(args);
+		const uvsAttributeLocation = PointGeometry.createUVsAttributeLocation(uvsArrayBuffer, args);
+		PointGeometry.setValueUVs(uvsAttributeLocation, uvsArrayBuffer, args);
 
 
 		return uvsAttributeLocation;

@@ -1,13 +1,5 @@
-import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
-import { Vector3 } from "../math/Vector3.js";
 import { MeshGeometry } from "./MeshGeometry.js";
-import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
-import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
-import { AttributeLocation } from "../core/data layouts/AttributeLocation.js";
-import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
-import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
-import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
-import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
+import { Vector3 } from "../math/Vector3.js";
 
 
 export class TriangleGeometry extends MeshGeometry {
@@ -48,7 +40,7 @@ export class TriangleGeometry extends MeshGeometry {
 	}
 
 
-	static assembleIndices(args = {}) {
+	static createIndicesArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -80,68 +72,39 @@ export class TriangleGeometry extends MeshGeometry {
 		}
 
 
-		const indicesArrayBuffer = new Uint32Array(indicesArray);
-		const indicesAttributeLocation = new AttributeLocation(
+		return new Uint32Array(indicesArray);
+	}
+	static createIndicesAttributeLocation(indicesArrayBuffer, args = {}) {
+		return super.createIndicesAttributeLocation(
+			indicesArrayBuffer,
 			{
-				number: null,
-				itemSize: 1,
-				arrayBuffer: indicesArrayBuffer,
+				...args,
 
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "triangle indices buffer",
-						size: indicesArrayBuffer.length,
-						usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				// vertexBufferLayoutDescriptor: new VertexBufferLayout(
-				// 	{
-				// 		arrayStride: 1 * 4,
-				// 		stepMode: VertexStepMode.VERTEX,
-				// 		attributes: [
-				// 			new VertexAttribute(
-				// 				{
-				// 					format: VertexFormat.UINT_32,
-				// 					offset: 0,
-				// 					shaderLocation: 0,
-				// 				}
-				// 			)
-				// 		],			
-				// 	}
-				// )
-				vertexBufferLayoutDescriptor: null
+				label: (args.label !== undefined) ? args.label : "triangle indices buffer",
 			}
 		);
-		indicesAttributeLocation.setValue(
-			"triangle indices",
-			new BufferSetInstruction(
-				{
-					label: "triangle indices",
-
-					number: null,
-
-					source: {
-						arrayBuffer: indicesArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: indicesArrayBuffer.length
-				}
-			)
-		);
-
-
-		return indexed ? indicesAttributeLocation : null;
 	}
-	static assembleVertices(args = {}) {
+	static setValueIndices(indicesAttributeLocation, indicesArrayBuffer, args = {}) {
+		super.setValueIndices(
+			indicesAttributeLocation,
+			indicesArrayBuffer,
+			{
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "triangle indices",
+			}
+			);
+	}
+	static assembleIndices(args = {}) {
+		const indicesArrayBuffer = TriangleGeometry.createIndicesArrayBuffer(args);
+		const indicesAttributeLocation = TriangleGeometry.createIndicesAttributeLocation(indicesArrayBuffer, args);
+		TriangleGeometry.setValueIndices(indicesAttributeLocation, indicesArrayBuffer, args);
+
+
+		return args.indexed ? indicesAttributeLocation : null;
+	}
+
+	static createVerticesArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -190,65 +153,39 @@ export class TriangleGeometry extends MeshGeometry {
 		}
 
 
-		const verticesArrayBuffer = new Float32Array(verticesArray);
-		const verticesAttributeLocation = new AttributeLocation(
+		return new Float32Array(verticesArray);
+	}
+	static createVerticesAttributeLocation(verticesArrayBuffer, args = {}) {
+		return super.createVerticesAttributeLocation(
+			verticesArrayBuffer,
 			{
-				itemSize: 3,
-				arrayBuffer: verticesArrayBuffer,
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "triangle vertices buffer",
-						size: verticesArrayBuffer.length,
-						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					{
-						arrayStride: 3 * 4,
-						stepMode: VertexStepMode.VERTEX,
-						attributes: [
-							new VertexAttribute(
-								{
-									format: VertexFormat.FLOAT_32x3,
-									offset: 0,
-									shaderLocation: 0,
-								}
-							)
-						],						
-					}
-				)
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "triangle vertices buffer",
 			}
 		);
-		verticesAttributeLocation.setValue(
-			"triangle vertices",
-			new BufferSetInstruction(
-				{
-					label: "triangle vertices",
+	}
+	static setValueVertices(verticesAttributeLocation, verticesArrayBuffer, args = {}) {
+		super.setValueVertices(
+			verticesAttributeLocation,
+			verticesArrayBuffer,
+			args = {
+				...args,
 
-					number: 0,
-
-					source: {
-						arrayBuffer: verticesArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: verticesArrayBuffer.length
-				}
-			)
+				label: (args.label !== undefined) ? args.label : "triangle vertices",
+			}
 		);
+	}
+	static assembleVertices(args = {}) {
+		const verticesArrayBuffer = TriangleGeometry.createVerticesArrayBuffer(args);
+		const verticesAttributeLocation = TriangleGeometry.createVerticesAttributeLocation(verticesArrayBuffer, args);
+		TriangleGeometry.setValueVertices(verticesAttributeLocation, verticesArrayBuffer, args);
 
 
 		return verticesAttributeLocation;
 	}
-	static assembleNormals(args = {}) {
+
+	static createNormalsArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -309,66 +246,39 @@ export class TriangleGeometry extends MeshGeometry {
 		}
 
 
-		const normalsArrayBuffer = new Float32Array(normalsArray);
-		const normalsAttributeLocation = new AttributeLocation(
+		return new Float32Array(normalsArray);
+	}
+	static createNormalsAttributeLocation(normalsArrayBuffer, args = {}) {
+		return super.createNormalsAttributeLocation(
+			normalsArrayBuffer,
 			{
-				itemSize: 3,
-				arrayBuffer: normalsArrayBuffer,
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "triangle normals buffer",
-						size: normalsArrayBuffer.length,
-						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					{
-						arrayStride: 3 * 4,
-						stepMode: VertexStepMode.VERTEX,
-						attributes: [
-							new VertexAttribute(
-								{
-									format: VertexFormat.FLOAT_32x3,
-									offset: 0,
-									shaderLocation: 1,
-								}
-							)
-						],						
-					}
-				)
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "triangle normals buffer",
 			}
 		);
-		normalsAttributeLocation.normalize();
-		normalsAttributeLocation.setValue(
-			"triangle normals",
-			new BufferSetInstruction(
-				{
-					label: "triangle normals",
+	}
+	static setValueNormals(normalsAttributeLocation, normalsArrayBuffer, args = {}) {
+		super.setValueNormals(
+			normalsAttributeLocation,
+			normalsArrayBuffer,
+			{
+				...args,
 
-					number: 1,
-
-					source: {
-						arrayBuffer: normalsArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: normalsArrayBuffer.length
-				}
-			)
+				label: (args.label !== undefined) ? args.label : "triangle normals",
+			}
 		);
+	}
+	static assembleNormals(args = {}) {
+		const normalsArrayBuffer = TriangleGeometry.createNormalsArrayBuffer(args);
+		const normalsAttributeLocation = TriangleGeometry.createNormalsAttributeLocation(normalsArrayBuffer, args);
+		TriangleGeometry.setValueNormals(normalsAttributeLocation, normalsArrayBuffer, args);
 
 
 		return normalsAttributeLocation;
 	}
-	static assembleUVs(args = {}) {
+	
+	static createUVsArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -407,60 +317,33 @@ export class TriangleGeometry extends MeshGeometry {
 		}
 
 
-		const uvsArrayBuffer = new Float32Array(uvsArray);
-		const uvsAttributeLocation = new AttributeLocation(
+		return new Float32Array(uvsArray);
+	}
+	static createUVsAttributeLocation(uvsArrayBuffer, args = {}) {
+		return super.createUVsAttributeLocation(
+			uvsArrayBuffer,
 			{
-				itemSize: 2,
-				arrayBuffer: uvsArrayBuffer,
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "triangle uvs buffer",
-						size: uvsArrayBuffer.length,
-						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					{
-						arrayStride: 2 * 4,
-						stepMode: VertexStepMode.VERTEX,
-						attributes: [
-							new VertexAttribute(
-								{
-									format: VertexFormat.FLOAT_32x2,
-									offset: 0,
-									shaderLocation: 2,
-								}
-							)
-						],						
-					}
-				)
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "triangle uvs buffer",
 			}
 		);
-		uvsAttributeLocation.setValue(
-			"triangle uvs",
-			new BufferSetInstruction(
-				{
-					label: "triangle uvs",
+	}
+	static setValueUVs(uvsAttributeLocation, uvsArrayBuffer, args = {}) {
+		super.setValueUVs(
+			uvsAttributeLocation,
+			uvsArrayBuffer,
+			{
+				...args,
 
-					number: 2,
-
-					source: {
-						arrayBuffer: uvsArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: uvsArrayBuffer.length
-				}
-			)
+				label: (args.label !== undefined) ? args.label : "triangle uvs",
+			}
 		);
+	}
+	static assembleUVs(args = {}) {
+		const uvsArrayBuffer = TriangleGeometry.createUVsArrayBuffer(args);
+		const uvsAttributeLocation = TriangleGeometry.createUVsAttributeLocation(uvsArrayBuffer, args);
+		TriangleGeometry.setValueUVs(uvsAttributeLocation, uvsArrayBuffer, args);
 
 
 		return uvsAttributeLocation;

@@ -1,12 +1,4 @@
-import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
 import { MeshGeometry } from "./MeshGeometry.js";
-import { AttributeLocation } from "../core/data layouts/AttributeLocation.js";
-import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
-import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
-import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
-import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
-import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
-import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 import { Vector3 } from "../math/Vector3.js";
 
 
@@ -48,7 +40,7 @@ export class LineGeometry extends MeshGeometry {
 	}
 
 
-	static assembleIndices(args = {}) {
+	static createIndicesArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -79,68 +71,39 @@ export class LineGeometry extends MeshGeometry {
 		}
 
 
-		const indicesArrayBuffer = new Uint32Array(indicesArray);
-		const indicesAttributeLocation = new AttributeLocation(
+		return new Uint32Array(indicesArray);
+	}
+	static createIndicesAttributeLocation(indicesArrayBuffer, args = {}) {
+		return super.createIndicesAttributeLocation(
+			indicesArrayBuffer,
 			{
-				number: null,
-				itemSize: 1,
-				arrayBuffer: indicesArrayBuffer,
+				...args,
 
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "line indices buffer",
-						size: indicesArrayBuffer.length,
-						usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				// vertexBufferLayoutDescriptor: new VertexBufferLayout(
-				// 	{
-				// 		arrayStride: 1 * 4,
-				// 		stepMode: VertexStepMode.VERTEX,
-				// 		attributes: [
-				// 			new VertexAttribute(
-				// 				{
-				// 					format: VertexFormat.UINT_32,
-				// 					offset: 0,
-				// 					shaderLocation: 0,
-				// 				}
-				// 			)
-				// 		],			
-				// 	}
-				// )
-				vertexBufferLayoutDescriptor: null
+				label: (args.label !== undefined) ? args.label : "line indices buffer",
 			}
 		);
-		indicesAttributeLocation.setValue(
-			"line indices",
-			new BufferSetInstruction(
-				{
-					label: "line indices",
-
-					number: null,
-
-					source: {
-						arrayBuffer: indicesArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: indicesArrayBuffer.length
-				}
-			)
-		);
-
-
-		return indexed ? indicesAttributeLocation : null;
 	}
-	static assembleVertices(args = {}) {
+	static setValueIndices(indicesAttributeLocation, indicesArrayBuffer, args = {}) {
+		super.setValueIndices(
+			indicesAttributeLocation,
+			indicesArrayBuffer,
+			{
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "line indices",
+			}
+			);
+	}
+	static assembleIndices(args = {}) {
+		const indicesArrayBuffer = LineGeometry.createIndicesArrayBuffer(args);
+		const indicesAttributeLocation = LineGeometry.createIndicesAttributeLocation(indicesArrayBuffer, args);
+		LineGeometry.setValueIndices(indicesAttributeLocation, indicesArrayBuffer, args);
+
+
+		return args.indexed ? indicesAttributeLocation : null;
+	}
+
+	static createVerticesArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -197,65 +160,39 @@ export class LineGeometry extends MeshGeometry {
 		}
 
 
-		const verticesArrayBuffer = new Float32Array(verticesArray);
-		const verticesAttributeLocation = new AttributeLocation(
+		return new Float32Array(verticesArray);
+	}
+	static createVerticesAttributeLocation(verticesArrayBuffer, args = {}) {
+		return super.createVerticesAttributeLocation(
+			verticesArrayBuffer,
 			{
-				itemSize: 3,
-				arrayBuffer: verticesArrayBuffer,
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "line vertices buffer",
-						size: verticesArrayBuffer.length,
-						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					{
-						arrayStride: 3 * 4,
-						stepMode: VertexStepMode.VERTEX,
-						attributes: [
-							new VertexAttribute(
-								{
-									format: VertexFormat.FLOAT_32x3,
-									offset: 0,
-									shaderLocation: 0,
-								}
-							)
-						],						
-					}
-				)
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "line vertices buffer",
 			}
 		);
-		verticesAttributeLocation.setValue(
-			"line vertices",
-			new BufferSetInstruction(
-				{
-					label: "line vertices",
+	}
+	static setValueVertices(verticesAttributeLocation, verticesArrayBuffer, args = {}) {
+		super.setValueVertices(
+			verticesAttributeLocation,
+			verticesArrayBuffer,
+			args = {
+				...args,
 
-					number: 0,
-
-					source: {
-						arrayBuffer: verticesArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: verticesArrayBuffer.length
-				}
-			)
+				label: (args.label !== undefined) ? args.label : "line vertices",
+			}
 		);
+	}
+	static assembleVertices(args = {}) {
+		const verticesArrayBuffer = LineGeometry.createVerticesArrayBuffer(args);
+		const verticesAttributeLocation = LineGeometry.createVerticesAttributeLocation(verticesArrayBuffer, args);
+		LineGeometry.setValueVertices(verticesAttributeLocation, verticesArrayBuffer, args);
 
 
 		return verticesAttributeLocation;
 	}
-	static assembleNormals(args = {}) {
+
+	static createNormalsArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -292,66 +229,39 @@ export class LineGeometry extends MeshGeometry {
 		}
 
 
-		const normalsArrayBuffer = new Float32Array(normalsArray);
-		const normalsAttributeLocation = new AttributeLocation(
+		return new Float32Array(normalsArray);
+	}
+	static createNormalsAttributeLocation(normalsArrayBuffer, args = {}) {
+		return super.createNormalsAttributeLocation(
+			normalsArrayBuffer,
 			{
-				itemSize: 3,
-				arrayBuffer: normalsArrayBuffer,
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "line normals buffer",
-						size: normalsArrayBuffer.length,
-						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					{
-						arrayStride: 3 * 4,
-						stepMode: VertexStepMode.VERTEX,
-						attributes: [
-							new VertexAttribute(
-								{
-									format: VertexFormat.FLOAT_32x3,
-									offset: 0,
-									shaderLocation: 1,
-								}
-							)
-						],						
-					}
-				)
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "line normals buffer",
 			}
 		);
-		// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
-		normalsAttributeLocation.setValue(
-			"line normals",
-			new BufferSetInstruction(
-				{
-					label: "line normals",
+	}
+	static setValueNormals(normalsAttributeLocation, normalsArrayBuffer, args = {}) {
+		super.setValueNormals(
+			normalsAttributeLocation,
+			normalsArrayBuffer,
+			{
+				...args,
 
-					number: 1,
-
-					source: {
-						arrayBuffer: normalsArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: normalsArrayBuffer.length
-				}
-			)
+				label: (args.label !== undefined) ? args.label : "line normals",
+			}
 		);
+	}
+	static assembleNormals(args = {}) {
+		const normalsArrayBuffer = LineGeometry.createNormalsArrayBuffer(args);
+		const normalsAttributeLocation = LineGeometry.createNormalsAttributeLocation(normalsArrayBuffer, args);
+		LineGeometry.setValueNormals(normalsAttributeLocation, normalsArrayBuffer, args);
 
 
 		return normalsAttributeLocation;
 	}
-	static assembleUVs(args = {}) {
+	
+	static createUVsArrayBuffer(args = {}) {
 		const indexed = args.indexed;
 		const baseGeometry = args.baseGeometry;
 		const positions = baseGeometry.positions;
@@ -388,60 +298,33 @@ export class LineGeometry extends MeshGeometry {
 		}
 
 
-		const uvsArrayBuffer = new Float32Array(uvsArray);
-		const uvsAttributeLocation = new AttributeLocation(
+		return new Float32Array(uvsArray);
+	}
+	static createUVsAttributeLocation(uvsArrayBuffer, args = {}) {
+		return super.createUVsAttributeLocation(
+			uvsArrayBuffer,
 			{
-				itemSize: 2,
-				arrayBuffer: uvsArrayBuffer,
-				bufferDescriptor: new BufferDescriptor(
-					{
-						label: "line uvs buffer",
-						size: uvsArrayBuffer.length,
-						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
-					}
-				),
-				vertexBufferLayoutDescriptor: new VertexBufferLayout(
-					{
-						arrayStride: 2 * 4,
-						stepMode: VertexStepMode.VERTEX,
-						attributes: [
-							new VertexAttribute(
-								{
-									format: VertexFormat.FLOAT_32x2,
-									offset: 0,
-									shaderLocation: 2,
-								}
-							)
-						],						
-					}
-				)
+				...args,
+
+				label: (args.label !== undefined) ? args.label : "line uvs buffer",
 			}
 		);
-		uvsAttributeLocation.setValue(
-			"line uvs",
-			new BufferSetInstruction(
-				{
-					label: "line uvs",
+	}
+	static setValueUVs(uvsAttributeLocation, uvsArrayBuffer, args = {}) {
+		super.setValueUVs(
+			uvsAttributeLocation,
+			uvsArrayBuffer,
+			{
+				...args,
 
-					number: 2,
-
-					source: {
-						arrayBuffer: uvsArrayBuffer,
-						layout: {
-							offset: (0),
-						}
-					},
-					destination: {
-						buffer: null,
-						layout: {
-							offset: (0)
-						}
-					},
-					size: uvsArrayBuffer.length
-				}
-			)
+				label: (args.label !== undefined) ? args.label : "line uvs",
+			}
 		);
+	}
+	static assembleUVs(args = {}) {
+		const uvsArrayBuffer = LineGeometry.createUVsArrayBuffer(args);
+		const uvsAttributeLocation = LineGeometry.createUVsAttributeLocation(uvsArrayBuffer, args);
+		LineGeometry.setValueUVs(uvsAttributeLocation, uvsArrayBuffer, args);
 
 
 		return uvsAttributeLocation;
