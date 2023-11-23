@@ -28,6 +28,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 
 
 	#indexed;
+	#baseGeometry;
 
 	#attributeLocationDescriptors; //#resourceLocationDescriptors;
 
@@ -58,6 +59,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		);
 
 		this.indexed = (args.indexed !== undefined) ? args.indexed : MeshGeometry.DEFAULT.INDEXED;
+		this.baseGeometry = (args.baseGeometry !== undefined) ? args.baseGeometry : MeshGeometry.DEFAULT.BASE_GEOMETRY;
 
 		this.attributeLocationDescriptors = new Map(
 			[
@@ -96,6 +98,8 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 
 	get indexed() { return this.#indexed; }
 	set indexed(indexed) { this.#indexed = indexed; }
+	get baseGeometry() { return this.#baseGeometry; }
+	set baseGeometry(baseGeometry) { this.#baseGeometry = baseGeometry; }
 
 	get attributeLocationDescriptors() { return this.#attributeLocationDescriptors; }
 	set attributeLocationDescriptors(attributeLocationDescriptors) { this.#attributeLocationDescriptors = attributeLocationDescriptors; }
