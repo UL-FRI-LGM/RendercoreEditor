@@ -51,8 +51,8 @@ export class BoundingSphereFrameGeometry extends SphereFrameGeometry {
 				indexed: (args.indexed !== undefined) ? args.indexed : SphereFrameGeometry.DEFAULT.INDEXED,
 				baseGeometry: (args.baseGeometry !== undefined) ? {
 					positions: [new Vector3(0, 0, 0)],
-					centers: [new Vector3(0, 0, 0)],
-					radiuses: [1],
+					centers: [args.baseGeometry.mesh.bounding.sphere.worldspace.center],
+					radiuses: [args.baseGeometry.mesh.bounding.sphere.worldspace.radius],
 					nPoints: 32,
 				} : SphereFrameGeometry.DEFAULT.BASE_GEOMETRY,
 			}
@@ -95,8 +95,8 @@ export class BoundingSphereFrameGeometry extends SphereFrameGeometry {
 	// 			indexed: (args.indexed !== undefined) ? args.indexed : SphereFrameGeometry.DEFAULT.INDEXED,
 	// 			baseGeometry: (args.baseGeometry !== undefined) ? {
 	// 				positions: [new Vector3(0, 0, 0)],
-	// 				centers: [new Vector3(0, 0, 0)],
-	// 				radiuses: [1],
+	// 				centers: [args.baseGeometry.mesh.bounding.sphere.worldspace.center],
+	// 				radiuses: [args.baseGeometry.mesh.bounding.sphere.worldspace.radius],
 	// 				nPoints: 32,
 	// 			} : SphereFrameGeometry.DEFAULT.BASE_GEOMETRY,
 	// 		}
@@ -111,8 +111,8 @@ export class BoundingSphereFrameGeometry extends SphereFrameGeometry {
 				indexed: (args.indexed !== undefined) ? args.indexed : SphereFrameGeometry.DEFAULT.INDEXED,
 				baseGeometry: (args.baseGeometry !== undefined) ? {
 					positions: [new Vector3(0, 0, 0)],
-					centers: [new Vector3(0, 0, 0)],
-					radiuses: [1],
+					centers: [args.baseGeometry.mesh.bounding.sphere.worldspace.center],
+					radiuses: [args.baseGeometry.mesh.bounding.sphere.worldspace.radius],
 					nPoints: 32,
 				} : SphereFrameGeometry.DEFAULT.BASE_GEOMETRY,
 			}
@@ -155,8 +155,8 @@ export class BoundingSphereFrameGeometry extends SphereFrameGeometry {
 	// 			indexed: (args.indexed !== undefined) ? args.indexed : SphereFrameGeometry.DEFAULT.INDEXED,
 	// 			baseGeometry: (args.baseGeometry !== undefined) ? {
 	// 				positions: [new Vector3(0, 0, 0)],
-	// 				centers: [new Vector3(0, 0, 0)],
-	// 				radiuses: [1],
+	// 				centers: [args.baseGeometry.mesh.bounding.sphere.worldspace.center],
+	// 				radiuses: [args.baseGeometry.mesh.bounding.sphere.worldspace.radius],
 	// 				nPoints: 32,
 	// 			} : SphereFrameGeometry.DEFAULT.BASE_GEOMETRY,
 	// 		}
@@ -171,8 +171,8 @@ export class BoundingSphereFrameGeometry extends SphereFrameGeometry {
 				indexed: (args.indexed !== undefined) ? args.indexed : SphereFrameGeometry.DEFAULT.INDEXED,
 				baseGeometry: (args.baseGeometry !== undefined) ? {
 					positions: [new Vector3(0, 0, 0)],
-					centers: [new Vector3(0, 0, 0)],
-					radiuses: [1],
+					centers: [args.baseGeometry.mesh.bounding.sphere.worldspace.center],
+					radiuses: [args.baseGeometry.mesh.bounding.sphere.worldspace.radius],
 					nPoints: 32,
 				} : SphereFrameGeometry.DEFAULT.BASE_GEOMETRY,
 			}
@@ -215,8 +215,8 @@ export class BoundingSphereFrameGeometry extends SphereFrameGeometry {
 	// 			indexed: (args.indexed !== undefined) ? args.indexed : SphereFrameGeometry.DEFAULT.INDEXED,
 	// 			baseGeometry: (args.baseGeometry !== undefined) ? {
 	// 				positions: [new Vector3(0, 0, 0)],
-	// 				centers: [new Vector3(0, 0, 0)],
-	// 				radiuses: [1],
+	// 				centers: [args.baseGeometry.mesh.bounding.sphere.worldspace.center],
+	// 				radiuses: [args.baseGeometry.mesh.bounding.sphere.worldspace.radius],
 	// 				nPoints: 32,
 	// 			} : SphereFrameGeometry.DEFAULT.BASE_GEOMETRY,
 	// 		}
@@ -231,8 +231,8 @@ export class BoundingSphereFrameGeometry extends SphereFrameGeometry {
 				indexed: (args.indexed !== undefined) ? args.indexed : SphereFrameGeometry.DEFAULT.INDEXED,
 				baseGeometry: (args.baseGeometry !== undefined) ? {
 					positions: [new Vector3(0, 0, 0)],
-					centers: [new Vector3(0, 0, 0)],
-					radiuses: [1],
+					centers: [args.baseGeometry.mesh.bounding.sphere.worldspace.center],
+					radiuses: [args.baseGeometry.mesh.bounding.sphere.worldspace.radius],
 					nPoints: 32,
 				} : SphereFrameGeometry.DEFAULT.BASE_GEOMETRY,
 			}
@@ -275,8 +275,8 @@ export class BoundingSphereFrameGeometry extends SphereFrameGeometry {
 	// 			indexed: (args.indexed !== undefined) ? args.indexed : SphereFrameGeometry.DEFAULT.INDEXED,
 	// 			baseGeometry: (args.baseGeometry !== undefined) ? {
 	// 				positions: [new Vector3(0, 0, 0)],
-	// 				centers: [new Vector3(0, 0, 0)],
-	// 				radiuses: [1],
+	// 				centers: [args.baseGeometry.mesh.bounding.sphere.worldspace.center],
+	// 				radiuses: [args.baseGeometry.mesh.bounding.sphere.worldspace.radius],
 	// 				nPoints: 32,
 	// 			} : SphereFrameGeometry.DEFAULT.BASE_GEOMETRY,
 	// 		}
