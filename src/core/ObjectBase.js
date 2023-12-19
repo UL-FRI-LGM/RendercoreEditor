@@ -1,10 +1,13 @@
 import {_Math} from '../math/Math.js';
 
 
-export class ObjectBase {
+export class ObjectBase extends Object {
+
+
 	static DEFAULT = {
+		UUID: { value: null, generator: () => { return _Math.generateUUID(); } },
+		TYPE: "ObjectBase",
 		NAME: "",
-		TYPE: "ObjectBase"
 	};
 
 
@@ -14,9 +17,11 @@ export class ObjectBase {
 
 
 	constructor(args = {}) {
-		this.uuid = (args.uuid !== undefined) ? args.uuid : _Math.generateUUID();
-		this.name = (args.name !== undefined) ? args.name : ObjectBase.DEFAULT.NAME;
+		super();
+
+		this.uuid = (args.uuid !== undefined) ? args.uuid : { ...ObjectBase.DEFAULT.UUID, value: ObjectBase.DEFAULT.UUID.generator() };
 		this.type = (args.type !== undefined) ? args.type : ObjectBase.DEFAULT.TYPE;
+		this.name = (args.name !== undefined) ? args.name : ObjectBase.DEFAULT.NAME;
 	}
 
 
