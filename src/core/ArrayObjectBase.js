@@ -31,4 +31,4 @@ export class ArrayObjectBase extends Array {
 	set type(type) { this.#type = type; }
 	get name() { return this.#name; }
 	set name(name) { this.#name = name; }
-}
+};
