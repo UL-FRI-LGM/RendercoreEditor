@@ -16,8 +16,8 @@ export class MapObjectBase extends Map {
 	#name;
 
 
-	constructor(args = {}) {
-		super();
+	constructor(args = {}, iterable = undefined) {
+		super(iterable);
 		
 		this.uuid = (args.uuid !== undefined) ? args.uuid : { ...MapObjectBase.DEFAULT.UUID, value: MapObjectBase.DEFAULT.UUID.generator() };
 		this.type = (args.type !== undefined) ? args.type : MapObjectBase.DEFAULT.TYPE;

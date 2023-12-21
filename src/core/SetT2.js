@@ -10,19 +10,21 @@ export class SetT2 extends SetObjectBase {
 	};
 
 
-	constructor(args = {}) {
+	constructor(args = {}, iterable = undefined) {
 		super(
 			{
 				...args,
 
 				type: (args.type !== undefined) ? args.type : SetT2.DEFAULT.TYPE,
 				name: (args.name !== undefined) ? args.name : SetT2.DEFAULT.NAME,
-			}
+			},
+			iterable
 		);
 	}
 
 
 	clone() {
+		console.warn("clone set", this.size);
 		const originalSet = this;
 		const clonedSet = new SetT2();
 

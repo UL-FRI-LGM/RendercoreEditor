@@ -10,19 +10,21 @@ export class MapT2 extends MapObjectBase {
 	};
 
 
-	constructor(args = {}) {
+	constructor(args = {}, iterable = undefined) {
 		super(
 			{
 				...args,
 
 				type: (args.type !== undefined) ? args.type : MapT2.DEFAULT.TYPE,
 				name: (args.name !== undefined) ? args.name : MapT2.DEFAULT.NAME,
-			}
+			},
+			iterable
 		);
 	}
 
 
 	clone() {
+		console.warn("clone map", this.size);
 		const originalMap = this;
 		const clonedMap = new MapT2();
 

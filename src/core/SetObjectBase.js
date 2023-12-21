@@ -16,8 +16,8 @@ export class SetObjectBase extends Map {
 	#name;
 
 
-	constructor(args = {}) {
-		super();
+	constructor(args = {}, iterable = undefined) {
+		super(iterable);
 		
 		this.uuid = (args.uuid !== undefined) ? args.uuid : { ...SetObjectBase.DEFAULT.UUID, value: SetObjectBase.DEFAULT.UUID.generator() };
 		this.type = (args.type !== undefined) ? args.type : SetObjectBase.DEFAULT.TYPE;

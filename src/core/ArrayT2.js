@@ -10,19 +10,21 @@ export class ArrayT2 extends ArrayObjectBase {
 	};
 
 
-	constructor(args = {}) {
+	constructor(args = {}, ...rest) {
 		super(
 			{
 				...args,
 
 				type: (args.type !== undefined) ? args.type : ArrayT2.DEFAULT.TYPE,
 				name: (args.name !== undefined) ? args.name : ArrayT2.DEFAULT.NAME,
-			}
+			},
+			...rest
 		);
 	}
 
 
 	clone() {
+		console.warn("clone arr", this.length);
 		return this.map((x) => { return (x === Object(x)) ? x.clone() : x; });
 	}
 };

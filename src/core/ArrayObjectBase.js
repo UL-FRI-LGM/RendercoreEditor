@@ -16,8 +16,8 @@ export class ArrayObjectBase extends Array {
 	#name;
 
 
-	constructor(args = {}) {
-		super();
+	constructor(args = {}, ...rest) {
+		super(...rest);
 		
 		this.uuid = (args.uuid !== undefined) ? args.uuid : { ...ArrayObjectBase.DEFAULT.UUID, value: ArrayObjectBase.DEFAULT.UUID.generator() };
 		this.type = (args.type !== undefined) ? args.type : ArrayObjectBase.DEFAULT.TYPE;
