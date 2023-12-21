@@ -1,7 +1,7 @@
-import { ArrayObjectBase } from "../core/ArrayObjectBase.js";
+import { ArrayT2 } from "../core/ArrayT2.js";
 
 
-export class RenderArray extends ArrayObjectBase {
+export class RenderArray extends ArrayT2 {
 
 
 	static DEFAULT = {
