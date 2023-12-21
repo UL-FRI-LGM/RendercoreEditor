@@ -10,14 +10,15 @@ export class RenderArray extends ArrayT2 {
 	};
 
 
-	constructor(args = {}) {
+	constructor(args = {}, ...rest) {
 		super(
 			{
 				...args,
 
 				type: (args.type !== undefined) ? args.type : RenderArray.DEFAULT.TYPE,
 				name: (args.name !== undefined) ? args.name : RenderArray.DEFAULT.NAME,
-			}
+			},
+			...rest
 		);
 	}
 

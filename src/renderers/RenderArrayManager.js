@@ -11,6 +11,9 @@ export class RenderArrayManager extends ObjectBase {
 		NAME: "",
 
 		RENDER_ARRAYS: new MapT2(
+			{
+				name: "render array manager render arrays",
+			},
 			[
 				["skyboxes", new RenderArray()],
 				["lights", new RenderArray()],
