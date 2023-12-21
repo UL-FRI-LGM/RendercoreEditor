@@ -24,7 +24,6 @@ export class ArrayT2 extends ArrayObjectBase {
 
 
 	clone() {
-		console.warn("clone arr", this.length);
 		return this.map((x) => { return (x === Object(x)) ? x.clone() : x; });
 	}
 };

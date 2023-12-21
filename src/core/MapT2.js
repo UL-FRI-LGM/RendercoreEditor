@@ -24,7 +24,6 @@ export class MapT2 extends MapObjectBase {
 
 
 	clone() {
-		console.warn("clone map", this.size);
 		const originalMap = this;
 		const clonedMap = new MapT2();
 

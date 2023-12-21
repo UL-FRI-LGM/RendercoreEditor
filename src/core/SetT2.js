@@ -24,7 +24,6 @@ export class SetT2 extends SetObjectBase {
 
 
 	clone() {
-		console.warn("clone set", this.size);
 		const originalSet = this;
 		const clonedSet = new SetT2();
 
