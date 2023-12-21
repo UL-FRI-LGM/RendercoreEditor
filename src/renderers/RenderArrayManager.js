@@ -1,4 +1,5 @@
 import { ObjectBase } from "../core/ObjectBase.js";
+import { MapT2 } from "../core/MapT2.js";
 import { RenderArray } from "./RenderArray.js";
 
 
@@ -9,7 +10,7 @@ export class RenderArrayManager extends ObjectBase {
 		TYPE: "RenderArrayManager",
 		NAME: "",
 
-		RENDER_ARRAYS: new Map(
+		RENDER_ARRAYS: new MapT2(
 			[
 				["skyboxes", new RenderArray()],
 				["lights", new RenderArray()],
