@@ -28,7 +28,19 @@ export class MeshHelperEntry extends HelperEntry {
 	}
 
 
+	// clone() {
+	// 	return new MeshHelperEntry(this);
+	// }
+
 	clone() {
-		return new MeshHelperEntry(this);
+		return new MeshHelperEntry(
+			{
+				type: (this.type === Object(this.type)) ? this.type.clone() : this.type,
+				name: (this.name === Object(this.name)) ? this.name.clone() : this.name,
+
+				object: (this.object === Object(this.object)) ? this.object.clone() : this.object,
+				enabled: (this.enabled === Object(this.enabled)) ? this.enabled.clone() : this.enabled,
+			}
+		);
 	}
 };

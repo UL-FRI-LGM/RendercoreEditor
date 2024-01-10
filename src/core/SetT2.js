@@ -23,18 +23,31 @@ export class SetT2 extends SetObjectBase {
 	}
 
 
+	// clone() {
+	// 	// return new SetT2(this, [...this]);
+	// 	return new SetT2(this, this);
+	// }
+
 	clone() {
-		const originalSet = this;
-		const clonedSet = new SetT2();
+		// const originalSet = this;
+		// const clonedSet = new SetT2();
 
-		originalSet.forEach((value, key) => {
-			// const clonedKey = (key === Object(key)) ? x.clone() : key;
-			const clonedValue = (value === Object(value)) ? value.clone() : value;
+		// originalSet.forEach((value, key) => {
+		// 	// const clonedKey = (key === Object(key)) ? x.clone() : key;
+		// 	const clonedValue = (value === Object(value)) ? value.clone() : value;
 
-			clonedSet.add(clonedValue);
-		});
+		// 	clonedSet.add(clonedValue);
+		// });
 	
 
-		return clonedSet;
+		// return clonedSet;
+		return new SetT2(
+			{
+				type: (this.type === Object(this.type)) ? this.type.clone() : this.type,
+				name: (this.name === Object(this.name)) ? this.name.clone() : this.name,
+			},
+			// [...this].map((x) => { return (x === Object(x)) ? x.clone() : x; })
+			[...this.entries()].map((e) => { return (e[1] === Object(e[1])) ? e[1].clone() : e[1]; })
+		);
 	}
 };

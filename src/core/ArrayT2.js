@@ -23,7 +23,18 @@ export class ArrayT2 extends ArrayObjectBase {
 	}
 
 
+	// clone() {
+	// 	return new ArrayT2(this, ...this);
+	// }
+
 	clone() {
-		return this.map((x) => { return (x === Object(x)) ? x.clone() : x; });
+		// return this.map((x) => { return (x === Object(x)) ? x.clone() : x; });
+		return new ArrayT2(
+			{
+				type: (this.type === Object(this.type)) ? this.type.clone() : this.type,
+				name: (this.name === Object(this.name)) ? this.name.clone() : this.name,
+			},
+			...this.map((x) => { return (x === Object(x)) ? x.clone() : x; })
+		);
 	}
 };
