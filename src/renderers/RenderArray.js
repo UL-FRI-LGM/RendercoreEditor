@@ -23,6 +23,16 @@ export class RenderArray extends ArrayT2 {
 	}
 
 
+	clone() {
+		return new RenderArray(
+			{
+				type: (this.type === Object(this.type)) ? this.type.clone() : this.type,
+				name: (this.name === Object(this.name)) ? this.name.clone() : this.name,
+			},
+			...this.map((x) => { return (x === Object(x)) ? x.clone() : x; })
+		);
+	}
+
 	add(object, index) {
 		throw new Error("NOT IMPLEMENTED");
 	}
