@@ -1,7 +1,7 @@
 import {_Math} from '../math/Math.js';
 
 
-export class SetObjectBase extends Map {
+export class SetObjectBase extends Set {
 
 
 	static DEFAULT = {
