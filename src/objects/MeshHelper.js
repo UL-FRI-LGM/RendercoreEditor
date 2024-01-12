@@ -32,7 +32,7 @@ export class MeshHelper extends Helper {
 			BBF:				0b00000010,
 			AABBF:				0b00000100,
 	
-			VERTEX_NORMAL: 		0b00001000,
+			VERTEX_NORMAL:		0b00001000,
 		},
 	};
 	static FLAGS = {
