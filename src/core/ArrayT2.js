@@ -27,14 +27,15 @@ export class ArrayT2 extends ArrayObjectBase {
 	// 	return new ArrayT2(this, ...this);
 	// }
 
-	clone() {
+	clone(cloneEntries = true) {
 		// return this.map((x) => { return (x === Object(x)) ? x.clone() : x; });
 		return new ArrayT2(
 			{
 				type: (this.type === Object(this.type)) ? this.type.clone() : this.type,
 				name: (this.name === Object(this.name)) ? this.name.clone() : this.name,
 			},
-			...this.map((x) => { return (x === Object(x)) ? x.clone() : x; })
+			// ...this.map((x) => { return cloneEntries ? ((x === Object(x)) ? x.clone() : x) : x; })
+			...[...this.entries()].map(([k, v]) => { return cloneEntries ? ((v === Object(v)) ? v.clone() : v) : v; })
 		);
 	}
 };

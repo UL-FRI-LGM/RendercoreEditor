@@ -28,7 +28,7 @@ export class SetT2 extends SetObjectBase {
 	// 	return new SetT2(this, this);
 	// }
 
-	clone() {
+	clone(cloneEntries = true) {
 		// const originalSet = this;
 		// const clonedSet = new SetT2();
 
@@ -46,8 +46,8 @@ export class SetT2 extends SetObjectBase {
 				type: (this.type === Object(this.type)) ? this.type.clone() : this.type,
 				name: (this.name === Object(this.name)) ? this.name.clone() : this.name,
 			},
-			// [...this].map((x) => { return (x === Object(x)) ? x.clone() : x; })
-			[...this.entries()].map((e) => { return (e[1] === Object(e[1])) ? e[1].clone() : e[1]; })
+			// [...this].map((x) => { return cloneEntries ? ((x === Object(x)) ? x.clone() : x) : x; })
+			[...this.entries()].map(([k, v]) => { return cloneEntries ? ((v === Object(v)) ? v.clone() : v) : v; })
 		);
 	}
 };
