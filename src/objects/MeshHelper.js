@@ -98,7 +98,7 @@ export class MeshHelper extends Helper {
 			},
 			[...this.entries()].map(([k, v]) => { return cloneEntries ? ([(k === Object(k)) ? k.clone() : k, (v === Object(v)) ? v.clone() : v]) : [k, v]; }),
 			cloneTarget ? ((this.target === Object(this.target)) ? this.target.clone() : this.target) : this.target
-		);	
+		);
 	}
 
 	#assembleVertexNormal() {
