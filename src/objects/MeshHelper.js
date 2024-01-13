@@ -90,13 +90,13 @@ export class MeshHelper extends Helper {
 	set vertexNormal(vertexNormal) { this.set("vertexNormal", vertexNormal); }
 
 
-	clone(cloneEntries = true, cloneTarget = false) {
+	clone(cloneValues = true, cloneTarget = false) {
 		return new MeshHelper(
 			{
 				type: (this.type === Object(this.type)) ? this.type.clone() : this.type,
 				name: (this.name === Object(this.name)) ? this.name.clone() : this.name,
 			},
-			[...this.entries()].map(([k, v]) => { return cloneEntries ? ([(k === Object(k)) ? k.clone() : k, (v === Object(v)) ? v.clone() : v]) : [k, v]; }),
+			[...this.entries()].map(([k, v]) => { return cloneValues ? ([k, (v === Object(v)) ? v.clone() : v]) : [k, v]; }),
 			cloneTarget ? ((this.target === Object(this.target)) ? this.target.clone() : this.target) : this.target
 		);
 	}

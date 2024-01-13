@@ -28,7 +28,7 @@ export class MapT2 extends MapObjectBase {
 	// 	return new MapT2(this, this);
 	// }
 
-	clone(cloneEntries = true) {
+	clone(cloneValues = true) {
 		// const originalMap = this;
 		// const clonedMap = new MapT2();
 
@@ -46,8 +46,8 @@ export class MapT2 extends MapObjectBase {
 				type: (this.type === Object(this.type)) ? this.type.clone() : this.type,
 				name: (this.name === Object(this.name)) ? this.name.clone() : this.name,
 			},
-			// [...this].map(([k, v]) => { return cloneEntries ? ([(k === Object(k)) ? k.clone() : k, (v === Object(v)) ? v.clone() : v]) : [k, v]; })
-			[...this.entries()].map(([k, v]) => { return cloneEntries ? ([(k === Object(k)) ? k.clone() : k, (v === Object(v)) ? v.clone() : v]) : [k, v]; })
+			// [...this].map(([k, v]) => { return cloneValues ? ([k, (v === Object(v)) ? v.clone() : v]) : [k, v]; })
+			[...this.entries()].map(([k, v]) => { return cloneValues ? ([k, (v === Object(v)) ? v.clone() : v]) : [k, v]; })
 		);
 	}
 };
