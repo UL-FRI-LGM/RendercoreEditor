@@ -68,8 +68,8 @@ export class BoundingSphereFrameGeometry extends SphereFrameGeometry {
 			}
 		);
 	}
-	static setIndicesVertices(indicesAttributeLocation, indicesArrayBuffer, args = {}) {
-		super.setIndicesVertices(
+	static setValueIndices(indicesAttributeLocation, indicesArrayBuffer, args = {}) {
+		super.setValueIndices(
 			indicesAttributeLocation,
 			indicesArrayBuffer,
 			args = {

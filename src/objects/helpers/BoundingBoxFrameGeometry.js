@@ -71,8 +71,8 @@ export class BoundingBoxFrameGeometry extends BoxFrameGeometry {
 			}
 		);
 	}
-	static setIndicesVertices(indicesAttributeLocation, indicesArrayBuffer, args = {}) {
-		super.setIndicesVertices(
+	static setValueIndices(indicesAttributeLocation, indicesArrayBuffer, args = {}) {
+		super.setValueIndices(
 			indicesAttributeLocation,
 			indicesArrayBuffer,
 			args = {
