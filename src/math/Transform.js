@@ -95,6 +95,18 @@ export class Transform {
 		this.scaling.copy(scaling);
 		this.MMat = this.MMat.compose(this.position, this.quaternion, this.scaling);
 	}
+	get scalingX() { return this.scaling.x; }
+	set scalingX(scalingX) { 
+		this.scaling = this.scaling.setX(scalingX);
+	}
+	get scalingY() { return this.scaling.y; }
+	set scalingY(scalingY) { 
+		this.scaling = this.scaling.setY(scalingY);
+	}
+	get scalingZ() { return this.scaling.z; }
+	set scalingZ(scalingZ) { 
+		this.scaling = this.scaling.setZ(scalingZ);
+	}
 	
 	get modelMatrix() { return this.#modelMatrix; }
 	set modelMatrix(modelMatrix) { this.#modelMatrix.copy(modelMatrix); }
