@@ -25,6 +25,7 @@ export class LineGeometry extends MeshGeometry {
 				name: (args.name !== undefined) ? args.name : LineGeometry.DEFAULT.NAME,
 
 				indexed: (args.indexed !== undefined) ? args.indexed : LineGeometry.DEFAULT.INDEXED,
+				baseGeometry: (args.baseGeometry !== undefined) ? args.baseGeometry : LineGeometry.DEFAULT.BASE_GEOMETRY,
 
 				indices: (args.indices !== undefined) ? args.indices : LineGeometry.assembleIndices(args),
 				vertices: (args.vertices !== undefined) ? args.vertices : LineGeometry.assembleVertices(args),

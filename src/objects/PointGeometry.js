@@ -25,6 +25,7 @@ export class PointGeometry extends MeshGeometry {
 				name: (args.name !== undefined) ? args.name : PointGeometry.DEFAULT.NAME,
 
 				indexed: (args.indexed !== undefined) ? args.indexed : PointGeometry.DEFAULT.INDEXED,
+				baseGeometry: (args.baseGeometry !== undefined) ? args.baseGeometry : PointGeometry.DEFAULT.BASE_GEOMETRY,
 
 				indices: (args.indices !== undefined) ? args.indices : PointGeometry.assembleIndices(args),
 				vertices: (args.vertices !== undefined) ? args.vertices : PointGeometry.assembleVertices(args),

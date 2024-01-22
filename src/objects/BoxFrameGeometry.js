@@ -26,6 +26,7 @@ export class BoxFrameGeometry extends MeshGeometry {
 				name: (args.name !== undefined) ? args.name : BoxFrameGeometry.DEFAULT.NAME,
 
 				indexed: (args.indexed !== undefined) ? args.indexed : BoxFrameGeometry.DEFAULT.INDEXED,
+				baseGeometry: (args.baseGeometry !== undefined) ? args.baseGeometry : BoxFrameGeometry.DEFAULT.BASE_GEOMETRY,
 
 				indices: (args.indices !== undefined) ? args.indices : BoxFrameGeometry.assembleIndices(args),
 				vertices: (args.vertices !== undefined) ? args.vertices : BoxFrameGeometry.assembleVertices(args),

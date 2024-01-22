@@ -27,6 +27,7 @@ export class QuadGeometry extends MeshGeometry {
 				name: (args.name !== undefined) ? args.name : QuadGeometry.DEFAULT.NAME,
 
 				indexed: (args.indexed !== undefined) ? args.indexed : QuadGeometry.DEFAULT.INDEXED,
+				baseGeometry: (args.baseGeometry !== undefined) ? args.baseGeometry : QuadGeometry.DEFAULT.BASE_GEOMETRY,
 
 				indices: (args.indices !== undefined) ? args.indices : QuadGeometry.assembleIndices(args),
 				vertices: (args.vertices !== undefined) ? args.vertices : QuadGeometry.assembleVertices(args),

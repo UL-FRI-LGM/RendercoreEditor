@@ -29,6 +29,7 @@ export class SphereFrameGeometry extends MeshGeometry {
 				name: (args.name !== undefined) ? args.name : SphereFrameGeometry.DEFAULT.NAME,
 
 				indexed: (args.indexed !== undefined) ? args.indexed : SphereFrameGeometry.DEFAULT.INDEXED,
+				baseGeometry: (args.baseGeometry !== undefined) ? args.baseGeometry : SphereFrameGeometry.DEFAULT.BASE_GEOMETRY,
 
 				indices: (args.indices !== undefined) ? args.indices : SphereFrameGeometry.assembleIndices(args),
 				vertices: (args.vertices !== undefined) ? args.vertices : SphereFrameGeometry.assembleVertices(args),

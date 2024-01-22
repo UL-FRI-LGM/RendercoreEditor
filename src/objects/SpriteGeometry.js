@@ -36,6 +36,7 @@ export class SpriteGeometry extends MeshGeometry {
 				name: (args.name !== undefined) ? args.name : SpriteGeometry.DEFAULT.NAME,
 
 				indexed: (args.indexed !== undefined) ? args.indexed : SpriteGeometry.DEFAULT.INDEXED,
+				baseGeometry: (args.baseGeometry !== undefined) ? args.baseGeometry : SpriteGeometry.DEFAULT.BASE_GEOMETRY,
 
 				indices: (args.indices !== undefined) ? args.indices : SpriteGeometry.assembleIndices(args),
 				vertices: (args.vertices !== undefined) ? args.vertices : SpriteGeometry.assembleVertices(args),
