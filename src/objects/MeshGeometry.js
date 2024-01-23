@@ -158,14 +158,14 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 
 	get boundingBox() {
 		// If the bounding sphere was not yet computed compute it
-		if (this.#boundingBox === null) this.computeBoundingBox();
+		if (this.#boundingBox === null) this.#computeBoundingBox();
 
 		return this.#boundingBox;
 	}
 	set boundingBox(boundingBox) { this.#boundingBox = boundingBox; }
 	get boundingSphere() {
 		// If the bounding sphere was not yet computed compute it
-		if (this.#boundingSphere === null) this.computeBoundingSphere();
+		if (this.#boundingSphere === null) this.#computeBoundingSphere();
 
 		return this.#boundingSphere;
 	}
@@ -988,7 +988,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 	/**
 	 * Compute minimal bounding box that encapsulates all triangles.
 	 */
-	computeBoundingBox() {
+	#computeBoundingBox() {
 
 		// Check if the bounding box already exist
 		if (this.#boundingBox === null) {
@@ -1008,7 +1008,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 	/**
 	 * Compute minimal bounding sphere that encapsulates all triangles.
 	 */
-	computeBoundingSphere() {
+	#computeBoundingSphere() {
 
 		// Check if the sphere already exists
 		if (this.#boundingSphere === null) {
