@@ -5,17 +5,18 @@ export class Geometry extends ObjectBase {
 
 
 	static DEFAULT = {
-		NAME: "",
 		TYPE: "Geometry",
+		NAME: "",
 	};
 
-	
+
 	constructor(args = {}) {
 		super(
 			{
-				...args, 
-				name: (args.name !== undefined) ? args.name : Geometry.DEFAULT.NAME,
+				...args,
+
 				type: (args.type !== undefined) ? args.type : Geometry.DEFAULT.TYPE,
+				name: (args.name !== undefined) ? args.name : Geometry.DEFAULT.NAME,
 			}
 		);
 	}
