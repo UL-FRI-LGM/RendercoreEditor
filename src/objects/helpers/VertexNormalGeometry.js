@@ -38,6 +38,7 @@ export class VertexNormalGeometry extends MeshGeometry {
 				name: (args.name !== undefined) ? args.name : VertexNormalGeometry.DEFAULT.NAME,
 
 				indexed: (args.indexed !== undefined) ? args.indexed : VertexNormalGeometry.DEFAULT.INDEXED,
+				baseGeometry: (args.baseGeometry !== undefined) ? args.baseGeometry : VertexNormalGeometry.DEFAULT.BASE_GEOMETRY,
 
 				indices: (args.indices !== undefined) ? args.indices : VertexNormalGeometry.assembleIndices(args),
 				vertices: (args.vertices !== undefined) ? args.vertices : VertexNormalGeometry.assembleVertices(args),
