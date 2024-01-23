@@ -16,7 +16,7 @@ export class BoundingSphereFrameGeometry extends SphereFrameGeometry {
 			mesh: new Cube(),
 		},
 	};
-	
+
 
 	constructor(args = {}) {
 		super(

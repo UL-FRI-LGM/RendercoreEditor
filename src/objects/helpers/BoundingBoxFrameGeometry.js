@@ -16,7 +16,7 @@ export class BoundingBoxFrameGeometry extends BoxFrameGeometry {
 			mesh: new Cube(),
 		},
 	};
-	
+
 
 	constructor(args = {}) {
 		super(
