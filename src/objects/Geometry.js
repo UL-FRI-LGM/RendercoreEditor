@@ -1,4 +1,7 @@
 import { ObjectBase } from "../core/ObjectBase.js";
+import { Vector3 } from "../math/Vector3.js";
+import { Box3 } from "../math/Box3.js";
+import { Sphere } from "../math/Sphere.js";
 
 
 export class Geometry extends ObjectBase {
@@ -10,6 +13,10 @@ export class Geometry extends ObjectBase {
 	};
 
 
+	#boundingSphere = null;
+	#boundingBox = null;
+
+
 	constructor(args = {}) {
 		super(
 			{
@@ -19,8 +26,84 @@ export class Geometry extends ObjectBase {
 				name: (args.name !== undefined) ? args.name : Geometry.DEFAULT.NAME,
 			}
 		);
+
+		// Bounding
+		this.boundingBox = null;
+		this.boundingSphere = null;
 	}
 
+
+	get boundingSphere() {
+		// If the bounding sphere was not yet computed compute it
+		if (this.#boundingSphere === null) this.#computeBoundingSphere();
+
+		return this.#boundingSphere;
+	}
+	set boundingSphere(boundingSphere) { this.#boundingSphere = boundingSphere; }
+	get boundingBox() {
+		// If the bounding sphere was not yet computed compute it
+		if (this.#boundingBox === null) this.#computeBoundingBox();
+
+		return this.#boundingBox;
+	}
+	set boundingBox(boundingBox) { this.#boundingBox = boundingBox; }
+
+
+	/**
+	 * Compute minimal bounding sphere that encapsulates all triangles.
+	 */
+	#computeBoundingSphere() {
+
+		// Check if the sphere already exists
+		if (this.#boundingSphere === null) {
+			this.#boundingSphere = new Sphere();
+		}
+
+		// Create new bounding sphere using the vertices
+		if (this.vertices) {
+			const box = new Box3();
+			const vector = new Vector3();
+			const arrayBuffer = this.vertices.arrayBuffer;
+			const center = this.boundingSphere.center;
+
+			// Set initial bounding sphere based on the bounding box
+			box.setFromArray(arrayBuffer);
+			// box.center(center);
+
+			// Optimize sphere radius
+			let maxRadiusSq = 0;
+
+			for (let i = 0; i < arrayBuffer.length; i += 3) {
+				vector.fromArray(arrayBuffer, i);
+				maxRadiusSq = Math.max(maxRadiusSq, center.distanceToSquared(vector));
+			}
+
+			this.boundingSphere.radius = Math.sqrt(maxRadiusSq);
+		}
+
+		if (isNaN(this.boundingSphere.radius)) {
+			console.error("Geometry error: Bounding sphere radius is NaN.");
+		}
+	}
+	/**
+	 * Compute minimal bounding box that encapsulates all triangles.
+	 */
+	#computeBoundingBox() {
+
+		// Check if the bounding box already exist
+		if (this.#boundingBox === null) {
+			this.#boundingBox = new Box3();
+		}
+
+		// Create new bounding box using the vertices
+		if (this.vertices) {
+			this.boundingBox.setFromArray(this.vertices.arrayBuffer);
+		}
+
+		if (isNaN(this.boundingBox.min.x) || isNaN(this.boundingBox.min.y) || isNaN(this.boundingBox.min.z)) {
+			console.error("Geometry error: One or more of bounding box axis min is NaN.");
+		}
+	}
 
 	static createIndicesArrayBuffer(args = {}) {
 		throw new Error("Not implemented!");

@@ -1,7 +1,5 @@
 import { Vector2 } from "../math/Vector2.js";
 import { Vector3 } from "../math/Vector3.js";
-import { Box3 } from "../math/Box3.js";
-import { Sphere } from "../math/Sphere.js";
 import { Geometry } from "./Geometry.js";
 import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
 import { AttributeLocation } from "../core/data layouts/AttributeLocation.js";
@@ -44,9 +42,6 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 
 	#wireframeIndices;
 
-	#boundingBox;
-	#boundingSphere;
-	
 
 	constructor(args = {}) {
 		super(
@@ -89,10 +84,6 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		this.translations = (args.translations !== undefined) ? args.translations : null;
 
 		this.wireframeIndices = (args.wireframeIndices !== undefined) ? args.wireframeIndices : null;
-	
-		// Bounding
-		this.boundingBox = null;
-		this.boundingSphere = null;
 	}
 
 
@@ -155,21 +146,6 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		this.#wireframeIndices = wireframeIndices;
 		this.attributeLocationDescriptors.set("wireframeIndices", wireframeIndices);
 	}
-
-	get boundingBox() {
-		// If the bounding sphere was not yet computed compute it
-		if (this.#boundingBox === null) this.#computeBoundingBox();
-
-		return this.#boundingBox;
-	}
-	set boundingBox(boundingBox) { this.#boundingBox = boundingBox; }
-	get boundingSphere() {
-		// If the bounding sphere was not yet computed compute it
-		if (this.#boundingSphere === null) this.#computeBoundingSphere();
-
-		return this.#boundingSphere;
-	}
-	set boundingSphere(boundingSphere) { this.#boundingSphere = boundingSphere; }
 
 
 	buildWireframeBuffer() {
@@ -982,63 +958,6 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 
 
 			this.bitangents = bitangentsAttributeLocation;
-		}
-	}
-
-	/**
-	 * Compute minimal bounding box that encapsulates all triangles.
-	 */
-	#computeBoundingBox() {
-
-		// Check if the bounding box already exist
-		if (this.#boundingBox === null) {
-			this.#boundingBox = new Box3();
-		}
-
-		// Create new bounding box using the vertices
-		if (this.vertices) {
-			this.boundingBox.setFromArray(this.vertices.arrayBuffer);
-		}
-
-		if (isNaN(this.boundingBox.min.x) || isNaN(this.boundingBox.min.y) || isNaN(this.boundingBox.min.z)) {
-			console.error("Geometry error: One or more of bounding box axis min is NaN.");
-		}
-	}
-
-	/**
-	 * Compute minimal bounding sphere that encapsulates all triangles.
-	 */
-	#computeBoundingSphere() {
-
-		// Check if the sphere already exists
-		if (this.#boundingSphere === null) {
-			this.#boundingSphere = new Sphere();
-		}
-
-		// Create new bounding sphere using the vertices
-		if (this.vertices) {
-			const box = new Box3();
-			const vector = new Vector3();
-			const arrayBuffer = this.vertices.arrayBuffer;
-			const center = this.boundingSphere.center;
-
-			// Set initial bounding sphere based on the bounding box
-			box.setFromArray(arrayBuffer);
-			box.center(center);
-
-			// Optimize sphere radius
-			let maxRadiusSq = 0;
-
-			for (let i = 0; i < arrayBuffer.length; i += 3) {
-				vector.fromArray(arrayBuffer, i);
-				maxRadiusSq = Math.max(maxRadiusSq, center.distanceToSquared(vector));
-			}
-
-			this.boundingSphere.radius = Math.sqrt(maxRadiusSq);
-		}
-
-		if (isNaN(this.boundingSphere.radius)) {
-			console.error("Geometry error: Bounding sphere radius is NaN.");
 		}
 	}
 
