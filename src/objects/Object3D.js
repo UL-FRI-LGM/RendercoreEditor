@@ -1,7 +1,8 @@
 import { _Math } from "../math/Math.js";
 import { ObjectBase } from "../core/ObjectBase.js";
 import { Transform } from "../math/Transform.js";
-import { Sphere } from "../math/Sphere.js";
+import { BoundingSphere } from "../math/BoundingSphere.js";
+import { BoundingBox } from "../math/BoundingBox.js";
 import { Bounding } from "../math/Bounding.js";
 import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 import { ResourceBinding } from "../core/data layouts/ResourceBinding.js";
@@ -14,7 +15,7 @@ import { GPUBufferBindingType } from "../core/ENUM/GPUBufferBindingType.js";
 import { BindGroupEntry } from "../core/RC/resource binding/BindGroupEntry.js";
 import { RCBufferBindingResource } from "../core/RCBufferBindingResource.js";
 import { ResourcePack } from "../core/data layouts/ResourcePack.js";
-import { Box3, Vector3 } from "../RenderCore.js";
+import { Vector3 } from "../RenderCore.js";
 
 
 export class Object3D extends ObjectBase {
@@ -461,7 +462,7 @@ export class Object3D extends ObjectBase {
 		if (boundingSpheres.length > 0) {
 			return _Math.computeSpheresBoundingSphere(boundingSpheres);
 		} else {
-			return new Sphere(new Vector3(0, 0, 0), Infinity);
+			return new BoundingSphere(new Vector3(0, 0, 0), Infinity);
 		}
 	}
 	computeBoundingBox() {
@@ -487,9 +488,9 @@ export class Object3D extends ObjectBase {
 				max.max(boundingBox.max);
 			}
 
-			return new Box3(min, max);
+			return new BoundingBox(min, max);
 		} else {
-			return new Box3(new Vector3(-Infinity, -Infinity, -Infinity), new Vector3(+Infinity, +Infinity, +Infinity));
+			return new BoundingBox(new Vector3(-Infinity, -Infinity, -Infinity), new Vector3(+Infinity, +Infinity, +Infinity));
 		}
 	}
 	#updateBounding() {
@@ -501,9 +502,9 @@ export class Object3D extends ObjectBase {
 	}
 	computeBounding() {
 		const boundingSphere_objectspace = this.computeBoundingSphere();
-		const boundingSphere_worldspace = new Sphere().copy(boundingSphere_objectspace).applyMatrix4(this.g_MMat);
+		const boundingSphere_worldspace = new BoundingSphere().copy(boundingSphere_objectspace).applyMatrix4(this.g_MMat);
 		const boundingBox_objectspace = this.computeBoundingBox();
-		const boundingBox_worldspace = new Box3().copy(boundingBox_objectspace).applyMatrix4(this.g_MMat);
+		const boundingBox_worldspace = new BoundingBox().copy(boundingBox_objectspace).applyMatrix4(this.g_MMat);
 
 		const bounding = new Bounding(
 			{

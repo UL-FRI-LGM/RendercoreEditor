@@ -1,7 +1,7 @@
 import { ObjectBase } from "../core/ObjectBase.js";
 import { Vector3 } from "../math/Vector3.js";
-import { Box3 } from "../math/Box3.js";
-import { Sphere } from "../math/Sphere.js";
+import { BoundingBox } from "../math/BoundingBox.js";
+import { BoundingSphere } from "../math/BoundingSphere.js";
 
 
 export class Geometry extends ObjectBase {
@@ -56,12 +56,12 @@ export class Geometry extends ObjectBase {
 
 		// Check if the sphere already exists
 		if (this.#boundingSphere === null) {
-			this.#boundingSphere = new Sphere();
+			this.#boundingSphere = new BoundingSphere();
 		}
 
 		// Create new bounding sphere using the vertices
 		if (this.vertices) {
-			const box = new Box3();
+			const box = new BoundingBox();
 			const vector = new Vector3();
 			const arrayBuffer = this.vertices.arrayBuffer;
 			const center = this.boundingSphere.center;
@@ -92,7 +92,7 @@ export class Geometry extends ObjectBase {
 
 		// Check if the bounding box already exist
 		if (this.#boundingBox === null) {
-			this.#boundingBox = new Box3();
+			this.#boundingBox = new BoundingBox();
 		}
 
 		// Create new bounding box using the vertices
