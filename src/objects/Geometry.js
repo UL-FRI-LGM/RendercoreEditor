@@ -61,24 +61,7 @@ export class Geometry extends ObjectBase {
 
 		// Create new bounding sphere using the vertices
 		if (this.vertices) {
-			const box = new BoundingBox();
-			const vector = new Vector3();
-			const arrayBuffer = this.vertices.arrayBuffer;
-			const center = this.boundingSphere.center;
-
-			// Set initial bounding sphere based on the bounding box
-			box.setFromArray(arrayBuffer);
-			// box.center(center);
-
-			// Optimize sphere radius
-			let maxRadiusSq = 0;
-
-			for (let i = 0; i < arrayBuffer.length; i += 3) {
-				vector.fromArray(arrayBuffer, i);
-				maxRadiusSq = Math.max(maxRadiusSq, center.distanceToSquared(vector));
-			}
-
-			this.boundingSphere.radius = Math.sqrt(maxRadiusSq);
+			this.boundingSphere.setFromArrayBuffer(this.vertices.arrayBuffer);
 		}
 
 		if (isNaN(this.boundingSphere.radius)) {
@@ -97,7 +80,7 @@ export class Geometry extends ObjectBase {
 
 		// Create new bounding box using the vertices
 		if (this.vertices) {
-			this.boundingBox.setFromArray(this.vertices.arrayBuffer);
+			this.boundingBox.setFromArrayBuffer(this.vertices.arrayBuffer);
 		}
 
 		if (isNaN(this.boundingBox.min.x) || isNaN(this.boundingBox.min.y) || isNaN(this.boundingBox.min.z)) {
