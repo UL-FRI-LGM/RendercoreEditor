@@ -18,6 +18,9 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		TYPE: "MeshGeometry",
 		NAME: "",
 
+		BOUNDING_SPHERE: null,
+		BOUNDING_BOX: null,
+
 		INDEXED: false,
 		BASE_GEOMETRY: {
 
@@ -50,6 +53,9 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 
 				name: (args.name !== undefined) ? args.name : MeshGeometry.DEFAULT.NAME,
 				type: (args.type !== undefined) ? args.type : MeshGeometry.DEFAULT.TYPE,
+
+				boundingSphere: (args.boundingSphere !== undefined) ? args.boundingSphere : MeshGeometry.DEFAULT.BOUNDING_SPHERE,
+				boundingBox: (args.boundingBox !== undefined) ? args.boundingBox : MeshGeometry.DEFAULT.BOUNDING_BOX,
 			}
 		);
 

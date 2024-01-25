@@ -10,6 +10,9 @@ export class Geometry extends ObjectBase {
 	static DEFAULT = {
 		TYPE: "Geometry",
 		NAME: "",
+
+		BOUNDING_SPHERE: null,
+		BOUNDING_BOX: null,
 	};
 
 
@@ -28,8 +31,8 @@ export class Geometry extends ObjectBase {
 		);
 
 		// Bounding
-		this.boundingBox = null;
-		this.boundingSphere = null;
+		this.boundingSphere = (args.boundingSphere !== undefined) ? args.boundingSphere : Geometry.DEFAULT.BOUNDING_SPHERE;
+		this.boundingBox = (args.boundingBox !== undefined) ? args.boundingBox : Geometry.DEFAULT.BOUNDING_BOX;
 	}
 
 
