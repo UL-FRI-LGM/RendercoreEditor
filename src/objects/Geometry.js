@@ -1,7 +1,7 @@
 import { ObjectBase } from "../core/ObjectBase.js";
 import { Vector3 } from "../math/Vector3.js";
-import { BoundingBox } from "../math/BoundingBox.js";
 import { BoundingSphere } from "../math/BoundingSphere.js";
+import { BoundingBox } from "../math/BoundingBox.js";
 
 
 export class Geometry extends ObjectBase {
