@@ -54,7 +54,7 @@ export class BoundingSphere {
 			const nPoints = arrayBuffer.length / 3;
 			const centroid = new Centroid3(0, 0, 0).setFromArrayBuffer(arrayBuffer);
 
-			this.center = centroid; // setter copy
+			this.center = centroid;	// setter copy
 			this.radius = 0;		// setter copy
 
 
