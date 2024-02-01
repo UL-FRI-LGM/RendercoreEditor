@@ -1,18 +1,11 @@
 import { XHRLoader } from "./XHRLoader.js";
 import { Mesh } from "../objects/Mesh.js";
-import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
 import { MeshGeometry } from "../objects/MeshGeometry.js";
 import { MeshBasicMaterial } from "../materials/MeshBasicMaterial.js";
 import { Group } from "../objects/Group.js";
 import { LoadingManager } from "./LoadingManager.js";
 import { MeshLambertMaterial } from "../materials/MeshLambertMaterial.js";
-import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
-import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
-import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
-import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
-import { AttributeLocation } from "../core/data layouts/AttributeLocation.js";
-import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
-import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
+import { Vector3 } from "../RenderCore.js";
 
 
 export class OBJLoader extends XHRLoader {
@@ -318,203 +311,43 @@ export class OBJLoader extends XHRLoader {
 
 
 		const grupObject = new Group();
-		for (let i = 0; i < objects.length; i++) {
 
+
+		for (let i = 0; i < objects.length; i++) {
 			const geometry = objects[i].geometry;
 
-			// Create new buffer geometry
-			const meshGeometry = new MeshGeometry();
-
-			// Add position of vertices
-			const verticesArrayBuffer = new Float32Array(geometry.vertices);
-			meshGeometry.vertices = new AttributeLocation(
-				{
-					itemSize: 3,
-					arrayBuffer: verticesArrayBuffer,
-					bufferDescriptor: new BufferDescriptor(
-						{
-							label: "OBJ vertices buffer",
-							size: verticesArrayBuffer.length,
-							usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-							mappedAtCreation: false
-						}
-					),
-					vertexBufferLayoutDescriptor: new VertexBufferLayout(
-						{
-							arrayStride: 3 * 4,
-							stepMode: VertexStepMode.VERTEX,
-							attributes: [
-								new VertexAttribute(
-									{
-										format: VertexFormat.FLOAT_32x3,
-										offset: 0,
-										shaderLocation: 0,
-									}
-								)
-							],						
-						}
-					)
-				}
-			);
-			meshGeometry.vertices.setValue(
-				"OBJ vertices",
-				new BufferSetInstruction(
-					{
-						label: "OBJ vertices",
-	
-						number: 0,
-	
-						source: {
-							arrayBuffer: verticesArrayBuffer,
-							layout: {
-								offset: (0),
-							}
-						},
-						destination: {
-							buffer: null,
-							layout: {
-								offset: (0)
-							}
-						},
-						size: verticesArrayBuffer.length
-					}
-				)
-			);
-
-			// Check if normals are specified. Otherwise calculate them
-			if (geometry.normals.length > 0) {
-				const normalsArrayBuffer = new Float32Array(geometry.normals);
-				meshGeometry.normals = new AttributeLocation(
-					{
-						itemSize: 3,
-						arrayBuffer: normalsArrayBuffer,
-						bufferDescriptor: new BufferDescriptor(
-							{
-								label: "OBJ normals buffer",
-								size: normalsArrayBuffer.length,
-								usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-								mappedAtCreation: false
-							}
-						),
-						vertexBufferLayoutDescriptor: new VertexBufferLayout(
-							{
-								arrayStride: 3 * 4,
-								stepMode: VertexStepMode.VERTEX,
-								attributes: [
-									new VertexAttribute(
-										{
-											format: VertexFormat.FLOAT_32x3,
-											offset: 0,
-											shaderLocation: 1,
-										}
-									)
-								],						
-							}
-						)
-					}
-				);
-				meshGeometry.normals.setValue(
-					"OBJ normals",
-					new BufferSetInstruction(
-						{
-							label: "OBJ normals",
-		
-							number: 1,
-		
-							source: {
-								arrayBuffer: normalsArrayBuffer,
-								layout: {
-									offset: (0),
-								}
-							},
-							destination: {
-								buffer: null,
-								layout: {
-									offset: (0)
-								}
-							},
-							size: normalsArrayBuffer.length
-						}
-					)
-				);
-			} else {
-				meshGeometry.computeVertexNormals();
-			}
-
-			// If specified add texture uv-s
-			if (geometry.uvs.length > 0) {
-				const uvsArrayBuffer =  new Float32Array(geometry.uvs);
-				meshGeometry.uvs = new AttributeLocation(
-					{
-						itemSize: 2,
-						arrayBuffer: uvsArrayBuffer,
-						bufferDescriptor: new BufferDescriptor(
-							{
-								label: "OBJ uvs buffer",
-								size: uvsArrayBuffer.length,
-								usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-								mappedAtCreation: false
-							}
-						),
-						vertexBufferLayoutDescriptor: new VertexBufferLayout(
-							{
-								arrayStride: 2 * 4,
-								stepMode: VertexStepMode.VERTEX,
-								attributes: [
-									new VertexAttribute(
-										{
-											format: VertexFormat.FLOAT_32x2,
-											offset: 0,
-											shaderLocation: 2,
-										}
-									)
-								],						
-							}
-						)
-					}
-				);
-				meshGeometry.uvs.setValue(
-					"OBJ uvs",
-					new BufferSetInstruction(
-						{
-							label: "OBJ uvs",
-		
-							number: 2,
-		
-							source: {
-								arrayBuffer: uvsArrayBuffer,
-								layout: {
-									offset: (0),
-								}
-							},
-							destination: {
-								buffer: null,
-								layout: {
-									offset: (0)
-								}
-							},
-							size: uvsArrayBuffer.length
-						}
-					)
-				);
-			}
-
-
-			// const meshMaterial = new MeshBasicMaterial();
-			const meshMaterial = new MeshLambertMaterial();
-			// meshMaterial.shading = objects[i].material.smooth ? SmoothShading : FlatShading;
-
-			// Create new mesh
 			const meshObject = new Mesh(
 				{
 					name: objects[i].name,
-					geometry: meshGeometry, 
-					material: meshMaterial
+
+					visible: true,
+					frustumCulled: true,
+
+					geometry: new MeshGeometry(
+						{
+							indexed: false,
+							baseGeometry: {
+								positions: [new Vector3(0, 0, 0)],
+		
+								indices: geometry.indices,
+								vertices: geometry.vertices,
+								normals: geometry.normals,
+								uvs: geometry.uvs,
+							},
+						}
+					), 
+					material: new MeshLambertMaterial(
+						{
+
+						}
+					),
 				}
 			);
 
+
 			grupObject.add(meshObject);
 		}
+
 
 		return grupObject;
 	}
