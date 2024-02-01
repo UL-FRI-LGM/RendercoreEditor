@@ -84,14 +84,14 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		);
 
 		// attribute locations
-		this.indices = (args.indices !== undefined) ? args.indices : null;
-		this.vertices = (args.vertices !== undefined) ? args.vertices : null;
-		this.normals = (args.normals !== undefined) ? args.normals : null;
+		this.indices = (args.indices !== undefined) ? args.indices : MeshGeometry.assembleIndices(args);
+		this.vertices = (args.vertices !== undefined) ? args.vertices : MeshGeometry.assembleVertices(args);
+		this.normals = (args.normals !== undefined) ? args.normals : MeshGeometry.assembleNormals(args);
 		this.tangents = (args.tangents !== undefined) ? args.tangents : null;
 		this.bitangents = (args.bitangents !== undefined) ? args.bitangents : null;
 		this.colors = (args.colors !== undefined) ? args.colors : null;
 		this.uvs = (args.uvs !== undefined) ? args.uvs : null;
-		this.MMats = (args.MMats !== undefined) ? args.MMats : null;
+		this.MMats = (args.MMats !== undefined) ? args.MMats : MeshGeometry.assembleUVs(args);
 		this.translations = (args.translations !== undefined) ? args.translations : null;
 
 		this.wireframeIndices = (args.wireframeIndices !== undefined) ? args.wireframeIndices : null;
