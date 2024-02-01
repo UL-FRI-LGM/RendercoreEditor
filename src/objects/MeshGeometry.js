@@ -23,7 +23,12 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 
 		INDEXED: false,
 		BASE_GEOMETRY: {
+			positions: [new Vector3(0, 0, 0)],
 
+			indices: null,
+			vertices: null,
+			normals: null,
+			uvs: null,
 		},
 	};
 
@@ -968,7 +973,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 	}
 
 	static createIndicesArrayBuffer(args = {}) {
-		return super.createIndicesArrayBuffer(args);
+		return new Uint32Array(args.baseGeometry.indices);
 	}
 	static createIndicesAttributeLocation(indicesArrayBuffer, args = {}) {
 		const label = (args.label !== undefined) ? args.label : "mesh indices buffer";
@@ -1037,11 +1042,16 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		);
 	}
 	static assembleIndices(args = {}) {
-		return super.assembleIndices(args);
+		const indicesArrayBuffer = MeshGeometry.createIndicesArrayBuffer(args);
+		const indicesAttributeLocation = MeshGeometry.createIndicesAttributeLocation(indicesArrayBuffer, args);
+		MeshGeometry.setValueIndices(indicesAttributeLocation, indicesArrayBuffer, args);
+
+
+		return args.indexed ? indicesAttributeLocation : null;
 	}
 
 	static createVerticesArrayBuffer(args = {}) {
-		return super.createVerticesArrayBuffer(args);
+		return new Float32Array(args.baseGeometry.vertices);
 	}
 	static createVerticesAttributeLocation(verticesArrayBuffer, args = {}) {
 		const label = (args.label !== undefined) ? args.label : "mesh vertices buffer";
@@ -1109,11 +1119,16 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		);
 	}
 	static assembleVertices(args = {}) {
-		return super.assembleVertices(args);
+		const verticesArrayBuffer = MeshGeometry.createVerticesArrayBuffer(args);
+		const verticesAttributeLocation = MeshGeometry.createVerticesAttributeLocation(verticesArrayBuffer, args);
+		MeshGeometry.setValueVertices(verticesAttributeLocation, verticesArrayBuffer, args);
+
+
+		return verticesAttributeLocation;
 	}
 
 	static createNormalsArrayBuffer(args = {}) {
-		return super.createNormalsArrayBuffer(args);
+		return new Float32Array(args.baseGeometry.normals);
 	}
 	static createNormalsAttributeLocation(normalsArrayBuffer, args = {}) {
 		const label = (args.label !== undefined) ? args.label : "mesh normals buffer";
@@ -1180,11 +1195,16 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		);
 	}
 	static assembleNormals(args = {}) {
-		return super.assembleNormals(args);
+		const normalsArrayBuffer = MeshGeometry.createNormalsArrayBuffer(args);
+		const normalsAttributeLocation = MeshGeometry.createNormalsAttributeLocation(normalsArrayBuffer, args);
+		MeshGeometry.setValueNormals(normalsAttributeLocation, normalsArrayBuffer, args);
+
+
+		return normalsAttributeLocation;
 	}
 
 	static createUVsArrayBuffer(args = {}) {
-		return super.createUVsArrayBuffer(args);
+		return new Float32Array(args.baseGeometry.uvs);
 	}
 	static createUVsAttributeLocation(uvsArrayBuffer, args = {}) {
 		const label = (args.label !== undefined) ? args.label : "mesh uvs buffer";
@@ -1250,6 +1270,11 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		);
 	}
 	static assembleUVs(args = {}) {
-		return super.assembleUVs(args);
+		const uvsArrayBuffer = MeshGeometry.createUVsArrayBuffer(args);
+		const uvsAttributeLocation = MeshGeometry.createUVsAttributeLocation(uvsArrayBuffer, args);
+		MeshGeometry.setValueUVs(uvsAttributeLocation, uvsArrayBuffer, args);
+
+
+		return uvsAttributeLocation;
 	}
 };
