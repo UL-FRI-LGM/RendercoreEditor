@@ -1,9 +1,9 @@
 import { XHRLoader } from "./XHRLoader.js";
+import { LoadingManager } from "./LoadingManager.js";
+import { Group } from "../objects/Group.js";
 import { Mesh } from "../objects/Mesh.js";
 import { MeshGeometry } from "../objects/MeshGeometry.js";
 import { MeshBasicMaterial } from "../materials/MeshBasicMaterial.js";
-import { Group } from "../objects/Group.js";
-import { LoadingManager } from "./LoadingManager.js";
 import { MeshLambertMaterial } from "../materials/MeshLambertMaterial.js";
 import { Vector3 } from "../RenderCore.js";
 
