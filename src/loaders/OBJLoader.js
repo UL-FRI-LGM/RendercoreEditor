@@ -310,7 +310,7 @@ export class OBJLoader extends XHRLoader {
 		}
 
 
-		const grupObject = new Group();
+		const groupObject = new Group();
 
 
 		for (let i = 0; i < objects.length; i++) {
@@ -345,10 +345,10 @@ export class OBJLoader extends XHRLoader {
 			);
 
 
-			grupObject.add(meshObject);
+			groupObject.add(meshObject);
 		}
 
 
-		return grupObject;
+		return groupObject;
 	}
 };
