@@ -976,33 +976,30 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		return new Uint32Array(args.baseGeometry.indices);
 	}
 	static createIndicesAttributeLocation(indicesArrayBuffer, args = {}) {
-		const label = (args.label !== undefined) ? args.label : "mesh indices buffer";
-
-
 		return new AttributeLocation(
 			{
-				number: null,
-				itemSize: 1,
+				number: (args.number !== undefined) ? args.number : null,
+				itemSize: (args.itemSize !== undefined) ? args.itemSize : (1),
 				arrayBuffer: indicesArrayBuffer,
 
-				bufferDescriptor: new BufferDescriptor(
+				bufferDescriptor: (args.bufferDescriptor !== undefined) ? args.bufferDescriptor : new BufferDescriptor(
 					{
-						label: label,
-						size: indicesArrayBuffer.length,
-						usage:  BufferUsage.INDEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
+						label: (args.label !== undefined) ? args.label : "mesh indices buffer",
+						size: (args.size !== undefined) ? args.size : (indicesArrayBuffer.length),
+						usage: (args.usage !== undefined) ? args.usage : (BufferUsage.INDEX | BufferUsage.COPY_DST),
+						mappedAtCreation: (args.mappedAtCreation !== undefined) ? args.mappedAtCreation : false
 					}
 				),
-				// vertexBufferLayoutDescriptor: new VertexBufferLayout(
+				// vertexBufferLayoutDescriptor: (args.vertexBufferLayoutDescriptor !== undefined) ? args.vertexBufferLayoutDescriptor : new VertexBufferLayout(
 				// 	{
-				// 		arrayStride: 1 * 4,
-				// 		stepMode: VertexStepMode.VERTEX,
-				// 		attributes: [
+				// 		arrayStride: (args.arrayStride !== undefined) ? args.arrayStride : (1) * indicesArrayBuffer.BYTES_PER_ELEMENT,
+				// 		stepMode: (args.stepMode !== undefined) ? args.stepMode : VertexStepMode.VERTEX,
+				// 		attributes: (args.attributes !== undefined) ? args.attributes : [
 				// 			new VertexAttribute(
 				// 				{
-				// 					format: VertexFormat.UINT_32,
-				// 					offset: 0,
-				// 					shaderLocation: 0,
+				// 					format: (args.format !== undefined) ? args.format : VertexFormat.UINT_32,
+				// 					offset: (args.offset !== undefined) ? args.offset : (0) * indicesArrayBuffer.BYTES_PER_ELEMENT,
+				// 					shaderLocation: (args.shaderLocation !== undefined) ? args.shaderLocation : 0,
 				// 				}
 				// 			)
 				// 		],			
@@ -1013,30 +1010,27 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		);
 	}
 	static setValueIndices(indicesAttributeLocation, indicesArrayBuffer, args = {}) {
-		const label = (args.label !== undefined) ? args.label : "mesh indices";
-
-
 		indicesAttributeLocation.setValue(
-			label,
+			(args.label !== undefined) ? args.label : "mesh vertices",
 			new BufferSetInstruction(
 				{
-					label: label,
+					label: (args.label !== undefined) ? args.label : "mesh indices",
 
-					number: null,
+					number: (args.number !== undefined) ? args.number : null,
 
 					source: {
 						arrayBuffer: indicesArrayBuffer,
 						layout: {
-							offset: (0),
+							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0),
 						}
 					},
 					destination: {
 						buffer: null,
 						layout: {
-							offset: (0)
+							offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
 						}
 					},
-					size: indicesArrayBuffer.length
+					size: (args.size !== undefined) ? args.size : (indicesArrayBuffer.length)
 				}
 			)
 		);
@@ -1054,33 +1048,30 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		return new Float32Array(args.baseGeometry.vertices);
 	}
 	static createVerticesAttributeLocation(verticesArrayBuffer, args = {}) {
-		const label = (args.label !== undefined) ? args.label : "mesh vertices buffer";
-
-
 		return new AttributeLocation(
 			{
-				number: 0,
-				itemSize: 3,
+				number: (args.number !== undefined) ? args.number : 0,
+				itemSize: (args.itemSize !== undefined) ? args.itemSize : (3),
 				arrayBuffer: verticesArrayBuffer,
 
-				bufferDescriptor: new BufferDescriptor(
+				bufferDescriptor: (args.bufferDescriptor !== undefined) ? args.bufferDescriptor : new BufferDescriptor(
 					{
-						label: label,
-						size: verticesArrayBuffer.length,
-						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
+						label: (args.label !== undefined) ? args.label : "mesh vertices buffer",
+						size: (args.size !== undefined) ? args.size : (verticesArrayBuffer.length),
+						usage: (args.usage !== undefined) ? args.usage : (BufferUsage.VERTEX | BufferUsage.COPY_DST),
+						mappedAtCreation: (args.mappedAtCreation !== undefined) ? args.mappedAtCreation : false
 					}
 				),
-				vertexBufferLayoutDescriptor: new VertexBufferLayout(
+				vertexBufferLayoutDescriptor: (args.vertexBufferLayoutDescriptor !== undefined) ? args.vertexBufferLayoutDescriptor : new VertexBufferLayout(
 					{
-						arrayStride: 3 * 4,
-						stepMode: VertexStepMode.VERTEX,
-						attributes: [
+						arrayStride: (args.arrayStride !== undefined) ? args.arrayStride : (3) * verticesArrayBuffer.BYTES_PER_ELEMENT,
+						stepMode: (args.stepMode !== undefined) ? args.stepMode : VertexStepMode.VERTEX,
+						attributes: (args.attributes !== undefined) ? args.attributes : [
 							new VertexAttribute(
 								{
-									format: VertexFormat.FLOAT_32x3,
-									offset: 0,
-									shaderLocation: 0,
+									format: (args.format !== undefined) ? args.format : VertexFormat.FLOAT_32x3,
+									offset: (args.offset !== undefined) ? args.offset : (0) * verticesArrayBuffer.BYTES_PER_ELEMENT,
+									shaderLocation: (args.shaderLocation !== undefined) ? args.shaderLocation : 0,
 								}
 							)
 						],
@@ -1090,30 +1081,27 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		);
 	}
 	static setValueVertices(verticesAttributeLocation, verticesArrayBuffer, args = {}) {
-		const label = (args.label !== undefined) ? args.label : "mesh vertices";
-
-
 		verticesAttributeLocation.setValue(
-			label,
+			(args.label !== undefined) ? args.label : "mesh vertices",
 			new BufferSetInstruction(
 				{
-					label: label,
+					label: (args.label !== undefined) ? args.label : "mesh vertices",
 
-					number: 0,
+					number: (args.number !== undefined) ? args.number : 0,
 
 					source: {
 						arrayBuffer: verticesArrayBuffer,
 						layout: {
-							offset: (0),
+							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0),
 						}
 					},
 					destination: {
 						buffer: null,
 						layout: {
-							offset: (0)
+							offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
 						}
 					},
-					size: verticesArrayBuffer.length
+					size: (args.size !== undefined) ? args.size : (verticesArrayBuffer.length)
 				}
 			)
 		);
@@ -1131,31 +1119,30 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		return new Float32Array(args.baseGeometry.normals);
 	}
 	static createNormalsAttributeLocation(normalsArrayBuffer, args = {}) {
-		const label = (args.label !== undefined) ? args.label : "mesh normals buffer";
-
-		
 		return new AttributeLocation(
 			{
-				itemSize: 3,
+				number: (args.number !== undefined) ? args.number : 1,
+				itemSize: (args.itemSize !== undefined) ? args.itemSize : (3),
 				arrayBuffer: normalsArrayBuffer,
-				bufferDescriptor: new BufferDescriptor(
+
+				bufferDescriptor: (args.bufferDescriptor !== undefined) ? args.bufferDescriptor : new BufferDescriptor(
 					{
-						label: label,
-						size: normalsArrayBuffer.length,
-						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
+						label:  (args.label !== undefined) ? args.label : "mesh normals buffer",
+						size: (args.size !== undefined) ? args.size : (normalsArrayBuffer.length),
+						usage: (args.usage !== undefined) ? args.usage : (BufferUsage.VERTEX | BufferUsage.COPY_DST),
+						mappedAtCreation: (args.mappedAtCreation !== undefined) ? args.mappedAtCreation : false
 					}
 				),
-				vertexBufferLayoutDescriptor: new VertexBufferLayout(
+				vertexBufferLayoutDescriptor: (args.vertexBufferLayoutDescriptor !== undefined) ? args.vertexBufferLayoutDescriptor : new VertexBufferLayout(
 					{
-						arrayStride: 3 * 4,
-						stepMode: VertexStepMode.VERTEX,
-						attributes: [
+						arrayStride: (args.arrayStride !== undefined) ? args.arrayStride : (3) * normalsArrayBuffer.BYTES_PER_ELEMENT,
+						stepMode: (args.stepMode !== undefined) ? args.stepMode : VertexStepMode.VERTEX,
+						attributes: (args.attributes !== undefined) ? args.attributes : [
 							new VertexAttribute(
 								{
-									format: VertexFormat.FLOAT_32x3,
-									offset: 0,
-									shaderLocation: 1,
+									format: (args.format !== undefined) ? args.format : VertexFormat.FLOAT_32x3,
+									offset: (args.offset !== undefined) ? args.offset : (0) * normalsArrayBuffer.BYTES_PER_ELEMENT,
+									shaderLocation: (args.shaderLocation !== undefined) ? args.shaderLocation : 1,
 								}
 							)
 						],						
@@ -1166,30 +1153,27 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
 	}
 	static setValueNormals(normalsAttributeLocation, normalsArrayBuffer, args = {}) {
-		const label = (args.label !== undefined) ? args.label : "mesh normals";
-
-
 		normalsAttributeLocation.setValue(
-			label,
+			(args.label !== undefined) ? args.label : "mesh normals",
 			new BufferSetInstruction(
 				{
-					label: label,
+					label: (args.label !== undefined) ? args.label : "mesh normals",
 
-					number: 1,
+					number: (args.number !== undefined) ? args.number : 1,
 
 					source: {
 						arrayBuffer: normalsArrayBuffer,
 						layout: {
-							offset: (0),
+							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0),
 						}
 					},
 					destination: {
 						buffer: null,
 						layout: {
-							offset: (0)
+							offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
 						}
 					},
-					size: normalsArrayBuffer.length
+					size: (args.size !== undefined) ? args.size : (normalsArrayBuffer.length)
 				}
 			)
 		);
@@ -1207,31 +1191,30 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		return new Float32Array(args.baseGeometry.uvs);
 	}
 	static createUVsAttributeLocation(uvsArrayBuffer, args = {}) {
-		const label = (args.label !== undefined) ? args.label : "mesh uvs buffer";
-
-		
 		return new AttributeLocation(
 			{
-				itemSize: 2,
+				number: (args.number !== undefined) ? args.number : 2,
+				itemSize: (args.itemSize !== undefined) ? args.itemSize : (2),
 				arrayBuffer: uvsArrayBuffer,
-				bufferDescriptor: new BufferDescriptor(
+
+				bufferDescriptor: (args.bufferDescriptor !== undefined) ? args.bufferDescriptor : new BufferDescriptor(
 					{
-						label: label,
-						size: uvsArrayBuffer.length,
-						usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
-						mappedAtCreation: false
+						label: (args.label !== undefined) ? args.label : "mesh uvs buffer",
+						size: (args.size !== undefined) ? args.size : (uvsArrayBuffer.length),
+						usage: (args.usage !== undefined) ? args.usage : (BufferUsage.VERTEX | BufferUsage.COPY_DST),
+						mappedAtCreation: (args.mappedAtCreation !== undefined) ? args.mappedAtCreation : false
 					}
 				),
-				vertexBufferLayoutDescriptor: new VertexBufferLayout(
+				vertexBufferLayoutDescriptor: (args.vertexBufferLayoutDescriptor !== undefined) ? args.vertexBufferLayoutDescriptor : new VertexBufferLayout(
 					{
-						arrayStride: 2 * 4,
-						stepMode: VertexStepMode.VERTEX,
-						attributes: [
+						arrayStride: (args.arrayStride !== undefined) ? args.arrayStride : (2) * uvsArrayBuffer.BYTES_PER_ELEMENT,
+						stepMode: (args.stepMode !== undefined) ? args.stepMode : VertexStepMode.VERTEX,
+						attributes: (args.attributes !== undefined) ? args.attributes : [
 							new VertexAttribute(
 								{
-									format: VertexFormat.FLOAT_32x2,
-									offset: 0,
-									shaderLocation: 2,
+									format: (args.format !== undefined) ? args.format : VertexFormat.FLOAT_32x2,
+									offset: (args.offset !== undefined) ? args.offset : (0) * uvsArrayBuffer.BYTES_PER_ELEMENT,
+									shaderLocation: (args.shaderLocation !== undefined) ? args.shaderLocation : 2,
 								}
 							)
 						],
@@ -1241,30 +1224,27 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 		);
 	}
 	static setValueUVs(uvsAttributeLocation, uvsArrayBuffer, args = {}) {
-		const label = (args.label !== undefined) ? args.label : "mesh uvs";
-
-
 		uvsAttributeLocation.setValue(
-			label,
+			(args.label !== undefined) ? args.label : "mesh uvs",
 			new BufferSetInstruction(
 				{
-					label: label,
+					label: (args.label !== undefined) ? args.label : "mesh uvs",
 
-					number: 2,
+					number: (args.number !== undefined) ? args.number : 2,
 
 					source: {
 						arrayBuffer: uvsArrayBuffer,
 						layout: {
-							offset: (0),
+							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0),
 						}
 					},
 					destination: {
 						buffer: null,
 						layout: {
-							offset: (0)
+							offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
 						}
 					},
-					size: uvsArrayBuffer.length
+					size: (args.size !== undefined) ? args.size : (uvsArrayBuffer.length)
 				}
 			)
 		);
