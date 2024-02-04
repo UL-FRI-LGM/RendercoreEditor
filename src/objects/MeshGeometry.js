@@ -9,9 +9,10 @@ import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.
 import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
 import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
 import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
+import { GroupGeometry } from "./GroupGeometry.js";
 
 
-export class MeshGeometry extends Geometry { //mesh custom geometry
+export class MeshGeometry extends GroupGeometry { //mesh custom geometry
 
 
 	static DEFAULT = {
@@ -999,10 +1000,10 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 				// 				{
 				// 					format: (args.format !== undefined) ? args.format : VertexFormat.UINT_32,
 				// 					offset: (args.offset !== undefined) ? args.offset : (0) * indicesArrayBuffer.BYTES_PER_ELEMENT,
-				// 					shaderLocation: (args.shaderLocation !== undefined) ? args.shaderLocation : 0,
+				// 					shaderLocation: (args.shaderLocation !== undefined) ? args.shaderLocation : 0
 				// 				}
 				// 			)
-				// 		],			
+				// 		]
 				// 	}
 				// )
 				vertexBufferLayoutDescriptor: null
@@ -1021,7 +1022,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 					source: {
 						arrayBuffer: indicesArrayBuffer,
 						layout: {
-							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0),
+							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
 						}
 					},
 					destination: {
@@ -1071,10 +1072,10 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 								{
 									format: (args.format !== undefined) ? args.format : VertexFormat.FLOAT_32x3,
 									offset: (args.offset !== undefined) ? args.offset : (0) * verticesArrayBuffer.BYTES_PER_ELEMENT,
-									shaderLocation: (args.shaderLocation !== undefined) ? args.shaderLocation : 0,
+									shaderLocation: (args.shaderLocation !== undefined) ? args.shaderLocation : 0
 								}
 							)
-						],
+						]
 					}
 				)
 			}
@@ -1092,7 +1093,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 					source: {
 						arrayBuffer: verticesArrayBuffer,
 						layout: {
-							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0),
+							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
 						}
 					},
 					destination: {
@@ -1127,7 +1128,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 
 				bufferDescriptor: (args.bufferDescriptor !== undefined) ? args.bufferDescriptor : new BufferDescriptor(
 					{
-						label:  (args.label !== undefined) ? args.label : "mesh normals buffer",
+						label: (args.label !== undefined) ? args.label : "mesh normals buffer",
 						size: (args.size !== undefined) ? args.size : (normalsArrayBuffer.length),
 						usage: (args.usage !== undefined) ? args.usage : (BufferUsage.VERTEX | BufferUsage.COPY_DST),
 						mappedAtCreation: (args.mappedAtCreation !== undefined) ? args.mappedAtCreation : false
@@ -1142,10 +1143,10 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 								{
 									format: (args.format !== undefined) ? args.format : VertexFormat.FLOAT_32x3,
 									offset: (args.offset !== undefined) ? args.offset : (0) * normalsArrayBuffer.BYTES_PER_ELEMENT,
-									shaderLocation: (args.shaderLocation !== undefined) ? args.shaderLocation : 1,
+									shaderLocation: (args.shaderLocation !== undefined) ? args.shaderLocation : 1
 								}
 							)
-						],						
+						]
 					}
 				)
 			}
@@ -1164,7 +1165,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 					source: {
 						arrayBuffer: normalsArrayBuffer,
 						layout: {
-							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0),
+							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
 						}
 					},
 					destination: {
@@ -1214,10 +1215,10 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 								{
 									format: (args.format !== undefined) ? args.format : VertexFormat.FLOAT_32x2,
 									offset: (args.offset !== undefined) ? args.offset : (0) * uvsArrayBuffer.BYTES_PER_ELEMENT,
-									shaderLocation: (args.shaderLocation !== undefined) ? args.shaderLocation : 2,
+									shaderLocation: (args.shaderLocation !== undefined) ? args.shaderLocation : 2
 								}
 							)
-						],
+						]
 					}
 				)
 			}
@@ -1235,7 +1236,7 @@ export class MeshGeometry extends Geometry { //mesh custom geometry
 					source: {
 						arrayBuffer: uvsArrayBuffer,
 						layout: {
-							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0),
+							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
 						}
 					},
 					destination: {
