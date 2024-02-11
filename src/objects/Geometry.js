@@ -2,6 +2,14 @@ import { ObjectBase } from "../core/ObjectBase.js";
 import { Vector3 } from "../math/Vector3.js";
 import { BoundingSphere } from "../math/BoundingSphere.js";
 import { BoundingBox } from "../math/BoundingBox.js";
+import { AttributeLocation } from "../core/data layouts/AttributeLocation.js";
+import { BufferDescriptor } from "../core/RC/buffers/BufferDescriptor.js";
+import { BufferUsage } from "../core/RC/buffers/BufferUsage.js";
+import { VertexBufferLayout } from "../core/RC/pipeline/vertex state/VertexBufferLayout.js";
+import { VertexStepMode } from "../core/RC/pipeline/vertex state/VertexStepMode.js";
+import { VertexAttribute } from "../core/RC/pipeline/vertex state/VertexAttribute.js";
+import { VertexFormat } from "../core/RC/pipeline/vertex state/VertexFormat.js";
+import { BufferSetInstruction } from "../core/data layouts/BufferSetInstruction.js";
 
 
 export class Geometry extends ObjectBase {
@@ -91,6 +99,78 @@ export class Geometry extends ObjectBase {
 		}
 	}
 
+	// (custom) attribute location
+	static createArraybuffer(args = {}) {
+		throw new Error("Not implemented!");
+	}
+	static createAttributeLocation(arrayBuffer, args = {}) {
+		return new AttributeLocation(
+			{
+				number: (args.number !== undefined) ? args.number : 0,
+				itemSize: (args.itemSize !== undefined) ? args.itemSize : (4),
+				arrayBuffer: arrayBuffer,
+
+				bufferDescriptor: (args.bufferDescriptor !== undefined) ? args.bufferDescriptor : new BufferDescriptor(
+					{
+						label: (args.label !== undefined) ? args.label : "custom attribute location",
+						size: (args.size !== undefined) ? args.size : (arrayBuffer.length),
+						usage: (args.usage !== undefined) ? args.usage : (BufferUsage.VERTEX | BufferUsage.COPY_DST),
+						mappedAtCreation: (args.mappedAtCreation !== undefined) ? args.mappedAtCreation : false
+					}
+				),
+				vertexBufferLayoutDescriptor: (args.vertexBufferLayoutDescriptor !== undefined) ? args.vertexBufferLayoutDescriptor : new VertexBufferLayout(
+					{
+						arrayStride: (args.arrayStride !== undefined) ? args.arrayStride : (4) * arrayBuffer.BYTES_PER_ELEMENT,
+						stepMode: (args.stepMode !== undefined) ? args.stepMode : VertexStepMode.VERTEX,
+						attributes: (args.attributes !== undefined) ? args.attributes : [
+							new VertexAttribute(
+								{
+									format: (args.format !== undefined) ? args.format : VertexFormat.FLOAT_32x4,
+									offset: (args.offset !== undefined) ? args.offset : (0) * arrayBuffer.BYTES_PER_ELEMENT,
+									shaderLocation: (args.shaderLocation !== undefined) ? args.shaderLocation : 0
+								}
+							)
+						]
+					}
+				)
+			}
+		);
+	}
+	static setValueAttributeLocation(attributeLocation, arrayBuffer, args = {}) {
+		attributeLocation.setValue(
+			(args.label !== undefined) ? args.label : "custom set value",
+			new BufferSetInstruction(
+				{
+					label: (args.label !== undefined) ? args.label : "custom set value",
+
+					number: (args.number !== undefined) ? args.number : 0,
+
+					source: {
+						arrayBuffer: arrayBuffer,
+						layout: {
+							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
+						}
+					},
+					destination: {
+						buffer: null,
+						layout: {
+							offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
+						}
+					},
+					size: (args.size !== undefined) ? args.size : arrayBuffer.length
+				}
+			)
+		);
+	}
+	static assembleAttributeLocation(args = {}) {
+		const arrayBuffer = Geometry.createArrayBuffer(args);
+		const attributeLocation = Geometry.createAttributeLocation(arrayBuffer, args);
+		Geometry.setValueVertices(attributeLocation, arrayBuffer, args);
+
+
+		return attributeLocation;
+	}
+	
 	static createIndicesArrayBuffer(args = {}) {
 		throw new Error("Not implemented!");
 	}

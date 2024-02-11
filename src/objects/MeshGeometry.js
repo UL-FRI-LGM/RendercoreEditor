@@ -977,8 +977,43 @@ export class MeshGeometry extends GroupGeometry { //mesh custom geometry
 		return new Uint32Array(args.baseGeometry.indices);
 	}
 	static createIndicesAttributeLocation(indicesArrayBuffer, args = {}) {
-		return new AttributeLocation(
+		// return new AttributeLocation(
+		// 	{
+		// 		number: (args.number !== undefined) ? args.number : null,
+		// 		itemSize: (args.itemSize !== undefined) ? args.itemSize : (1),
+		// 		arrayBuffer: indicesArrayBuffer,
+
+		// 		bufferDescriptor: (args.bufferDescriptor !== undefined) ? args.bufferDescriptor : new BufferDescriptor(
+		// 			{
+		// 				label: (args.label !== undefined) ? args.label : "mesh indices buffer",
+		// 				size: (args.size !== undefined) ? args.size : (indicesArrayBuffer.length),
+		// 				usage: (args.usage !== undefined) ? args.usage : (BufferUsage.INDEX | BufferUsage.COPY_DST),
+		// 				mappedAtCreation: (args.mappedAtCreation !== undefined) ? args.mappedAtCreation : false
+		// 			}
+		// 		),
+		// 		// vertexBufferLayoutDescriptor: (args.vertexBufferLayoutDescriptor !== undefined) ? args.vertexBufferLayoutDescriptor : new VertexBufferLayout(
+		// 		// 	{
+		// 		// 		arrayStride: (args.arrayStride !== undefined) ? args.arrayStride : (1) * indicesArrayBuffer.BYTES_PER_ELEMENT,
+		// 		// 		stepMode: (args.stepMode !== undefined) ? args.stepMode : VertexStepMode.VERTEX,
+		// 		// 		attributes: (args.attributes !== undefined) ? args.attributes : [
+		// 		// 			new VertexAttribute(
+		// 		// 				{
+		// 		// 					format: (args.format !== undefined) ? args.format : VertexFormat.UINT_32,
+		// 		// 					offset: (args.offset !== undefined) ? args.offset : (0) * indicesArrayBuffer.BYTES_PER_ELEMENT,
+		// 		// 					shaderLocation: (args.shaderLocation !== undefined) ? args.shaderLocation : 0
+		// 		// 				}
+		// 		// 			)
+		// 		// 		]
+		// 		// 	}
+		// 		// )
+		// 		vertexBufferLayoutDescriptor: null
+		// 	}
+		// );
+		return super.createAttributeLocation(
+			indicesArrayBuffer,
 			{
+				...args,
+
 				number: (args.number !== undefined) ? args.number : null,
 				itemSize: (args.itemSize !== undefined) ? args.itemSize : (1),
 				arrayBuffer: indicesArrayBuffer,
@@ -1011,29 +1046,52 @@ export class MeshGeometry extends GroupGeometry { //mesh custom geometry
 		);
 	}
 	static setValueIndices(indicesAttributeLocation, indicesArrayBuffer, args = {}) {
-		indicesAttributeLocation.setValue(
-			(args.label !== undefined) ? args.label : "mesh vertices",
-			(args.bufferSetInstruction !== undefined) ? args.bufferSetInstruction : new BufferSetInstruction(
-				{
-					label: (args.label !== undefined) ? args.label : "mesh indices",
+		// indicesAttributeLocation.setValue(
+		// 	(args.label !== undefined) ? args.label : "mesh vertices",
+		// 	(args.bufferSetInstruction !== undefined) ? args.bufferSetInstruction : new BufferSetInstruction(
+		// 		{
+		// 			label: (args.label !== undefined) ? args.label : "mesh indices",
 
-					number: (args.number !== undefined) ? args.number : null,
+		// 			number: (args.number !== undefined) ? args.number : null,
 
-					source: (args.source !== undefined) ? args.source : {
-						arrayBuffer: indicesArrayBuffer,
-						layout: {
-							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
-						}
-					},
-					destination: (args.destination !== undefined) ? args.destination : {
-						buffer: null,
-						layout: {
-							offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
-						}
-					},
-					size: (args.size !== undefined) ? args.size : (indicesArrayBuffer.length)
-				}
-			)
+		// 			source: (args.source !== undefined) ? args.source : {
+		// 				arrayBuffer: indicesArrayBuffer,
+		// 				layout: {
+		// 					offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
+		// 				}
+		// 			},
+		// 			destination: (args.destination !== undefined) ? args.destination : {
+		// 				buffer: null,
+		// 				layout: {
+		// 					offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
+		// 				}
+		// 			},
+		// 			size: (args.size !== undefined) ? args.size : (indicesArrayBuffer.length)
+		// 		}
+		// 	)
+		// );
+		super.setValueAttributeLocation(
+			indicesAttributeLocation,
+			indicesArrayBuffer,
+			{
+				label: (args.label !== undefined) ? args.label : "mesh indices",
+
+				number: (args.number !== undefined) ? args.number : null,
+
+				source: (args.source !== undefined) ? args.source : {
+					arrayBuffer: indicesArrayBuffer,
+					layout: {
+						offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
+					}
+				},
+				destination: (args.destination !== undefined) ? args.destination : {
+					buffer: null,
+					layout: {
+						offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
+					}
+				},
+				size: (args.size !== undefined) ? args.size : (indicesArrayBuffer.length)
+			}
 		);
 	}
 	static assembleIndices(args = {}) {
@@ -1049,8 +1107,42 @@ export class MeshGeometry extends GroupGeometry { //mesh custom geometry
 		return new Float32Array(args.baseGeometry.vertices);
 	}
 	static createVerticesAttributeLocation(verticesArrayBuffer, args = {}) {
-		return new AttributeLocation(
+		// return new AttributeLocation(
+		// 	{
+		// 		number: (args.number !== undefined) ? args.number : 0,
+		// 		itemSize: (args.itemSize !== undefined) ? args.itemSize : (3),
+		// 		arrayBuffer: verticesArrayBuffer,
+
+		// 		bufferDescriptor: (args.bufferDescriptor !== undefined) ? args.bufferDescriptor : new BufferDescriptor(
+		// 			{
+		// 				label: (args.label !== undefined) ? args.label : "mesh vertices buffer",
+		// 				size: (args.size !== undefined) ? args.size : (verticesArrayBuffer.length),
+		// 				usage: (args.usage !== undefined) ? args.usage : (BufferUsage.VERTEX | BufferUsage.COPY_DST),
+		// 				mappedAtCreation: (args.mappedAtCreation !== undefined) ? args.mappedAtCreation : false
+		// 			}
+		// 		),
+		// 		vertexBufferLayoutDescriptor: (args.vertexBufferLayoutDescriptor !== undefined) ? args.vertexBufferLayoutDescriptor : new VertexBufferLayout(
+		// 			{
+		// 				arrayStride: (args.arrayStride !== undefined) ? args.arrayStride : (3) * verticesArrayBuffer.BYTES_PER_ELEMENT,
+		// 				stepMode: (args.stepMode !== undefined) ? args.stepMode : VertexStepMode.VERTEX,
+		// 				attributes: (args.attributes !== undefined) ? args.attributes : [
+		// 					new VertexAttribute(
+		// 						{
+		// 							format: (args.format !== undefined) ? args.format : VertexFormat.FLOAT_32x3,
+		// 							offset: (args.offset !== undefined) ? args.offset : (0) * verticesArrayBuffer.BYTES_PER_ELEMENT,
+		// 							shaderLocation: (args.shaderLocation !== undefined) ? args.shaderLocation : 0
+		// 						}
+		// 					)
+		// 				]
+		// 			}
+		// 		)
+		// 	}
+		// );
+		return super.createAttributeLocation(
+			verticesArrayBuffer,
 			{
+				...args,
+
 				number: (args.number !== undefined) ? args.number : 0,
 				itemSize: (args.itemSize !== undefined) ? args.itemSize : (3),
 				arrayBuffer: verticesArrayBuffer,
@@ -1082,29 +1174,52 @@ export class MeshGeometry extends GroupGeometry { //mesh custom geometry
 		);
 	}
 	static setValueVertices(verticesAttributeLocation, verticesArrayBuffer, args = {}) {
-		verticesAttributeLocation.setValue(
-			(args.label !== undefined) ? args.label : "mesh vertices",
-			(args.bufferSetInstruction !== undefined) ? args.bufferSetInstruction : new BufferSetInstruction(
-				{
-					label: (args.label !== undefined) ? args.label : "mesh vertices",
+		// verticesAttributeLocation.setValue(
+		// 	(args.label !== undefined) ? args.label : "mesh vertices",
+		// 	(args.bufferSetInstruction !== undefined) ? args.bufferSetInstruction : new BufferSetInstruction(
+		// 		{
+		// 			label: (args.label !== undefined) ? args.label : "mesh vertices",
 
-					number: (args.number !== undefined) ? args.number : 0,
+		// 			number: (args.number !== undefined) ? args.number : 0,
 
-					source: (args.source !== undefined) ? args.source : {
-						arrayBuffer: verticesArrayBuffer,
-						layout: {
-							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
-						}
-					},
-					destination: (args.destination !== undefined) ? args.destination : {
-						buffer: null,
-						layout: {
-							offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
-						}
-					},
-					size: (args.size !== undefined) ? args.size : (verticesArrayBuffer.length)
-				}
-			)
+		// 			source: (args.source !== undefined) ? args.source : {
+		// 				arrayBuffer: verticesArrayBuffer,
+		// 				layout: {
+		// 					offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
+		// 				}
+		// 			},
+		// 			destination: (args.destination !== undefined) ? args.destination : {
+		// 				buffer: null,
+		// 				layout: {
+		// 					offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
+		// 				}
+		// 			},
+		// 			size: (args.size !== undefined) ? args.size : (verticesArrayBuffer.length)
+		// 		}
+		// 	)
+		// );
+		super.setValueAttributeLocation(
+			verticesAttributeLocation,
+			verticesArrayBuffer,
+			{
+				label: (args.label !== undefined) ? args.label : "mesh vertices",
+
+				number: (args.number !== undefined) ? args.number : 0,
+
+				source: (args.source !== undefined) ? args.source : {
+					arrayBuffer: verticesArrayBuffer,
+					layout: {
+						offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
+					}
+				},
+				destination: (args.destination !== undefined) ? args.destination : {
+					buffer: null,
+					layout: {
+						offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
+					}
+				},
+				size: (args.size !== undefined) ? args.size : (verticesArrayBuffer.length)
+			}
 		);
 	}
 	static assembleVertices(args = {}) {
@@ -1120,8 +1235,43 @@ export class MeshGeometry extends GroupGeometry { //mesh custom geometry
 		return new Float32Array(args.baseGeometry.normals);
 	}
 	static createNormalsAttributeLocation(normalsArrayBuffer, args = {}) {
-		return new AttributeLocation(
+		// return new AttributeLocation(
+		// 	{
+		// 		number: (args.number !== undefined) ? args.number : 1,
+		// 		itemSize: (args.itemSize !== undefined) ? args.itemSize : (3),
+		// 		arrayBuffer: normalsArrayBuffer,
+
+		// 		bufferDescriptor: (args.bufferDescriptor !== undefined) ? args.bufferDescriptor : new BufferDescriptor(
+		// 			{
+		// 				label:  (args.label !== undefined) ? args.label : "mesh normals buffer",
+		// 				size: (args.size !== undefined) ? args.size : (normalsArrayBuffer.length),
+		// 				usage: (args.usage !== undefined) ? args.usage : (BufferUsage.VERTEX | BufferUsage.COPY_DST),
+		// 				mappedAtCreation: (args.mappedAtCreation !== undefined) ? args.mappedAtCreation : false
+		// 			}
+		// 		),
+		// 		vertexBufferLayoutDescriptor: (args.vertexBufferLayoutDescriptor !== undefined) ? args.vertexBufferLayoutDescriptor : new VertexBufferLayout(
+		// 			{
+		// 				arrayStride: (args.arrayStride !== undefined) ? args.arrayStride : (3) * normalsArrayBuffer.BYTES_PER_ELEMENT,
+		// 				stepMode: (args.stepMode !== undefined) ? args.stepMode : VertexStepMode.VERTEX,
+		// 				attributes: (args.attributes !== undefined) ? args.attributes : [
+		// 					new VertexAttribute(
+		// 						{
+		// 							format: (args.format !== undefined) ? args.format : VertexFormat.FLOAT_32x3,
+		// 							offset: (args.offset !== undefined) ? args.offset : (0) * normalsArrayBuffer.BYTES_PER_ELEMENT,
+		// 							shaderLocation: (args.shaderLocation !== undefined) ? args.shaderLocation : 1
+		// 						}
+		// 					)
+		// 				]
+		// 			}
+		// 		),
+		// 	}
+		// );
+		// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
+		return super.createAttributeLocation(
+			normalsArrayBuffer,
 			{
+				...args,
+
 				number: (args.number !== undefined) ? args.number : 1,
 				itemSize: (args.itemSize !== undefined) ? args.itemSize : (3),
 				arrayBuffer: normalsArrayBuffer,
@@ -1151,32 +1301,54 @@ export class MeshGeometry extends GroupGeometry { //mesh custom geometry
 				)
 			}
 		);
-		// normalsAttributeLocation.normalize(); // no need to normalize for this configuration
 	}
 	static setValueNormals(normalsAttributeLocation, normalsArrayBuffer, args = {}) {
-		normalsAttributeLocation.setValue(
-			(args.label !== undefined) ? args.label : "mesh normals",
-			(args.bufferSetInstruction !== undefined) ? args.bufferSetInstruction : new BufferSetInstruction(
-				{
-					label: (args.label !== undefined) ? args.label : "mesh normals",
+		// normalsAttributeLocation.setValue(
+		// 	(args.label !== undefined) ? args.label : "mesh normals",
+		// 	(args.bufferSetInstruction !== undefined) ? args.bufferSetInstruction : new BufferSetInstruction(
+		// 		{
+		// 			label: (args.label !== undefined) ? args.label : "mesh normals",
 
-					number: (args.number !== undefined) ? args.number : 1,
+		// 			number: (args.number !== undefined) ? args.number : 1,
 
-					source: (args.source !== undefined) ? args.source : {
-						arrayBuffer: normalsArrayBuffer,
-						layout: {
-							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
-						}
-					},
-					destination: (args.destination !== undefined) ? args.destination : {
-						buffer: null,
-						layout: {
-							offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
-						}
-					},
-					size: (args.size !== undefined) ? args.size : (normalsArrayBuffer.length)
-				}
-			)
+		// 			source: (args.source !== undefined) ? args.source : {
+		// 				arrayBuffer: normalsArrayBuffer,
+		// 				layout: {
+		// 					offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
+		// 				}
+		// 			},
+		// 			destination: (args.destination !== undefined) ? args.destination : {
+		// 				buffer: null,
+		// 				layout: {
+		// 					offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
+		// 				}
+		// 			},
+		// 			size: (args.size !== undefined) ? args.size : (normalsArrayBuffer.length)
+		// 		}
+		// 	)
+		// );
+		super.setValueAttributeLocation(
+			normalsAttributeLocation,
+			normalsArrayBuffer,
+			{
+				label: (args.label !== undefined) ? args.label : "mesh normals",
+
+				number: (args.number !== undefined) ? args.number : 1,
+
+				source: (args.source !== undefined) ? args.source : {
+					arrayBuffer: normalsArrayBuffer,
+					layout: {
+						offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
+					}
+				},
+				destination: (args.destination !== undefined) ? args.destination : {
+					buffer: null,
+					layout: {
+						offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
+					}
+				},
+				size: (args.size !== undefined) ? args.size : (normalsArrayBuffer.length)
+			}
 		);
 	}
 	static assembleNormals(args = {}) {
@@ -1192,8 +1364,42 @@ export class MeshGeometry extends GroupGeometry { //mesh custom geometry
 		return new Float32Array(args.baseGeometry.uvs);
 	}
 	static createUVsAttributeLocation(uvsArrayBuffer, args = {}) {
-		return new AttributeLocation(
+		// return new AttributeLocation(
+		// 	{
+		// 		number: (args.number !== undefined) ? args.number : 2,
+		// 		itemSize: (args.itemSize !== undefined) ? args.itemSize : (2),
+		// 		arrayBuffer: uvsArrayBuffer,
+
+		// 		bufferDescriptor: (args.bufferDescriptor !== undefined) ? args.bufferDescriptor : new BufferDescriptor(
+		// 			{
+		// 				label: (args.label !== undefined) ? args.label : "mesh uvs buffer",
+		// 				size: (args.size !== undefined) ? args.size : (uvsArrayBuffer.length),
+		// 				usage: (args.usage !== undefined) ? args.usage : (BufferUsage.VERTEX | BufferUsage.COPY_DST),
+		// 				mappedAtCreation: (args.mappedAtCreation !== undefined) ? args.mappedAtCreation : false
+		// 			}
+		// 		),
+		// 		vertexBufferLayoutDescriptor: (args.vertexBufferLayoutDescriptor !== undefined) ? args.vertexBufferLayoutDescriptor : new VertexBufferLayout(
+		// 			{
+		// 				arrayStride: (args.arrayStride !== undefined) ? args.arrayStride : (2) * uvsArrayBuffer.BYTES_PER_ELEMENT,
+		// 				stepMode: (args.stepMode !== undefined) ? args.stepMode : VertexStepMode.VERTEX,
+		// 				attributes: (args.attributes !== undefined) ? args.attributes : [
+		// 					new VertexAttribute(
+		// 						{
+		// 							format: (args.format !== undefined) ? args.format : VertexFormat.FLOAT_32x2,
+		// 							offset: (args.offset !== undefined) ? args.offset : (0) * uvsArrayBuffer.BYTES_PER_ELEMENT,
+		// 							shaderLocation: (args.shaderLocation !== undefined) ? args.shaderLocation : 2
+		// 						}
+		// 					)
+		// 				]
+		// 			}
+		// 		)
+		// 	}
+		// );
+		return super.createAttributeLocation(
+			uvsArrayBuffer,
 			{
+				...args,
+
 				number: (args.number !== undefined) ? args.number : 2,
 				itemSize: (args.itemSize !== undefined) ? args.itemSize : (2),
 				arrayBuffer: uvsArrayBuffer,
@@ -1225,29 +1431,52 @@ export class MeshGeometry extends GroupGeometry { //mesh custom geometry
 		);
 	}
 	static setValueUVs(uvsAttributeLocation, uvsArrayBuffer, args = {}) {
-		uvsAttributeLocation.setValue(
-			(args.label !== undefined) ? args.label : "mesh uvs",
-			(args.bufferSetInstruction !== undefined) ? args.bufferSetInstruction : new BufferSetInstruction(
-				{
-					label: (args.label !== undefined) ? args.label : "mesh uvs",
+		// uvsAttributeLocation.setValue(
+		// 	(args.label !== undefined) ? args.label : "mesh uvs",
+		// 	(args.bufferSetInstruction !== undefined) ? args.bufferSetInstruction : new BufferSetInstruction(
+		// 		{
+		// 			label: (args.label !== undefined) ? args.label : "mesh uvs",
 
-					number: (args.number !== undefined) ? args.number : 2,
+		// 			number: (args.number !== undefined) ? args.number : 2,
 
-					source: (args.source !== undefined) ? args.source : {
-						arrayBuffer: uvsArrayBuffer,
-						layout: {
-							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
-						}
-					},
-					destination: (args.destination !== undefined) ? args.destination : {
-						buffer: null,
-						layout: {
-							offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
-						}
-					},
-					size: (args.size !== undefined) ? args.size : (uvsArrayBuffer.length)
-				}
-			)
+		// 			source: (args.source !== undefined) ? args.source : {
+		// 				arrayBuffer: uvsArrayBuffer,
+		// 				layout: {
+		// 					offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
+		// 				}
+		// 			},
+		// 			destination: (args.destination !== undefined) ? args.destination : {
+		// 				buffer: null,
+		// 				layout: {
+		// 					offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
+		// 				}
+		// 			},
+		// 			size: (args.size !== undefined) ? args.size : (uvsArrayBuffer.length)
+		// 		}
+		// 	)
+		// );
+		super.setValueAttributeLocation(
+			uvsAttributeLocation,
+			uvsArrayBuffer,
+			{
+				label: (args.label !== undefined) ? args.label : "mesh uvs",
+
+				number: (args.number !== undefined) ? args.number : 2,
+
+				source: (args.source !== undefined) ? args.source : {
+					arrayBuffer: uvsArrayBuffer,
+					layout: {
+						offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
+					}
+				},
+				destination: (args.destination !== undefined) ? args.destination : {
+					buffer: null,
+					layout: {
+						offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
+					}
+				},
+				size: (args.size !== undefined) ? args.size : (uvsArrayBuffer.length)
+			}
 		);
 	}
 	static assembleUVs(args = {}) {
