@@ -1013,19 +1013,19 @@ export class MeshGeometry extends GroupGeometry { //mesh custom geometry
 	static setValueIndices(indicesAttributeLocation, indicesArrayBuffer, args = {}) {
 		indicesAttributeLocation.setValue(
 			(args.label !== undefined) ? args.label : "mesh vertices",
-			new BufferSetInstruction(
+			(args.bufferSetInstruction !== undefined) ? args.bufferSetInstruction : new BufferSetInstruction(
 				{
 					label: (args.label !== undefined) ? args.label : "mesh indices",
 
 					number: (args.number !== undefined) ? args.number : null,
 
-					source: {
+					source: (args.source !== undefined) ? args.source : {
 						arrayBuffer: indicesArrayBuffer,
 						layout: {
 							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
 						}
 					},
-					destination: {
+					destination: (args.destination !== undefined) ? args.destination : {
 						buffer: null,
 						layout: {
 							offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
@@ -1084,19 +1084,19 @@ export class MeshGeometry extends GroupGeometry { //mesh custom geometry
 	static setValueVertices(verticesAttributeLocation, verticesArrayBuffer, args = {}) {
 		verticesAttributeLocation.setValue(
 			(args.label !== undefined) ? args.label : "mesh vertices",
-			new BufferSetInstruction(
+			(args.bufferSetInstruction !== undefined) ? args.bufferSetInstruction : new BufferSetInstruction(
 				{
 					label: (args.label !== undefined) ? args.label : "mesh vertices",
 
 					number: (args.number !== undefined) ? args.number : 0,
 
-					source: {
+					source: (args.source !== undefined) ? args.source : {
 						arrayBuffer: verticesArrayBuffer,
 						layout: {
 							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
 						}
 					},
-					destination: {
+					destination: (args.destination !== undefined) ? args.destination : {
 						buffer: null,
 						layout: {
 							offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
@@ -1156,19 +1156,19 @@ export class MeshGeometry extends GroupGeometry { //mesh custom geometry
 	static setValueNormals(normalsAttributeLocation, normalsArrayBuffer, args = {}) {
 		normalsAttributeLocation.setValue(
 			(args.label !== undefined) ? args.label : "mesh normals",
-			new BufferSetInstruction(
+			(args.bufferSetInstruction !== undefined) ? args.bufferSetInstruction : new BufferSetInstruction(
 				{
 					label: (args.label !== undefined) ? args.label : "mesh normals",
 
 					number: (args.number !== undefined) ? args.number : 1,
 
-					source: {
+					source: (args.source !== undefined) ? args.source : {
 						arrayBuffer: normalsArrayBuffer,
 						layout: {
 							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
 						}
 					},
-					destination: {
+					destination: (args.destination !== undefined) ? args.destination : {
 						buffer: null,
 						layout: {
 							offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
@@ -1227,19 +1227,19 @@ export class MeshGeometry extends GroupGeometry { //mesh custom geometry
 	static setValueUVs(uvsAttributeLocation, uvsArrayBuffer, args = {}) {
 		uvsAttributeLocation.setValue(
 			(args.label !== undefined) ? args.label : "mesh uvs",
-			new BufferSetInstruction(
+			(args.bufferSetInstruction !== undefined) ? args.bufferSetInstruction : new BufferSetInstruction(
 				{
 					label: (args.label !== undefined) ? args.label : "mesh uvs",
 
 					number: (args.number !== undefined) ? args.number : 2,
 
-					source: {
+					source: (args.source !== undefined) ? args.source : {
 						arrayBuffer: uvsArrayBuffer,
 						layout: {
 							offset: (args.sourceOffset !== undefined) ? args.sourceOffset : (0)
 						}
 					},
-					destination: {
+					destination: (args.destination !== undefined) ? args.destination : {
 						buffer: null,
 						layout: {
 							offset: (args.destinationOffset !== undefined) ? args.destinationOffset : (0)
