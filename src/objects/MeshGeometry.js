@@ -91,8 +91,8 @@ export class MeshGeometry extends GroupGeometry { //mesh custom geometry
 		this.tangents = (args.tangents !== undefined) ? args.tangents : null;
 		this.bitangents = (args.bitangents !== undefined) ? args.bitangents : null;
 		this.colors = (args.colors !== undefined) ? args.colors : null;
-		this.uvs = (args.uvs !== undefined) ? args.uvs : null;
-		this.MMats = (args.MMats !== undefined) ? args.MMats : MeshGeometry.assembleUVs(args);
+		this.uvs = (args.uvs !== undefined) ? args.uvs : MeshGeometry.assembleUVs(args);
+		this.MMats = (args.MMats !== undefined) ? args.MMats : null;
 		this.translations = (args.translations !== undefined) ? args.translations : null;
 
 		this.wireframeIndices = (args.wireframeIndices !== undefined) ? args.wireframeIndices : null;
