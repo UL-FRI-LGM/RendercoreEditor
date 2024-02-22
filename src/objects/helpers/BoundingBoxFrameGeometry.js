@@ -13,6 +13,7 @@ export class BoundingBoxFrameGeometry extends BoxFrameGeometry {
 		INDEXED: false,
 		BASE_GEOMETRY: {
 			// positions: [new Vector3(0, 0, 0)],
+			// dimensions: [{ min: new Vector3(-1, -1, -1), max: new Vector3(+1, +1, +1)}],
 			mesh: new Cube(),
 		},
 	};
@@ -53,8 +54,8 @@ export class BoundingBoxFrameGeometry extends BoxFrameGeometry {
 					positions: [new Vector3(0, 0, 0)],
 					dimensions: [
 						{
-							min: args.baseGeometry.mesh.bounding.box.objectspace.min,
-							max: args.baseGeometry.mesh.bounding.box.objectspace.max
+							min: args.baseGeometry.mesh.bounding.box.global.objectspace.min,
+							max: args.baseGeometry.mesh.bounding.box.global.objectspace.max
 						}
 					],
 				} : BoxFrameGeometry.DEFAULT.BASE_GEOMETRY,
@@ -100,8 +101,8 @@ export class BoundingBoxFrameGeometry extends BoxFrameGeometry {
 	// 				positions: [new Vector3(0, 0, 0)],
 	// 				dimensions: [
 	// 					{
-	// 						min: args.baseGeometry.mesh.bounding.box.objectspace.min,
-	// 						max: args.baseGeometry.mesh.bounding.box.objectspace.max
+	// 						min: args.baseGeometry.mesh.bounding.box.global.objectspace.min,
+	// 						max: args.baseGeometry.mesh.bounding.box.global.objectspace.max
 	// 					}
 	// 				],
 	// 			} : BoxFrameGeometry.DEFAULT.BASE_GEOMETRY,
@@ -119,8 +120,8 @@ export class BoundingBoxFrameGeometry extends BoxFrameGeometry {
 					positions: [new Vector3(0, 0, 0)],
 					dimensions: [
 						{
-							min: args.baseGeometry.mesh.bounding.box.objectspace.min,
-							max: args.baseGeometry.mesh.bounding.box.objectspace.max
+							min: args.baseGeometry.mesh.bounding.box.global.objectspace.min,
+							max: args.baseGeometry.mesh.bounding.box.global.objectspace.max
 						}
 					],
 				} : BoxFrameGeometry.DEFAULT.BASE_GEOMETRY,
@@ -166,8 +167,8 @@ export class BoundingBoxFrameGeometry extends BoxFrameGeometry {
 	// 				positions: [new Vector3(0, 0, 0)],
 	// 				dimensions: [
 	// 					{
-	// 						min: args.baseGeometry.mesh.bounding.box.objectspace.min,
-	// 						max: args.baseGeometry.mesh.bounding.box.objectspace.max
+	// 						min: args.baseGeometry.mesh.bounding.box.global.objectspace.min,
+	// 						max: args.baseGeometry.mesh.bounding.box.global.objectspace.max
 	// 					}
 	// 				],
 	// 			} : BoxFrameGeometry.DEFAULT.BASE_GEOMETRY,
@@ -185,8 +186,8 @@ export class BoundingBoxFrameGeometry extends BoxFrameGeometry {
 					positions: [new Vector3(0, 0, 0)],
 					dimensions: [
 						{
-							min: args.baseGeometry.mesh.bounding.box.objectspace.min,
-							max: args.baseGeometry.mesh.bounding.box.objectspace.max
+							min: args.baseGeometry.mesh.bounding.box.global.objectspace.min,
+							max: args.baseGeometry.mesh.bounding.box.global.objectspace.max
 						}
 					],
 				} : BoxFrameGeometry.DEFAULT.BASE_GEOMETRY,
@@ -232,8 +233,8 @@ export class BoundingBoxFrameGeometry extends BoxFrameGeometry {
 	// 				positions: [new Vector3(0, 0, 0)],
 	// 				dimensions: [
 	// 					{
-	// 						min: args.baseGeometry.mesh.bounding.box.objectspace.min,
-	// 						max: args.baseGeometry.mesh.bounding.box.objectspace.max
+	// 						min: args.baseGeometry.mesh.bounding.box.global.objectspace.min,
+	// 						max: args.baseGeometry.mesh.bounding.box.global.objectspace.max
 	// 					}
 	// 				],
 	// 			} : BoxFrameGeometry.DEFAULT.BASE_GEOMETRY,
@@ -251,8 +252,8 @@ export class BoundingBoxFrameGeometry extends BoxFrameGeometry {
 					positions: [new Vector3(0, 0, 0)],
 					dimensions: [
 						{
-							min: args.baseGeometry.mesh.bounding.box.objectspace.min,
-							max: args.baseGeometry.mesh.bounding.box.objectspace.max
+							min: args.baseGeometry.mesh.bounding.box.global.objectspace.min,
+							max: args.baseGeometry.mesh.bounding.box.global.objectspace.max
 						}
 					],
 				} : BoxFrameGeometry.DEFAULT.BASE_GEOMETRY,
@@ -298,8 +299,8 @@ export class BoundingBoxFrameGeometry extends BoxFrameGeometry {
 	// 				positions: [new Vector3(0, 0, 0)],
 	// 				dimensions: [
 	// 					{
-	// 						min: args.baseGeometry.mesh.bounding.box.objectspace.min,
-	// 						max: args.baseGeometry.mesh.bounding.box.objectspace.max
+	// 						min: args.baseGeometry.mesh.bounding.box.global.objectspace.min,
+	// 						max: args.baseGeometry.mesh.bounding.box.global.objectspace.max
 	// 					}
 	// 				],
 	// 			} : BoxFrameGeometry.DEFAULT.BASE_GEOMETRY,
