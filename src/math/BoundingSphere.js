@@ -92,4 +92,11 @@ export class BoundingSphere {
 
 		return this;
 	}
+
+	intersectsBoundingSphere(boundingSphere) {
+		const radiusesSum = this.radius + boundingSphere.radius;
+		const radiusesSumSquared = radiusesSum * radiusesSum;
+
+		return this.center.distanceToSquared(boundingSphere.center) < (radiusesSumSquared);
+	}
 };

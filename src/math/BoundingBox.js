@@ -110,4 +110,12 @@ export class BoundingBox {
 
 		return this;
 	}
+
+	intersectsBoundingBox(boundingBox) {
+		return (
+			this.min.x < boundingBox.max.x && this.max.x > boundingBox.min.x &&
+			this.min.y < boundingBox.max.y && this.max.y > boundingBox.min.y &&
+			this.min.z < boundingBox.max.z && this.max.z > boundingBox.min.z
+		);
+	}
 };
