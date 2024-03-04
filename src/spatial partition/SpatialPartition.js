@@ -99,8 +99,22 @@ export class SpatialPartition extends BoxFrame {
 		});
 	}
 	removeClient(client) {
+		// if (client.index + 1 === this.clients.length) {
+		// 	return this.clients.pop();
+		// } else {
+		// 	const clientLast = this.clients.pop();
+		// 	clientLast.index = client.index;
+		// 	this.clients[client.index] = clientLast;
+
+		// 	return client;
+		// }
 		const clientLast = this.clients.pop();
-		this.clients[client.index] = clientLast;
+
+		if (client.index !== this.clients.length) {
+			clientLast.index = client.index;
+			this.clients[client.index] = clientLast;
+		}
+		client.index = undefined;
 
 
 		return client;
