@@ -114,7 +114,7 @@ export class SpatialPartition extends BoxFrame {
 			clientLast.index = client.index;
 			this.clients[client.index] = clientLast;
 		}
-		client.index = undefined;
+		client.index = null;
 
 
 		return client;
