@@ -74,6 +74,10 @@ export class CellPartition extends SpatialPartition {
 		);
 	}
 
+	objectToClient(object) {
+		return super.objectToClient(object);
+	}
+
 	addClient(client) {
 		return super.addClient(client);
 	}

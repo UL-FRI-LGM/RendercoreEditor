@@ -77,6 +77,13 @@ export class SpatialPartition extends BoxFrame {
 		);
 	}
 
+	objectToClient(object) {
+		return {
+			object: object,
+			index: null,
+		};
+	}
+
 	addClient(client) {
 		const length = this.clients.push(client);
 		client.index = length - 1;
