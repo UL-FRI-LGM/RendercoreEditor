@@ -61,7 +61,7 @@ export class SpatialPartition extends BoxFrame {
 	get clients() { return this.#clients; }
 	set clients(clients) {
 		this.#clients = clients;
-	
+
 		this.addClients(clients);
 	}
 
@@ -88,7 +88,7 @@ export class SpatialPartition extends BoxFrame {
 		const length = this.clients.push(client);
 		client.index = length - 1;
 		
-	
+
 		return length;
 	}
 	addClients(clients) {

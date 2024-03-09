@@ -111,10 +111,10 @@ export class CellPartition extends SpatialPartition {
 				const client = this.clients[i];
 				const object = client.object;
 				const boundingSphereObject = object.bounding.sphere.local.worldspace;
-	
+
 				// const radiusesSum = radius + boundingSphereObject.radius;
 				// const radiusesSumSquared = radiusesSum * radiusesSum;
-	
+
 				// if (position.distanceToSquared(boundingSphereObject.center) < (radiusesSumSquared)) {
 				// 	clients.push(client);
 				// }
@@ -123,8 +123,8 @@ export class CellPartition extends SpatialPartition {
 					clients.push(client);
 				}
 			}
-	
-	
+
+
 			return clients;
 		};
 	})();
