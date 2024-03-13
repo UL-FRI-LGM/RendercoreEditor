@@ -1,6 +1,5 @@
 import { SpatialPartitionGeometry } from "./SpatialPartitionGeometry.js";
 import { Vector3 } from "../math/Vector3.js";
-import { Vector3F32 } from "../math/vector/Vector3F32.js";
 
 
 export class GridPartitionGeometry extends SpatialPartitionGeometry {
@@ -10,12 +9,16 @@ export class GridPartitionGeometry extends SpatialPartitionGeometry {
 		TYPE: "GridPartitionGeometry",
 		NAME: "",
 
+		BOUNDING_SPHERE: null,
+		BOUNDING_BOX: null,
+
 		INDEXED: false,
 		BASE_GEOMETRY: {
 			// positions: [new Vector3(0, 0, 0)],
-			// dimensions: [{ min: new Vector3(-1, -1, -1), max: new Vector3(+1, +1, +1)}],
-			dimension: { min: new Vector3(-10, -10, -10), max: new Vector3(+10, +10, +10) },
-			resolution: new Vector3(20, 20, 20),
+			// dimensions: [{ min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) }],
+			position: new Vector3(0, 0, 0),
+			dimension: { min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) },
+			resolution: new Vector3(8, 8, 8),
 		},
 	};
 
@@ -28,6 +31,9 @@ export class GridPartitionGeometry extends SpatialPartitionGeometry {
 				type: (args.type !== undefined) ? args.type : GridPartitionGeometry.DEFAULT.TYPE,
 				name: (args.name !== undefined) ? args.name : GridPartitionGeometry.DEFAULT.NAME,
 
+				boundingSphere: (args.boundingSphere !== undefined) ? args.boundingSphere : GridPartitionGeometry.DEFAULT.BOUNDING_SPHERE,
+				boundingBox: (args.boundingBox !== undefined) ? args.boundingBox : GridPartitionGeometry.DEFAULT.BOUNDING_BOX,
+			
 				indexed: (args.indexed !== undefined) ? args.indexed : GridPartitionGeometry.DEFAULT.INDEXED,
 				baseGeometry: (args.baseGeometry !== undefined) ? args.baseGeometry : GridPartitionGeometry.DEFAULT.BASE_GEOMETRY,
 
@@ -45,84 +51,8 @@ export class GridPartitionGeometry extends SpatialPartitionGeometry {
 	}
 
 
-	get baseGeometry() { return super.baseGeometry; }
-	set baseGeometry(baseGeometry) {
-		super.baseGeometry = baseGeometry;
-
-		this.baseGeometry.size = new Vector3().subVectors(this.baseGeometry.dimension.max, this.baseGeometry.dimension.min);
-		this.baseGeometry.resolutionOverSize = new Vector3().copy(this.baseGeometry.resolution).divide(this.baseGeometry.size);
-	
-		this.baseGeometry.resolutionMinusOne = new Vector3().subVectors(this.baseGeometry.resolution, Vector3F32.ONE);
-	}
-
-
-	static convertBaseGeometry(args = {}) {
-		const baseGeometry = args.baseGeometry;
-
-		const dimensionGrid = baseGeometry.dimension;
-		const resolutionGrid = baseGeometry.resolution;
-		const sizeGrid = new Vector3().subVectors(dimensionGrid.max, dimensionGrid.min);
-		
-		const dimensionCell = {
-			min: new Vector3(-sizeGrid.x/resolutionGrid.x/2.0, -sizeGrid.y/resolutionGrid.y/2.0, -sizeGrid.z/resolutionGrid.z/2.0),
-			max: new Vector3(+sizeGrid.x/resolutionGrid.x/2.0, +sizeGrid.y/resolutionGrid.y/2.0, +sizeGrid.z/resolutionGrid.z/2.0)
-		};
-		const sizeCell = new Vector3().subVectors(dimensionCell.max, dimensionCell.min);
-
-		const dimensionPosition = {
-			min: dimensionGrid.min.clone().sub(dimensionCell.min),
-			max: dimensionGrid.max.clone().sub(dimensionCell.max)
-		};
-
-
-		const positions = [...new Array(resolutionGrid.x * resolutionGrid.y * resolutionGrid.z)].map((v) => {
-			return new Vector3(0, 0, 0);
-		}).reduce((acc, v) => {
-			acc.positions.push(v.copy(acc.positionCurr));
-
-			acc.positionCurr.x = acc.positionCurr.x + sizeCell.x;
-			acc.positionCurr.y = (acc.positionCurr.x > dimensionPosition.max.x) ? acc.positionCurr.y + sizeCell.y : acc.positionCurr.y;
-			acc.positionCurr.z = (acc.positionCurr.y > dimensionPosition.max.y) ? acc.positionCurr.z + sizeCell.z : acc.positionCurr.z;
-
-			acc.positionCurr.x = (acc.positionCurr.x <= dimensionPosition.max.x) ? acc.positionCurr.x : dimensionPosition.min.x;
-			acc.positionCurr.y = (acc.positionCurr.y <= dimensionPosition.max.y) ? acc.positionCurr.y : dimensionPosition.min.y;
-			acc.positionCurr.z = (acc.positionCurr.z <= dimensionPosition.max.z) ? acc.positionCurr.z : dimensionPosition.min.z;
-
-
-			return acc;
-		}, { positions: [], positionCurr: dimensionPosition.min.clone() }).positions;
-
-		const dimensions = [...new Array(resolutionGrid.x * resolutionGrid.y * resolutionGrid.z)].map((v) => {
-			return {
-				min: dimensionCell.min.clone(),
-				max: dimensionCell.max.clone()
-			};
-		});
-
-
-		return {
-			positions: positions,
-			dimensions: dimensions
-		};
-	}
-
 	static createIndicesArrayBuffer(args = {}) {
-		return super.createIndicesArrayBuffer(
-			{
-				...args,
-
-				indexed: (args.indexed !== undefined) ? args.indexed : SpatialPartitionGeometry.DEFAULT.INDEXED,
-				baseGeometry: (args.baseGeometry !== undefined) ? (() => {
-					const spatialPartitionBaseGeometry = this.convertBaseGeometry(args);
-
-
-					return {
-						positions: spatialPartitionBaseGeometry.positions,
-						dimensions: spatialPartitionBaseGeometry.dimensions,
-					};
-				})() : SpatialPartitionGeometry.DEFAULT.BASE_GEOMETRY,
-			}
-		);
+		return super.createIndicesArrayBuffer(args);
 	}
 	static createIndicesAttributeLocation(indicesArrayBuffer, args = {}) {
 		return super.createIndicesAttributeLocation(
@@ -130,7 +60,7 @@ export class GridPartitionGeometry extends SpatialPartitionGeometry {
 			{
 				...args,
 
-				label: (args.label !== undefined) ? args.label : "grid partition indices buffer",
+				label: (args.label !== undefined) ? args.label : GridPartitionGeometry.DEFAULT.TYPE + ' ' + "indices buffer",
 			}
 		);
 	}
@@ -141,7 +71,7 @@ export class GridPartitionGeometry extends SpatialPartitionGeometry {
 			args = {
 				...args,
 
-				label: (args.label !== undefined) ? args.label : "grid partition indices",
+				label: (args.label !== undefined) ? args.label : GridPartitionGeometry.DEFAULT.TYPE + ' ' + "indices",
 			}
 		);
 	}
@@ -155,22 +85,7 @@ export class GridPartitionGeometry extends SpatialPartitionGeometry {
 	}
 
 	static createVerticesArrayBuffer(args = {}) {
-		return super.createVerticesArrayBuffer(
-			{
-				...args,
-
-				indexed: (args.indexed !== undefined) ? args.indexed : SpatialPartitionGeometry.DEFAULT.INDEXED,
-				baseGeometry: (args.baseGeometry !== undefined) ? (() => {
-					const spatialPartitionBaseGeometry = this.convertBaseGeometry(args);
-
-
-					return {
-						positions: spatialPartitionBaseGeometry.positions,
-						dimensions: spatialPartitionBaseGeometry.dimensions,
-					};
-				})() : SpatialPartitionGeometry.DEFAULT.BASE_GEOMETRY,
-			}
-		);
+		return super.createVerticesArrayBuffer(args);
 	}
 	static createVerticesAttributeLocation(verticesArrayBuffer, args = {}) {
 		return super.createVerticesAttributeLocation(
@@ -178,7 +93,7 @@ export class GridPartitionGeometry extends SpatialPartitionGeometry {
 			{
 				...args,
 
-				label: (args.label !== undefined) ? args.label : "grid partition vertices buffer",
+				label: (args.label !== undefined) ? args.label : GridPartitionGeometry.DEFAULT.TYPE + ' ' + "vertices buffer",
 			}
 		);
 	}
@@ -189,7 +104,7 @@ export class GridPartitionGeometry extends SpatialPartitionGeometry {
 			args = {
 				...args,
 
-				label: (args.label !== undefined) ? args.label : "grid partition vertices",
+				label: (args.label !== undefined) ? args.label : GridPartitionGeometry.DEFAULT.TYPE + ' ' + "vertices",
 			}
 		);
 	}
@@ -203,22 +118,7 @@ export class GridPartitionGeometry extends SpatialPartitionGeometry {
 	}
 
 	static createNormalsArrayBuffer(args = {}) {
-		return super.createNormalsArrayBuffer(
-			{
-				...args,
-
-				indexed: (args.indexed !== undefined) ? args.indexed : SpatialPartitionGeometry.DEFAULT.INDEXED,
-				baseGeometry: (args.baseGeometry !== undefined) ? (() => {
-					const spatialPartitionBaseGeometry = this.convertBaseGeometry(args);
-
-
-					return {
-						positions: spatialPartitionBaseGeometry.positions,
-						dimensions: spatialPartitionBaseGeometry.dimensions,
-					};
-				})() : SpatialPartitionGeometry.DEFAULT.BASE_GEOMETRY,
-			}
-		);
+		return super.createNormalsArrayBuffer(args);
 	}
 	static createNormalsAttributeLocation(normalsArrayBuffer, args = {}) {
 		return super.createNormalsAttributeLocation(
@@ -226,7 +126,7 @@ export class GridPartitionGeometry extends SpatialPartitionGeometry {
 			{
 				...args,
 
-				label: (args.label !== undefined) ? args.label : "grid partition normals buffer",
+				label: (args.label !== undefined) ? args.label : GridPartitionGeometry.DEFAULT.TYPE + ' ' + "normals buffer",
 			}
 		);
 	}
@@ -237,7 +137,7 @@ export class GridPartitionGeometry extends SpatialPartitionGeometry {
 			args = {
 				...args,
 
-				label: (args.label !== undefined) ? args.label : "grid partition normals",
+				label: (args.label !== undefined) ? args.label : GridPartitionGeometry.DEFAULT.TYPE + ' ' + "normals",
 			}
 		);
 	}
@@ -251,22 +151,7 @@ export class GridPartitionGeometry extends SpatialPartitionGeometry {
 	}
 
 	static createUVsArrayBuffer(args = {}) {
-		return super.createUVsArrayBuffer(
-			{
-				...args,
-
-				indexed: (args.indexed !== undefined) ? args.indexed : SpatialPartitionGeometry.DEFAULT.INDEXED,
-				baseGeometry: (args.baseGeometry !== undefined) ? (() => {
-					const spatialPartitionBaseGeometry = this.convertBaseGeometry(args);
-
-
-					return {
-						positions: spatialPartitionBaseGeometry.positions,
-						dimensions: spatialPartitionBaseGeometry.dimensions,
-					};
-				})() : SpatialPartitionGeometry.DEFAULT.BASE_GEOMETRY,
-			}
-		);
+		return super.createUVsArrayBuffer(args);
 	}
 	static createUVsAttributeLocation(uvsArrayBuffer, args = {}) {
 		return super.createUVsAttributeLocation(
@@ -274,7 +159,7 @@ export class GridPartitionGeometry extends SpatialPartitionGeometry {
 			{
 				...args,
 
-				label: (args.label !== undefined) ? args.label : "grid partition uvs buffer",
+				label: (args.label !== undefined) ? args.label : GridPartitionGeometry.DEFAULT.TYPE + ' ' + "uvs buffer",
 			}
 		);
 	}
@@ -285,7 +170,7 @@ export class GridPartitionGeometry extends SpatialPartitionGeometry {
 			args = {
 				...args,
 
-				label: (args.label !== undefined) ? args.label : "grid partition uvs",
+				label: (args.label !== undefined) ? args.label : GridPartitionGeometry.DEFAULT.TYPE + ' ' + "uvs",
 			}
 		);
 	}

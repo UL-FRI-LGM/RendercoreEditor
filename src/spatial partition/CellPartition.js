@@ -5,7 +5,9 @@ import { Vector3 } from "../RenderCore.js";
 import { PrimitiveTopology } from "../core/RC/pipeline/primitive state/PrimitiveTopology.js";
 import { Color4 } from "../math/Color4.js";
 import { ArrayT2 } from "../core/ArrayT2.js";
-import { BoundingSphere } from "../math/BoundingSphere.js";
+import { SpatialPartitionNode } from "./SpatialPartitionNode.js";
+import { SpatialPartitionNodeGeometry } from "./SpatialPartitionNodeGeometry.js";
+import { SpatialPartitionNodeBasicMaterial } from "./SpatialPartitionNodeBasicMaterial.js";
 
 
 export class CellPartition extends SpatialPartition {
@@ -22,8 +24,11 @@ export class CellPartition extends SpatialPartition {
 			{
 				indexed: false,
 				baseGeometry: {
-					positions: [new Vector3(0, 0, 0)],
-					dimensions: [{ min: new Vector3(-10, -10, -10), max: new Vector3(+10, +10, +10)}],
+					// positions: [new Vector3(0, 0, 0)],
+					// dimensions: [{ min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) }],
+					position: new Vector3(0, 0, 0),
+					dimension: { min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) },
+					resolution: new Vector3(1, 1, 1),
 				}
 			}
 		),
@@ -37,7 +42,44 @@ export class CellPartition extends SpatialPartition {
 		PICKABLE: false,
 		PRIMITIVE: PrimitiveTopology.LINE_LIST,
 
-		CLIENTS: new ArrayT2({ name: "cell partition clients" }),
+		NODES: new ArrayT2(
+			{},
+			...new ArrayT2({}, 1).keys().map((vz) => {
+				return new ArrayT2(
+					{},
+					...new ArrayT2({}, 1).keys().map((vy) => {
+						return new ArrayT2(
+							{},
+							...new ArrayT2({}, 1).keys().map((vx) => {
+								return new SpatialPartitionNode(
+									{
+										geometry: new SpatialPartitionNodeGeometry(
+											{
+												indexed: false,
+												baseGeometry: {
+													positions: [new Vector3(0, 0, 0)],
+													dimensions: [{ min: new Vector3(-1, -1, -1), max: new Vector3(+1, +1, +1)}],
+												}
+											}
+										),
+										material: new SpatialPartitionNodeBasicMaterial(
+											{
+												transparent: true,
+
+												emissive: new Color4(0.0, 0.0, 0.0, 0.0),
+												diffuse: new Color4(1.0, 1.0, 1.0, 0.125),
+											}
+										),
+
+										index: new Vector3(vx, vy, vz),
+									}
+								);
+							})
+						);
+					})
+				);
+			})
+		),
 	};
 
 
@@ -57,21 +99,28 @@ export class CellPartition extends SpatialPartition {
 				pickable: (args.pickable !== undefined) ? args.pickable : CellPartition.DEFAULT.PICKABLE,
 				primitive: (args.primitive !== undefined) ? args.primitive : CellPartition.DEFAULT.PRIMITIVE,
 
-				clients: (args.clients !== undefined) ? args.clients : CellPartition.DEFAULT.CLIENTS.clone(),
+				nodes: (args.nodes !== undefined) ? args.nodes : CellPartition.assembleNodes(args),
 			}
 		);
 	}
 
 
-	clone(cloneClients = false) {
+	clone() {
 		return new CellPartition(
 			{
 				type: (this.type === Object(this.type)) ? this.type.clone() : this.type,
 				name: (this.name === Object(this.name)) ? this.name.clone() : this.name,
-						
-				clients: this.clients.clone(cloneClients)
+
+				visible: (this.visible === Object(this.visible)) ? this.visible.clone() : this.visible,
+				frustumCulled: (this.frustumCulled === Object(this.frustumCulled)) ? this.frustumCulled.clone() : this.frustumCulled,
+
+				nodes: this.nodes.clone()
 			}
 		);
+	}
+
+	static assembleNodes(args) {
+		return SpatialPartition.assembleNodes(args);
 	}
 
 	objectToClient(object) {
@@ -82,50 +131,30 @@ export class CellPartition extends SpatialPartition {
 		return super.addClient(client);
 	}
 	addClients(clients) {
-		return super.addClients(clients);
+		// return super.addClients(clients);
+		return clients.reduce((acc, v) => {
+			acc.push(this.addClient(v)); return acc;
+		}, []);
 	}
 	updateClient(client) {
-		// NOOP
+		return super.updateClient(client);
 	}
 	updateClients(clients) {
-		// NOOP
+		return clients.reduce((acc, v) => {
+			acc.push(this.updateClient(v)); return acc;
+		}, []);
 	}
 	removeClient(client) {
 		return super.removeClient(client);
 	}
 	removeClients(clients) {
-		return super.removeClients(clients);
+		// return super.removeClients(clients);
+		return clients.reduce((acc, v) => {
+			acc.push(this.removeClient(v)); return acc;
+		}, []);
 	}
 
-    findClients = (() => {
-		const boundingSphereTarget = new BoundingSphere();
-
-
-		return (position, radius) => {
-			const clients = new Array();
-
-			boundingSphereTarget.center = position;
-			boundingSphereTarget.radius = radius;
-
-			for (let i = 0; i < this.clients.length; i++) {
-				const client = this.clients[i];
-				const object = client.object;
-				const boundingSphereObject = object.bounding.sphere.local.worldspace;
-
-				// const radiusesSum = radius + boundingSphereObject.radius;
-				// const radiusesSumSquared = radiusesSum * radiusesSum;
-
-				// if (position.distanceToSquared(boundingSphereObject.center) < (radiusesSumSquared)) {
-				// 	clients.push(client);
-				// }
-
-				if (boundingSphereTarget.intersectsBoundingSphere(boundingSphereObject)) {
-					clients.push(client);
-				}
-			}
-
-
-			return clients;
-		};
-	})();
+    findClients(position, radius) {
+		return super.findClients(position, radius);
+	}
 };

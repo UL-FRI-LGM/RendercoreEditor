@@ -1,8 +1,8 @@
-import { BoxFrameGeometry } from "../objects/BoxFrameGeometry.js";
+import { BoxGeometry } from "../objects/BoxGeometry.js";
 import { Vector3 } from "../math/Vector3.js";
 
 
-export class SpatialPartitionNodeGeometry extends BoxFrameGeometry {
+export class SpatialPartitionNodeGeometry extends BoxGeometry {
 
 
 	static DEFAULT = {

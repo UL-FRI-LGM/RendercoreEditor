@@ -1,4 +1,4 @@
-import { BoxFrame } from "../objects/BoxFrame.js";
+import { Box } from "../objects/Box.js";
 import { SpatialPartitionNodeGeometry } from "./SpatialPartitionNodeGeometry.js";
 import { SpatialPartitionNodeBasicMaterial } from "./SpatialPartitionNodeBasicMaterial.js";
 import { Vector3 } from "../RenderCore.js";
@@ -8,7 +8,7 @@ import { Color4 } from "../math/Color4.js";
 import { BoundingSphere } from "../math/BoundingSphere.js";
 
 
-export class SpatialPartitionNode extends BoxFrame {
+export class SpatialPartitionNode extends Box {
 
 
 	static DEFAULT = {
@@ -34,7 +34,7 @@ export class SpatialPartitionNode extends BoxFrame {
 			}
 		),
 		PICKABLE: false,
-		PRIMITIVE: PrimitiveTopology.LINE_LIST,
+		PRIMITIVE: PrimitiveTopology.TRIANGLE_LIST,
 
 		INDEX: new Vector3(0, 0, 0),
 		CLIENTS: new ArrayT2({ name: "spatial partition node clients" }),	
@@ -121,6 +121,7 @@ export class SpatialPartitionNode extends BoxFrame {
 	removeClient(client) {
 		const ni = this.index;
 
+		// V1
 		// if (client.index[ni.z][ni.y][ni.x] + 1 === this.clients.length) {
 		// 	return this.clients.pop();
 		// } else {
@@ -130,6 +131,8 @@ export class SpatialPartitionNode extends BoxFrame {
 
 		// 	return client;
 		// }
+
+		//V2
 		const clientLast = this.clients.pop();
 
 		if (client.index[ni.z][ni.y][ni.x] !== this.clients.length) {
@@ -147,35 +150,54 @@ export class SpatialPartitionNode extends BoxFrame {
 		}, []);
 	}
 
+	// V1 (for loop)
+	// findClients = (() => {
+	// 	const boundingSphereTarget = new BoundingSphere();
+
+
+	// 	return (position, radius) => {
+	// 		const clients = this.clients;
+	// 		const clientsSelected = new Array();
+
+	// 		boundingSphereTarget.center = position;
+	// 		boundingSphereTarget.radius = radius;
+
+	// 		for (const client of clients) {
+	// 			const object = client.object;
+	// 			const boundingSphereObject = object.bounding.sphere.local.worldspace;
+
+	// 			if (boundingSphereTarget.intersectsBoundingSphere(boundingSphereObject)) {
+	// 				clientsSelected.push(client);
+	// 			}
+	// 		}
+
+
+	// 		return clientsSelected;
+	// 	};
+	// })();
+	// V2 (reduce)
 	findClients = (() => {
 		const boundingSphereTarget = new BoundingSphere();
 
 
 		return (position, radius) => {
-			const clients = new Array();
+			const clients = this.clients;
 
 			boundingSphereTarget.center = position;
 			boundingSphereTarget.radius = radius;
 
-			for (let i = 0; i < this.clients.length; i++) {
-				const client = this.clients[i];
+
+			return clients.reduce((acc, client) => {
 				const object = client.object;
 				const boundingSphereObject = object.bounding.sphere.local.worldspace;
 
-				// const radiusesSum = radius + boundingSphereObject.radius;
-				// const radiusesSumSquared = radiusesSum * radiusesSum;
-
-				// if (position.distanceToSquared(boundingSphereObject.center) < (radiusesSumSquared)) {
-				// 	clients.push(client);
-				// }
-
 				if (boundingSphereTarget.intersectsBoundingSphere(boundingSphereObject)) {
-					clients.push(client);
+					acc.push(client);
 				}
-			}
 
 
-			return clients;
+				return acc;
+			}, []);
 		};
 	})();
 };

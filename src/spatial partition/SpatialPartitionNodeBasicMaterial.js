@@ -1,10 +1,10 @@
-import { BoxFrameBasicMaterial } from "../materials/BoxFrameBasicMaterial.js";
+import { BoxBasicMaterial } from "../materials/BoxBasicMaterial.js";
 import { MapT2 } from "../core/MapT2.js";
 import { Color4 } from "../math/Color4.js";
 import { ResourcePack } from "../core/data layouts/ResourcePack.js";
 
 
-export class SpatialPartitionNodeBasicMaterial extends BoxFrameBasicMaterial {
+export class SpatialPartitionNodeBasicMaterial extends BoxBasicMaterial {
 
 
 	static DEFAULT = {
