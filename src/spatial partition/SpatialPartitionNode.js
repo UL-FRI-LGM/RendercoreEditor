@@ -88,6 +88,7 @@ export class SpatialPartitionNode extends Box {
 				pickable: (this.pickable === Object(this.pickable)) ? this.pickable.clone() : this.pickable,
 				primitive: (this.primitive === Object(this.primitive)) ? this.primitive.clone() : this.primitive,
 
+				index: (this.index === Object(this.index)) ? this.index.clone() : this.index,
 				clients: this.clients.clone(cloneClients)
 			}
 		);
