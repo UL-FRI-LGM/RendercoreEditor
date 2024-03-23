@@ -4,10 +4,6 @@ import { CellPartitionBasicMaterial } from "./CellPartitionBasicMaterial.js";
 import { Vector3 } from "../RenderCore.js";
 import { PrimitiveTopology } from "../core/RC/pipeline/primitive state/PrimitiveTopology.js";
 import { Color4 } from "../math/Color4.js";
-import { ArrayT2 } from "../core/ArrayT2.js";
-import { SpatialPartitionNode } from "./SpatialPartitionNode.js";
-import { SpatialPartitionNodeGeometry } from "./SpatialPartitionNodeGeometry.js";
-import { SpatialPartitionNodeBasicMaterial } from "./SpatialPartitionNodeBasicMaterial.js";
 
 
 export class CellPartition extends SpatialPartition {
@@ -26,9 +22,19 @@ export class CellPartition extends SpatialPartition {
 				baseGeometry: {
 					// positions: [new Vector3(0, 0, 0)],
 					// dimensions: [{ min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) }],
-					position: new Vector3(0, 0, 0),
-					dimension: { min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) },
-					resolution: new Vector3(1, 1, 1),
+					position: {
+						elementspace: null,
+						objectspace: new Vector3(0, 0, 0)
+					},
+		
+					dimension: {
+						elementspace: { min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) },
+						objectspace: null
+					},
+					resolution: {
+						elementspace: new Vector3(1, 1, 1),
+						objectspace: null
+					},
 				}
 			}
 		),
@@ -42,43 +48,26 @@ export class CellPartition extends SpatialPartition {
 		PICKABLE: false,
 		PRIMITIVE: PrimitiveTopology.LINE_LIST,
 
-		NODES: new ArrayT2(
-			{},
-			...new ArrayT2({}, 1).keys().map((vz) => {
-				return new ArrayT2(
-					{},
-					...new ArrayT2({}, 1).keys().map((vy) => {
-						return new ArrayT2(
-							{},
-							...new ArrayT2({}, 1).keys().map((vx) => {
-								return new SpatialPartitionNode(
-									{
-										geometry: new SpatialPartitionNodeGeometry(
-											{
-												indexed: false,
-												baseGeometry: {
-													positions: [new Vector3(0, 0, 0)],
-													dimensions: [{ min: new Vector3(-1, -1, -1), max: new Vector3(+1, +1, +1)}],
-												}
-											}
-										),
-										material: new SpatialPartitionNodeBasicMaterial(
-											{
-												transparent: true,
-
-												emissive: new Color4(0.0, 0.0, 0.0, 0.0),
-												diffuse: new Color4(1.0, 1.0, 1.0, 0.125),
-											}
-										),
-
-										index: new Vector3(vx, vy, vz),
-									}
-								);
-							})
-						);
-					})
-				);
-			})
+		NODES: CellPartition.assembleNodes(
+			{
+				baseGeometry: {
+					// positions: [new Vector3(0, 0, 0)],
+					// dimensions: [{ min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) }],
+					position: {
+						elementspace: null,
+						objectspace: new Vector3(0, 0, 0)
+					},
+		
+					dimension: {
+						elementspace: { min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) },
+						objectspace: null
+					},
+					resolution: {
+						elementspace: new Vector3(1, 1, 1),
+						objectspace: null
+					},
+				}
+			}
 		),
 	};
 
@@ -99,7 +88,9 @@ export class CellPartition extends SpatialPartition {
 				pickable: (args.pickable !== undefined) ? args.pickable : CellPartition.DEFAULT.PICKABLE,
 				primitive: (args.primitive !== undefined) ? args.primitive : CellPartition.DEFAULT.PRIMITIVE,
 
-				nodes: (args.nodes !== undefined) ? args.nodes : CellPartition.assembleNodes(args),
+				nodes: (args.nodes !== undefined) ? args.nodes : CellPartition.assembleNodes(
+					(args.geometry !== undefined) ? args.geometry : CellPartition.DEFAULT.GEOMETRY
+				),
 			}
 		);
 	}

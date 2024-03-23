@@ -22,8 +22,19 @@ export class SpatialPartitionNode extends Box {
 			{
 				indexed: false,
 				baseGeometry: {
-					positions: [new Vector3(0, 0, 0)],
-					dimensions: [{ min: new Vector3(-1, -1, -1), max: new Vector3(+1, +1, +1) }],
+					nElements: 1,
+					positions: [
+						{
+							elementspace: null,
+							objectspace: new Vector3(0, 0, 0)
+						}
+					],
+					dimensions: [
+						{
+							elementspace: { min: new Vector3(-1, -1, -1), max: new Vector3(+1, +1, +1) },
+							objectspace: null
+						}
+					],
 				}
 			}
 		),

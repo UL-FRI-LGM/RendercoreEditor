@@ -8,7 +8,6 @@ import { SpatialPartitionNode } from "./SpatialPartitionNode.js";
 import { SpatialPartitionNodeGeometry } from "./SpatialPartitionNodeGeometry.js";
 import { SpatialPartitionNodeBasicMaterial } from "./SpatialPartitionNodeBasicMaterial.js";
 import { Color4 } from "../math/Color4.js";
-import { Vector3F32 } from "../math/vector/Vector3F32.js";
 import { SpatialPartitionClient } from "./SpatialPartitionClient.js";
 
 
@@ -28,9 +27,19 @@ export class SpatialPartition extends BoxFrame {
 				baseGeometry: {
 					// positions: [new Vector3(0, 0, 0)],
 					// dimensions: [{ min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) }],
-					position: new Vector3(0, 0, 0),
-					dimension: { min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) },
-					resolution: new Vector3(1, 1, 1),
+					position: {
+						elementspace: null,
+						objectspace: new Vector3(0, 0, 0)
+					},
+		
+					dimension: {
+						elementspace: { min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) },
+						objectspace: null
+					},
+					resolution: {
+						elementspace: new Vector3(1, 1, 1),
+						objectspace: null
+					},
 				}
 			}
 		),
@@ -43,43 +52,26 @@ export class SpatialPartition extends BoxFrame {
 		PICKABLE: false,
 		PRIMITIVE: PrimitiveTopology.LINE_LIST,
 
-		NODES: new ArrayT2(
-			{},
-			...new ArrayT2({}, 1).keys().map((vz) => {
-				return new ArrayT2(
-					{},
-					...new ArrayT2({}, 1).keys().map((vy) => {
-						return new ArrayT2(
-							{},
-							...new ArrayT2({}, 1).keys().map((vx) => {
-								return new SpatialPartitionNode(
-									{
-										geometry: new SpatialPartitionNodeGeometry(
-											{
-												indexed: false,
-												baseGeometry: {
-													positions: [new Vector3(0, 0, 0)],
-													dimensions: [{ min: new Vector3(-1, -1, -1), max: new Vector3(+1, +1, +1)}],
-												}
-											}
-										),
-										material: new SpatialPartitionNodeBasicMaterial(
-											{
-												transparent: true,
-
-												emissive: new Color4(0.0, 0.0, 0.0, 0.0),
-												diffuse: new Color4(1.0, 1.0, 1.0, 0.125),
-											}
-										),
-
-										index: new Vector3(vx, vy, vz),
-									}
-								);
-							})
-						);
-					})
-				);
-			})
+		NODES: SpatialPartition.assembleNodes(
+			{
+				baseGeometry: {
+					// positions: [new Vector3(0, 0, 0)],
+					// dimensions: [{ min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) }],
+					position: {
+						elementspace: null,
+						objectspace: new Vector3(0, 0, 0)
+					},
+		
+					dimension: {
+						elementspace: { min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) },
+						objectspace: null
+					},
+					resolution: {
+						elementspace: new Vector3(1, 1, 1),
+						objectspace: null
+					},
+				}
+			}
 		),
 	};
 
@@ -105,7 +97,9 @@ export class SpatialPartition extends BoxFrame {
 			}
 		);
 
-		this.nodes = (args.nodes !== undefined) ? args.nodes : SpatialPartition.assembleNodes(args);
+		this.nodes = (args.nodes !== undefined) ? args.nodes : SpatialPartition.assembleNodes(
+			(args.geometry !== undefined) ? args.geometry : SpatialPartition.DEFAULT.GEOMETRY
+		);
 	}
 
 
@@ -131,59 +125,32 @@ export class SpatialPartition extends BoxFrame {
 		);
 	}
 
-	static assembleNodes(args) {
-		const baseGeometry = args.geometry.baseGeometry;
+	static assembleNodes(args = {}) {
+		const partitionBaseGeometry = SpatialPartitionGeometry.expandBaseGeometry(args.baseGeometry);
 
-		const positionGrid_ws = baseGeometry.position;
-		const rotationGrid_ws = baseGeometry.rotation;
-		const scalingGrid_ws = baseGeometry.scaling;
+		const gridCenter_os = partitionBaseGeometry.center.objectspace;
 
-
-		const dimensionGrid_ps = baseGeometry.dimension;
-		const dimensionGrid_ws = {
-			min: positionGrid_ws.clone().add(dimensionGrid_ps.min),
-			max: positionGrid_ws.clone().add(dimensionGrid_ps.max),
-		};
-
-		const sizeGrid_ps = baseGeometry.size;
-		const sizeGrid_ws = sizeGrid_ps.clone();
-
-		const resolutionGrid_ps = baseGeometry.resolution;
-		const resolutionGrid_ws = resolutionGrid_ps.clone();
-
-		const centerGrid_ps = dimensionGrid_ps.min.clone().add(sizeGrid_ps.clone().divideScalar(2.0));
-		const centerGrid_ws = positionGrid_ws.clone().add(centerGrid_ps);
+		const gridSize_es = partitionBaseGeometry.size.elementspace;
+		const gridSize_os = partitionBaseGeometry.size.objectspace;
+		const gridResolution_es = partitionBaseGeometry.resolution.elementspace;
+		const gridResolution_os = partitionBaseGeometry.resolution.objectspace;
 
 
-		return new ArrayT2({}, ...new ArrayT2({}, resolutionGrid_ws.z).keys().map((vz) => {
-			return new ArrayT2({}, ...new ArrayT2({}, resolutionGrid_ws.y).keys().map((vy) => {
-				return new ArrayT2({}, ...new ArrayT2({}, resolutionGrid_ws.x).keys().map((vx) => {
-					const indexCell_ws = new Vector3(vx, vy, vz);
+		return new ArrayT2({}, ...new ArrayT2({}, gridResolution_os.z).keys().map((vz) => {
+			return new ArrayT2({}, ...new ArrayT2({}, gridResolution_os.y).keys().map((vy) => {
+				return new ArrayT2({}, ...new ArrayT2({}, gridResolution_os.x).keys().map((vx) => {
+					const indexCell_os = new Vector3(vx, vy, vz);
 
-					const positionCell_ws = indexCell_ws.clone()
-					.multiply(sizeGrid_ws).divide(resolutionGrid_ws)
-					.add(sizeGrid_ws.clone().divide(resolutionGrid_ws).divideScalar(2.0))
-					.add(new Vector3().subVectors(centerGrid_ws, sizeGrid_ws.clone().divideScalar(2.0)));
+					const positionCell_os = indexCell_os.clone()
+					.multiply(gridSize_os).divide(gridResolution_os)
+					.add(gridSize_os.clone().divide(gridResolution_os).divideScalar(2.0))
+					.add(new Vector3().subVectors(gridCenter_os, gridSize_os.clone().divideScalar(2.0)));
 
-					const dimensionCell_ps = {
-						min: sizeGrid_ps.clone().divide(resolutionGrid_ps).divideScalar(-2.0),
-						max: sizeGrid_ps.clone().divide(resolutionGrid_ps).divideScalar(+2.0)
+
+					const nodeDimension_es = {
+						min: gridSize_es.clone().divide(gridResolution_es).divideScalar(-2.0),
+						max: gridSize_es.clone().divide(gridResolution_es).divideScalar(+2.0)
 					};
-					const dimensionCell_ws = {
-						min: positionCell_ws.clone().add(dimensionCell_ps.min),
-						max: positionCell_ws.clone().add(dimensionCell_ps.max),
-					};
-			
-					const sizeCell_ps = dimensionCell_ps.max.clone().sub(dimensionCell_ps.min);
-					const sizeCell_ws = sizeCell_ps.clone();
-
-					const centerCell_ps = dimensionCell_ps.min.clone().add(sizeCell_ps.clone().divideScalar(2.0));
-					const centerCell_ws = positionCell_ws.clone().add(centerCell_ps);
-
-					// const dimensionPosition_ps = {
-					// 	min: dimensionGrid_ps.min.clone().sub(dimensionCell_ps.min),
-					// 	max: dimensionGrid_ps.max.clone().sub(dimensionCell_ps.max)
-					// };
 
 
 					return new SpatialPartitionNode(
@@ -192,13 +159,20 @@ export class SpatialPartition extends BoxFrame {
 								{
 									indexed: false,
 									baseGeometry: {
+										nElements: 1,
 										positions: [
-											positionCell_ws.clone()
+											{
+												elementspace: null,
+												objectspace: positionCell_os.clone()
+											}
 										],
 										dimensions: [
 											{
-												min: dimensionCell_ps.min.clone().multiplyScalar(0.95),
-												max: dimensionCell_ps.max.clone().multiplyScalar(0.95)
+												elementspace: {
+													min: nodeDimension_es.min.clone().multiplyScalar(0.95),
+													max: nodeDimension_es.max.clone().multiplyScalar(0.95)
+												},
+												objectspace: null
 											}
 										],
 									}
@@ -280,17 +254,15 @@ export class SpatialPartition extends BoxFrame {
 	objectToClient(object) {
 		const baseGeometry = this.geometry.baseGeometry;
 
-		const dimensionGrid = baseGeometry.dimension;
-		const resolutionGrid_ws = baseGeometry.resolution;
-		const sizeGrid_ps = baseGeometry.size;
+		const gridResolution_os = baseGeometry.resolution.objectspace;
 
 
 		return new SpatialPartitionClient(
 			{
 				object: object,
-				index: new ArrayT2({}, ...new ArrayT2({}, resolutionGrid_ws.z)).map((vz) => {
-					return new ArrayT2({}, ...new ArrayT2({}, resolutionGrid_ws.y)).map((vy) => {
-						return new ArrayT2({}, ...new ArrayT2({}, resolutionGrid_ws.x)).map((vx) => {
+				index: new ArrayT2({}, ...new ArrayT2({}, gridResolution_os.z)).map((vz) => {
+					return new ArrayT2({}, ...new ArrayT2({}, gridResolution_os.y)).map((vy) => {
+						return new ArrayT2({}, ...new ArrayT2({}, gridResolution_os.x)).map((vx) => {
 							return null;
 						});
 					});

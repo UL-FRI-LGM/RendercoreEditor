@@ -1,5 +1,6 @@
 import { BoxGeometry } from "../objects/BoxGeometry.js";
 import { Vector3 } from "../math/Vector3.js";
+import { Euler, Matrix4, Quaternion } from "../RenderCore.js";
 
 
 export class SpatialPartitionNodeGeometry extends BoxGeometry {
@@ -14,8 +15,19 @@ export class SpatialPartitionNodeGeometry extends BoxGeometry {
 
 		INDEXED: false,
 		BASE_GEOMETRY: {
-			positions: [new Vector3(0, 0, 0)],
-			dimensions: [{ min: new Vector3(-1, -1, -1), max: new Vector3(+1, +1, +1) }],
+			nElements: 1,
+			positions: [
+				{
+					elementspace: null,
+					objectspace: new Vector3(0, 0, 0)
+				}
+			],
+			dimensions: [
+				{
+					elementspace: { min: new Vector3(-1, -1, -1), max: new Vector3(+1, +1, +1) },
+					objectspace: null
+				}
+			],
 		},
 	};
 
@@ -48,8 +60,102 @@ export class SpatialPartitionNodeGeometry extends BoxGeometry {
 	}
 
 
+	get baseGeometry() { return super.baseGeometry; }
+	set baseGeometry(baseGeometry) { super.baseGeometry = SpatialPartitionNodeGeometry.expandBaseGeometry(baseGeometry); }
+
+
+	static expandBaseGeometry(baseGeometry) {
+		const positions = [];
+		const rotations = [];
+		const scalings = [];
+
+		const dimensions = [];
+		const centers = [];
+
+		const sizes = [];
+
+
+		for (let i = 0; i < baseGeometry.nElements; i++) {
+			const position_os = baseGeometry.positions[i].objectspace;
+			const rotation_os = new Euler(0.0, 0.0, 0.0, "XYZ");
+			const quaternion_os = new Quaternion(0.0, 0.0, 0.0, 1.0, false).setFromEuler(rotation_os);
+			const scaling_os = new Vector3(1.0, 1.0, 1.0);
+	
+			const M = new Matrix4().compose(position_os, quaternion_os, scaling_os);
+	
+	
+			const dimension_es = baseGeometry.dimensions[i].elementspace;
+			const dimension_os = {
+				min: dimension_es.min.clone().applyMatrix4(M),
+				max: dimension_es.max.clone().applyMatrix4(M),
+			};
+			const center_es = dimension_es.min.clone().add(dimension_es.max.clone().sub(dimension_es.min).divideScalar(2.0));
+			const center_os = center_es.clone().applyMatrix4(M);
+	
+			const size_es = dimension_es.max.clone().sub(dimension_es.min);
+			const size_os = size_es.clone();	
+	
+
+			positions[i] = {
+				objectspace: position_os
+			};
+			rotations[i] = {
+				objectspace: rotation_os
+			};
+			scalings[i] = {
+				objectspace: scaling_os
+			};
+
+
+			dimensions[i] = {
+				elementspace: dimension_es,
+				objectspace: dimension_os
+			};
+			centers[i] = {
+				elementspace: center_es,
+				objectspace: center_os
+			};
+
+			sizes[i] = {
+				elementspace: size_es,
+				objectspace: size_os
+			};
+			
+		}
+
+
+		return {
+			positions: positions,
+			rotations: rotations,
+			scalings: scalings,
+	
+			dimensions: dimensions,
+			centers: centers,
+	
+			sizes: sizes,
+		};
+	}
+
+	static convertBaseGeometry(baseGeometry) {
+		baseGeometry = SpatialPartitionNodeGeometry.expandBaseGeometry(baseGeometry);
+
+
+		return {
+			positions: baseGeometry.positions.map((v) => { return v.objectspace; }),
+
+			dimensions: baseGeometry.dimensions.map((v) => { return v.elementspace; }),
+		};
+	}
+
 	static createIndicesArrayBuffer(args = {}) {
-		return super.createIndicesArrayBuffer(args);
+		return super.createIndicesArrayBuffer(
+			{
+				...args,
+
+				indexed: (args.indexed !== undefined) ? args.indexed : BoxGeometry.DEFAULT.INDEXED,
+				baseGeometry: (args.baseGeometry !== undefined) ? SpatialPartitionNodeGeometry.convertBaseGeometry(args.baseGeometry) : BoxGeometry.DEFAULT.BASE_GEOMETRY,
+			}
+		);
 	}
 	static createIndicesAttributeLocation(indicesArrayBuffer, args = {}) {
 		return super.createIndicesAttributeLocation(
@@ -82,7 +188,14 @@ export class SpatialPartitionNodeGeometry extends BoxGeometry {
 	}
 
 	static createVerticesArrayBuffer(args = {}) {
-		return super.createVerticesArrayBuffer(args);
+		return super.createVerticesArrayBuffer(
+			{
+				...args,
+
+				indexed: (args.indexed !== undefined) ? args.indexed : BoxGeometry.DEFAULT.INDEXED,
+				baseGeometry: (args.baseGeometry !== undefined) ? SpatialPartitionNodeGeometry.convertBaseGeometry(args.baseGeometry) : BoxGeometry.DEFAULT.BASE_GEOMETRY,
+			}
+		);
 	}
 	static createVerticesAttributeLocation(verticesArrayBuffer, args = {}) {
 		return super.createVerticesAttributeLocation(
@@ -115,7 +228,14 @@ export class SpatialPartitionNodeGeometry extends BoxGeometry {
 	}
 
 	static createNormalsArrayBuffer(args = {}) {
-		return super.createNormalsArrayBuffer(args);
+		return super.createNormalsArrayBuffer(
+			{
+				...args,
+
+				indexed: (args.indexed !== undefined) ? args.indexed : BoxGeometry.DEFAULT.INDEXED,
+				baseGeometry: (args.baseGeometry !== undefined) ? SpatialPartitionNodeGeometry.convertBaseGeometry(args.baseGeometry) : BoxGeometry.DEFAULT.BASE_GEOMETRY,
+			}
+		);
 	}
 	static createNormalsAttributeLocation(normalsArrayBuffer, args = {}) {
 		return super.createNormalsAttributeLocation(
@@ -148,7 +268,14 @@ export class SpatialPartitionNodeGeometry extends BoxGeometry {
 	}
 
 	static createUVsArrayBuffer(args = {}) {
-		return super.createUVsArrayBuffer(args);
+		return super.createUVsArrayBuffer(
+			{
+				...args,
+
+				indexed: (args.indexed !== undefined) ? args.indexed : BoxGeometry.DEFAULT.INDEXED,
+				baseGeometry: (args.baseGeometry !== undefined) ? SpatialPartitionNodeGeometry.convertBaseGeometry(args.baseGeometry) : BoxGeometry.DEFAULT.BASE_GEOMETRY,
+			}
+		);
 	}
 	static createUVsAttributeLocation(uvsArrayBuffer, args = {}) {
 		return super.createUVsAttributeLocation(

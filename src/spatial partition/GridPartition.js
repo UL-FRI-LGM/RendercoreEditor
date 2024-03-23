@@ -6,9 +6,6 @@ import { PrimitiveTopology } from "../core/RC/pipeline/primitive state/Primitive
 import { Color4 } from "../math/Color4.js";
 import { ArrayT2 } from "../core/ArrayT2.js";
 import { Vector3F32 } from "../math/vector/Vector3F32.js";
-import { SpatialPartitionNode } from "./SpatialPartitionNode.js";
-import { SpatialPartitionNodeGeometry } from "./SpatialPartitionNodeGeometry.js";
-import { SpatialPartitionNodeBasicMaterial } from "./SpatialPartitionNodeBasicMaterial.js";
 import { GridPartitionClient } from "./GridPartitionClient.js";
 
 
@@ -28,9 +25,19 @@ export class GridPartition extends SpatialPartition {
 				baseGeometry: {
 					// positions: [new Vector3(0, 0, 0)],
 					// dimensions: [{ min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) }],
-					position: new Vector3(0, 0, 0),
-					dimension: { min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) },
-					resolution: new Vector3(8, 8, 8),
+					position: {
+						elementspace: null,
+						objectspace: new Vector3(0, 0, 0)
+					},
+		
+					dimension: {
+						elementspace: { min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) },
+						objectspace: null
+					},
+					resolution: {
+						elementspace: new Vector3(8, 8, 8),
+						objectspace: null
+					},
 				}
 			}
 		),
@@ -44,43 +51,26 @@ export class GridPartition extends SpatialPartition {
 		PICKABLE: false,
 		PRIMITIVE: PrimitiveTopology.LINE_LIST,
 
-		NODES: new ArrayT2(
-			{},
-			...new ArrayT2({}, 1).keys().map((vz) => {
-				return new ArrayT2(
-					{},
-					...new ArrayT2({}, 1).keys().map((vy) => {
-						return new ArrayT2(
-							{},
-							...new ArrayT2({}, 1).keys().map((vx) => {
-								return new SpatialPartitionNode(
-									{
-										geometry: new SpatialPartitionNodeGeometry(
-											{
-												indexed: false,
-												baseGeometry: {
-													positions: [new Vector3(0, 0, 0)],
-													dimensions: [{ min: new Vector3(-1, -1, -1), max: new Vector3(+1, +1, +1)}],
-												}
-											}
-										),
-										material: new SpatialPartitionNodeBasicMaterial(
-											{
-												transparent: true,
-
-												emissive: new Color4(0.0, 0.0, 0.0, 0.0),
-												diffuse: new Color4(1.0, 1.0, 1.0, 0.125),
-											}
-										),
-
-										index: new Vector3(vx, vy, vz),
-									}
-								);
-							})
-						);
-					})
-				);
-			})
+		NODES: GridPartition.assembleNodes(
+			{
+				baseGeometry: {
+					// positions: [new Vector3(0, 0, 0)],
+					// dimensions: [{ min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) }],
+					position: {
+						elementspace: null,
+						objectspace: new Vector3(0, 0, 0)
+					},
+		
+					dimension: {
+						elementspace: { min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) },
+						objectspace: null
+					},
+					resolution: {
+						elementspace: new Vector3(8, 8, 8),
+						objectspace: null
+					},
+				}
+			}
 		),
 
 		QUERY_ID: 0,
@@ -106,7 +96,9 @@ export class GridPartition extends SpatialPartition {
 				pickable: (args.pickable !== undefined) ? args.pickable : GridPartition.DEFAULT.PICKABLE,
 				primitive: (args.primitive !== undefined) ? args.primitive : GridPartition.DEFAULT.PRIMITIVE,
 
-				nodes: (args.nodes !== undefined) ? args.nodes : GridPartition.assembleNodes(args),
+				nodes: (args.nodes !== undefined) ? args.nodes : GridPartition.assembleNodes(
+					(args.geometry !== undefined) ? args.geometry : GridPartition.DEFAULT.GEOMETRY
+				),
 			}
 		);
 
@@ -141,17 +133,15 @@ export class GridPartition extends SpatialPartition {
 	objectToClient(object) {
 		const baseGeometry = this.geometry.baseGeometry;
 
-		const dimensionGrid = baseGeometry.dimension;
-		const resolutionGrid_ws = baseGeometry.resolution;
-		const sizeGrid = baseGeometry.size;
+		const gridResolution_os = baseGeometry.resolution.objectspace;
 
 
 		return new GridPartitionClient(
 			{
 				object: object,
-				index: new ArrayT2({}, ...new ArrayT2({}, resolutionGrid_ws.z)).map((vz) => {
-					return new ArrayT2({}, ...new ArrayT2({}, resolutionGrid_ws.y)).map((vy) => {
-						return new ArrayT2({}, ...new ArrayT2({}, resolutionGrid_ws.x)).map((vx) => {
+				index: new ArrayT2({}, ...new ArrayT2({}, gridResolution_os.z)).map((vz) => {
+					return new ArrayT2({}, ...new ArrayT2({}, gridResolution_os.y)).map((vy) => {
+						return new ArrayT2({}, ...new ArrayT2({}, gridResolution_os.x)).map((vx) => {
 							return null;
 						});
 					});
@@ -171,27 +161,14 @@ export class GridPartition extends SpatialPartition {
 		const max = position.clone().addScalar(radius);
 
 
+		// const baseGeometry = this.geometry.baseGeometry;
 		const baseGeometry = this.geometry.baseGeometry;
 
-		const positionGrid_ws = baseGeometry.position;
-		const rotationGrid_ws = baseGeometry.rotation;
-		const scalingGrid_ws = baseGeometry.scaling;
+		// console.warn(baseGeometry);
 
-		
-		const dimensionGrid_ps = baseGeometry.dimension;
-		const dimensionGrid_ws = {
-			min: positionGrid_ws.clone().add(dimensionGrid_ps.min),
-			max: positionGrid_ws.clone().add(dimensionGrid_ps.max),
-		};
 
-		const sizeGrid_ps = baseGeometry.size;
-		const sizeGrid_ws = sizeGrid_ps.clone();
-
-		const resolutionGrid_ps = baseGeometry.resolution;
-		const resolutionGrid_ws = resolutionGrid_ps.clone();
-
-		const centerGrid_ps = dimensionGrid_ps.min.clone().add(sizeGrid_ps.clone().divideScalar(2.0));
-		const centerGrid_ws = positionGrid_ws.clone().add(centerGrid_ps);
+		const sizeGrid_ws = baseGeometry.size.objectspace;
+		const centerGrid_ws = baseGeometry.center.objectspace;
 
 
 		min.sub(new Vector3().subVectors(centerGrid_ws, sizeGrid_ws.clone().divideScalar(2.0)));
@@ -202,14 +179,14 @@ export class GridPartition extends SpatialPartition {
 
 		// min.divide(baseGeometry.size).multiply(baseGeometry.resolution);
 		// max.divide(baseGeometry.size).multiply(baseGeometry.resolution);
-		min.multiply(baseGeometry.resolutionOverSize);
-		max.multiply(baseGeometry.resolutionOverSize);
+		min.multiply(baseGeometry.resolutionOverSize.objectspace);
+		max.multiply(baseGeometry.resolutionOverSize.objectspace);
 
 
 		// min.floor().clamp(Vector3F32.ZERO, new Vector3().subVectors(baseGeometry.resolution, Vector3F32.ONE));
 		// max.floor().clamp(Vector3F32.ZERO, new Vector3().subVectors(baseGeometry.resolution, Vector3F32.ONE));
-		min.floor().clamp(Vector3F32.ZERO, baseGeometry.resolutionMinusOne);
-		max.floor().clamp(Vector3F32.ZERO, baseGeometry.resolutionMinusOne);
+		min.floor().clamp(Vector3F32.ZERO, baseGeometry.resolutionMinusOne.objectspace);
+		max.floor().clamp(Vector3F32.ZERO, baseGeometry.resolutionMinusOne.objectspace);
 
 
 		return { min: min, max: max };

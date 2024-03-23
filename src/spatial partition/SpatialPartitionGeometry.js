@@ -1,6 +1,7 @@
 import { BoxFrameGeometry } from "../objects/BoxFrameGeometry.js";
 import { Vector3 } from "../math/Vector3.js";
 import { Vector3F32 } from "../math/vector/Vector3F32.js";
+import { Euler, Matrix4, Quaternion } from "../RenderCore.js";
 
 
 export class SpatialPartitionGeometry extends BoxFrameGeometry {
@@ -17,9 +18,19 @@ export class SpatialPartitionGeometry extends BoxFrameGeometry {
 		BASE_GEOMETRY: {
 			// positions: [new Vector3(0, 0, 0)],
 			// dimensions: [{ min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) }],
-			position: new Vector3(0, 0, 0),
-			dimension: { min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) },
-			resolution: new Vector3(1, 1, 1),
+			position: {
+				elementspace: null,
+				objectspace: new Vector3(0, 0, 0)
+			},
+
+			dimension: {
+				elementspace: { min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) },
+				objectspace: null
+			},
+			resolution: {
+				elementspace: new Vector3(1, 1, 1),
+				objectspace: null
+			},
 		},
 	};
 
@@ -53,66 +64,113 @@ export class SpatialPartitionGeometry extends BoxFrameGeometry {
 
 
 	get baseGeometry() { return super.baseGeometry; }
-	set baseGeometry(baseGeometry) {
-		super.baseGeometry = baseGeometry;
+	set baseGeometry(baseGeometry) { super.baseGeometry = SpatialPartitionGeometry.expandBaseGeometry(baseGeometry); }
 
-		this.baseGeometry.size = new Vector3().subVectors(this.baseGeometry.dimension.max, this.baseGeometry.dimension.min);
-		this.baseGeometry.resolutionOverSize = new Vector3().copy(this.baseGeometry.resolution).divide(this.baseGeometry.size);
+
+	static expandBaseGeometry(baseGeometry) {
+		const position_os = baseGeometry.position.objectspace;
+		const rotation_os = new Euler(0.0, 0.0, 0.0, "XYZ");
+		const quaternion_os = new Quaternion(0.0, 0.0, 0.0, 1.0, false).setFromEuler(rotation_os);
+		const scaling_os = new Vector3(1.0, 1.0, 1.0);
+
+		const M = new Matrix4().compose(position_os, quaternion_os, scaling_os);
+
+
+		const dimension_es = baseGeometry.dimension.elementspace;
+		const dimension_os = {
+			min: dimension_es.min.clone().applyMatrix4(M),
+			max: dimension_es.max.clone().applyMatrix4(M),
+		};
+		const center_es = dimension_es.min.clone().add(dimension_es.max.clone().sub(dimension_es.min).divideScalar(2.0));
+		const center_os = center_es.clone().applyMatrix4(M);
+
+		const size_es = dimension_es.max.clone().sub(dimension_es.min);
+		const size_os = size_es.clone();
+		const resolution_es = baseGeometry.resolution.elementspace;
+		const resolution_os = resolution_es.clone();
+		const resolutionOverSize_es = resolution_es.clone().divide(size_es);
+		const resolutionOverSize_os = resolutionOverSize_es.clone();
+		const resolutionMinusOne_es = resolution_es.clone().sub(Vector3F32.ONE);
+		const resolutionMinusOne_os = resolutionMinusOne_es.clone();
+
+
+		return {
+			position: {
+				objectspace: position_os
+			},
+			rotation: {
+				objectspace: rotation_os
+			},
+			scaling: {
+				objectspace: scaling_os
+			},
 	
-		this.baseGeometry.resolutionMinusOne = new Vector3().subVectors(this.baseGeometry.resolution, Vector3F32.ONE);
+
+			dimension: {
+				elementspace: dimension_es,
+				objectspace: dimension_os
+			},
+			center: {
+				elementspace: center_es,
+				objectspace: center_os
+			},
+	
+			size: {
+				elementspace: size_es,
+				objectspace: size_os
+			},
+			resolution: {
+				elementspace: resolution_es,
+				objectspace: resolution_os
+			},
+			resolutionOverSize: {
+				elementspace: resolutionOverSize_es,
+				objectspace: resolutionOverSize_os,
+			},
+			resolutionMinusOne: {
+				elementspace: resolutionMinusOne_es,
+				objectspace: resolutionMinusOne_os
+			}
+		};
 	}
 
+	static convertBaseGeometry(baseGeometry) {
+		baseGeometry = SpatialPartitionGeometry.expandBaseGeometry(baseGeometry);
 
-	static convertBaseGeometry(args = {}) {
-		const baseGeometry = args.baseGeometry;
-
-		const positionGrid_ws = baseGeometry.position;
-		const rotationGrid_ws = baseGeometry.rotation;
-		const scalingGrid_ws = baseGeometry.scaling;
-
-
-		const dimensionGrid_ps = baseGeometry.dimension;
-		const dimensionGrid_ws = {
-			min: positionGrid_ws.clone().add(dimensionGrid_ps.min),
-			max: positionGrid_ws.clone().add(dimensionGrid_ps.max),
-		};
-
-		const sizeGrid_ps = new Vector3().subVectors(dimensionGrid_ps.max, dimensionGrid_ps.min);
-		const sizeGrid_ws = sizeGrid_ps.clone();
-
-		const resolutionGrid_ps = baseGeometry.resolution;
-		const resolutionGrid_ws = resolutionGrid_ps.clone();
-
-		const centerGrid_ps = dimensionGrid_ps.min.clone().add(sizeGrid_ps.clone().divideScalar(2.0));
-		const centerGrid_ws = positionGrid_ws.clone().add(centerGrid_ps);
-
-		const dimensionCell_ps = {
-			min: sizeGrid_ps.clone().divide(resolutionGrid_ps).divideScalar(-2.0),
-			max: sizeGrid_ps.clone().divide(resolutionGrid_ps).divideScalar(+2.0)
-		};
+		const gridSize_es = baseGeometry.size.elementspace;
+		const gridSize_os = baseGeometry.size.objectspace;
+		const gridResolution_es = baseGeometry.resolution.elementspace;
+		const gridResolution_os = baseGeometry.resolution.objectspace;
+		const gridCenter_os = baseGeometry.center.objectspace;
 
 
-		const positions = [...new Array(resolutionGrid_ws.z).keys().reduce((accz, vz) => {
-			return (accz.push(...[...new Array(resolutionGrid_ws.y).keys().reduce((accy, vy) => {
-				return (accy.push(...[...new Array(resolutionGrid_ws.x).keys().reduce((accx, vx) => {
-					const indexCell_ws = new Vector3(vx, vy, vz);
+		const positions = [...new Array(gridResolution_os.z).keys().reduce((accz, vz) => {
+			return (accz.push(...[...new Array(gridResolution_os.y).keys().reduce((accy, vy) => {
+				return (accy.push(...[...new Array(gridResolution_os.x).keys().reduce((accx, vx) => {
+					const indexCell_os = new Vector3(vx, vy, vz);
 
-					const positionCell_ws = indexCell_ws.clone()
-					.multiply(sizeGrid_ws).divide(resolutionGrid_ws)
-					.add(sizeGrid_ws.clone().divide(resolutionGrid_ws).divideScalar(2.0))
-					.add(new Vector3().subVectors(centerGrid_ws, sizeGrid_ws.clone().divideScalar(2.0)));
+					const cellPosition_os = indexCell_os.clone()
+					.multiply(gridSize_os).divide(gridResolution_os)
+					.add(gridSize_os.clone().divide(gridResolution_os).divideScalar(2.0))
+					.add(new Vector3().subVectors(gridCenter_os, gridSize_os.clone().divideScalar(2.0)));
 
 
-					return (accx.push(positionCell_ws), accx);
+					return (accx.push(cellPosition_os), accx);
 				}, [])]), accy);
 			}, [])]), accz);
 		}, [])];
-		const dimensions = [...new Array(resolutionGrid_ws.z).keys().reduce((accz, vz) => {
-			return (accz.push(...[...new Array(resolutionGrid_ws.y).keys().reduce((accy, vy) => {
-				return (accy.push(...[...new Array(resolutionGrid_ws.x).keys().reduce((accx, vx) => {
+		const dimensions = [...new Array(gridResolution_os.z).keys().reduce((accz, vz) => {
+			return (accz.push(...[...new Array(gridResolution_os.y).keys().reduce((accy, vy) => {
+				return (accy.push(...[...new Array(gridResolution_os.x).keys().reduce((accx, vx) => {
+					const cellDimension_es = {
+						min: gridSize_es.clone().divide(gridResolution_es).divideScalar(-2.0),
+						max: gridSize_es.clone().divide(gridResolution_es).divideScalar(+2.0)
+					};
+
+					
 					const dimension = {
-						min: dimensionCell_ps.min.clone(),
-						max: dimensionCell_ps.max.clone()
+						min: cellDimension_es.min.clone(),
+						max: cellDimension_es.max.clone()
 					};
 
 
@@ -135,7 +193,7 @@ export class SpatialPartitionGeometry extends BoxFrameGeometry {
 
 				indexed: (args.indexed !== undefined) ? args.indexed : BoxFrameGeometry.DEFAULT.INDEXED,
 				baseGeometry: (args.baseGeometry !== undefined) ? (() => {
-					const spatialPartitionBaseGeometry = SpatialPartitionGeometry.convertBaseGeometry(args);
+					const spatialPartitionBaseGeometry = SpatialPartitionGeometry.convertBaseGeometry(args.baseGeometry);
 
 
 					return {
@@ -183,7 +241,7 @@ export class SpatialPartitionGeometry extends BoxFrameGeometry {
 
 				indexed: (args.indexed !== undefined) ? args.indexed : BoxFrameGeometry.DEFAULT.INDEXED,
 				baseGeometry: (args.baseGeometry !== undefined) ? (() => {
-					const spatialPartitionBaseGeometry = SpatialPartitionGeometry.convertBaseGeometry(args);
+					const spatialPartitionBaseGeometry = SpatialPartitionGeometry.convertBaseGeometry(args.baseGeometry);
 
 
 					return {
@@ -231,7 +289,7 @@ export class SpatialPartitionGeometry extends BoxFrameGeometry {
 
 				indexed: (args.indexed !== undefined) ? args.indexed : BoxFrameGeometry.DEFAULT.INDEXED,
 				baseGeometry: (args.baseGeometry !== undefined) ? (() => {
-					const spatialPartitionBaseGeometry = SpatialPartitionGeometry.convertBaseGeometry(args);
+					const spatialPartitionBaseGeometry = SpatialPartitionGeometry.convertBaseGeometry(args.baseGeometry);
 
 
 					return {
@@ -279,7 +337,7 @@ export class SpatialPartitionGeometry extends BoxFrameGeometry {
 
 				indexed: (args.indexed !== undefined) ? args.indexed : BoxFrameGeometry.DEFAULT.INDEXED,
 				baseGeometry: (args.baseGeometry !== undefined) ? (() => {
-					const spatialPartitionBaseGeometry = SpatialPartitionGeometry.convertBaseGeometry(args);
+					const spatialPartitionBaseGeometry = SpatialPartitionGeometry.convertBaseGeometry(args.baseGeometry);
 
 
 					return {
