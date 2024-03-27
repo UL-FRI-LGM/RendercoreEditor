@@ -15,19 +15,19 @@ export class SpatialPartitionNodeGeometry extends BoxGeometry {
 
 		INDEXED: false,
 		BASE_GEOMETRY: {
-			nElements: 1,
-			positions: [
+			elements: [
 				{
-					elementspace: null,
-					objectspace: new Vector3(0, 0, 0)
+					position: {
+						elementspace: null,
+						objectspace: new Vector3(0, 0, 0)
+					},
+
+					dimension: {
+						elementspace: { min: new Vector3(-1, -1, -1), max: new Vector3(+1, +1, +1) },
+						objectspace: null
+					},
 				}
-			],
-			dimensions: [
-				{
-					elementspace: { min: new Vector3(-1, -1, -1), max: new Vector3(+1, +1, +1) },
-					objectspace: null
-				}
-			],
+			]
 		},
 	};
 
@@ -65,74 +65,57 @@ export class SpatialPartitionNodeGeometry extends BoxGeometry {
 
 
 	static expandBaseGeometry(baseGeometry) {
-		const positions = [];
-		const rotations = [];
-		const scalings = [];
-
-		const dimensions = [];
-		const centers = [];
-
-		const sizes = [];
-
-
-		for (let i = 0; i < baseGeometry.nElements; i++) {
-			const position_os = baseGeometry.positions[i].objectspace;
-			const rotation_os = new Euler(0.0, 0.0, 0.0, "XYZ");
-			const quaternion_os = new Quaternion(0.0, 0.0, 0.0, 1.0, false).setFromEuler(rotation_os);
-			const scaling_os = new Vector3(1.0, 1.0, 1.0);
-	
-			const M = new Matrix4().compose(position_os, quaternion_os, scaling_os);
-	
-	
-			const dimension_es = baseGeometry.dimensions[i].elementspace;
-			const dimension_os = {
-				min: dimension_es.min.clone().applyMatrix4(M),
-				max: dimension_es.max.clone().applyMatrix4(M),
-			};
-			const center_es = dimension_es.min.clone().add(dimension_es.max.clone().sub(dimension_es.min).divideScalar(2.0));
-			const center_os = center_es.clone().applyMatrix4(M);
-	
-			const size_es = dimension_es.max.clone().sub(dimension_es.min);
-			const size_os = size_es.clone();	
-	
-
-			positions[i] = {
-				objectspace: position_os
-			};
-			rotations[i] = {
-				objectspace: rotation_os
-			};
-			scalings[i] = {
-				objectspace: scaling_os
-			};
-
-
-			dimensions[i] = {
-				elementspace: dimension_es,
-				objectspace: dimension_os
-			};
-			centers[i] = {
-				elementspace: center_es,
-				objectspace: center_os
-			};
-
-			sizes[i] = {
-				elementspace: size_es,
-				objectspace: size_os
-			};
-			
-		}
-
-
 		return {
-			positions: positions,
-			rotations: rotations,
-			scalings: scalings,
+			elements: baseGeometry.elements.map((v) => {
+				const position_os = v.position.objectspace;
+				const rotation_os = new Euler(0.0, 0.0, 0.0, "XYZ");
+				const quaternion_os = new Quaternion(0.0, 0.0, 0.0, 1.0, false).setFromEuler(rotation_os);
+				const scaling_os = new Vector3(1.0, 1.0, 1.0);
+		
+				const M = new Matrix4().compose(position_os, quaternion_os, scaling_os);
+		
+		
+				const dimension_es = v.dimension.elementspace;
+				const dimension_os = {
+					min: dimension_es.min.clone().applyMatrix4(M),
+					max: dimension_es.max.clone().applyMatrix4(M),
+				};
+				const center_es = dimension_es.min.clone().add(dimension_es.max.clone().sub(dimension_es.min).divideScalar(2.0));
+				const center_os = center_es.clone().applyMatrix4(M);
+		
+				const size_es = dimension_es.max.clone().sub(dimension_es.min);
+				const size_os = size_es.clone();	
+		
 	
-			dimensions: dimensions,
-			centers: centers,
+				return {
+					position: {
+						elementspace: null,
+						objectspace: position_os
+					},
+					rotation: {
+						elementspace: null,
+						objectspace: rotation_os
+					},
+					scaling: {
+						elementspace: null,
+						objectspace: scaling_os
+					},
 	
-			sizes: sizes,
+					dimension: {
+						elementspace: dimension_es,
+						objectspace: dimension_os
+					},
+					center: {
+						elementspace: center_es,
+						objectspace: center_os
+					},
+	
+					size: {
+						elementspace: size_es,
+						objectspace: size_os
+					}
+				};
+			})
 		};
 	}
 
@@ -141,9 +124,9 @@ export class SpatialPartitionNodeGeometry extends BoxGeometry {
 
 
 		return {
-			positions: baseGeometry.positions.map((v) => { return v.objectspace; }),
+			positions: baseGeometry.elements.map((v) => { return v.position.objectspace; }),
 
-			dimensions: baseGeometry.dimensions.map((v) => { return v.elementspace; }),
+			dimensions: baseGeometry.elements.map((v) => { return v.dimension.elementspace; }),
 		};
 	}
 

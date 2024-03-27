@@ -1,7 +1,7 @@
 import { Box } from "../objects/Box.js";
 import { SpatialPartitionNodeGeometry } from "./SpatialPartitionNodeGeometry.js";
 import { SpatialPartitionNodeBasicMaterial } from "./SpatialPartitionNodeBasicMaterial.js";
-import { Vector3 } from "../RenderCore.js";
+import { Vector3, Vector4 } from "../RenderCore.js";
 import { PrimitiveTopology } from "../core/RC/pipeline/primitive state/PrimitiveTopology.js";
 import { ArrayT2 } from "../core/ArrayT2.js";
 import { Color4 } from "../math/Color4.js";
@@ -22,19 +22,19 @@ export class SpatialPartitionNode extends Box {
 			{
 				indexed: false,
 				baseGeometry: {
-					nElements: 1,
-					positions: [
+					elements: [
 						{
-							elementspace: null,
-							objectspace: new Vector3(0, 0, 0)
+							position: {
+								elementspace: null,
+								objectspace: new Vector3(0, 0, 0)
+							},
+
+							dimension: {
+								elementspace: { min: new Vector3(-1, -1, -1), max: new Vector3(+1, +1, +1) },
+								objectspace: null
+							},
 						}
-					],
-					dimensions: [
-						{
-							elementspace: { min: new Vector3(-1, -1, -1), max: new Vector3(+1, +1, +1) },
-							objectspace: null
-						}
-					],
+					]
 				}
 			}
 		),
@@ -47,7 +47,7 @@ export class SpatialPartitionNode extends Box {
 		PICKABLE: false,
 		PRIMITIVE: PrimitiveTopology.TRIANGLE_LIST,
 
-		INDEX: new Vector3(0, 0, 0),
+		INDEX: new Vector4(0, 0, 0, 0),
 		CLIENTS: new ArrayT2({ name: "spatial partition node clients" }),	
 	};
 
@@ -106,10 +106,10 @@ export class SpatialPartitionNode extends Box {
 	}
 
 	addClient(client) {
-		const ni = this.index;
+		const kn = this.index;
 
 		const length = this.clients.push(client);
-		client.index[ni.z][ni.y][ni.x] = length - 1;
+		client.index[kn.w][kn.z][kn.y][kn.x] = length - 1;
 		
 	
 		return length;
@@ -131,15 +131,15 @@ export class SpatialPartitionNode extends Box {
 		}, true);
 	}
 	removeClient(client) {
-		const ni = this.index;
+		const kn = this.index;
 
 		// V1
-		// if (client.index[ni.z][ni.y][ni.x] + 1 === this.clients.length) {
+		// if (client.index[kn.w][kn.z][kn.y][kn.x] + 1 === this.clients.length) {
 		// 	return this.clients.pop();
 		// } else {
 		// 	const clientLast = this.clients.pop();
-		// 	clientLast.index[ni.z][ni.y][ni.x] = client.index[ni.z][ni.y][ni.x];
-		// 	this.clients[client.index[ni.z][ni.y][ni.x]] = clientLast;
+		// 	clientLast.index[kn.w][kn.z][kn.y][kn.x] = client.index[kn.w][kn.z][kn.y][kn.x];
+		// 	this.clients[client.index[kn.w][kn.z][kn.y][kn.x]] = clientLast;
 
 		// 	return client;
 		// }
@@ -147,11 +147,11 @@ export class SpatialPartitionNode extends Box {
 		//V2
 		const clientLast = this.clients.pop();
 
-		if (client.index[ni.z][ni.y][ni.x] !== this.clients.length) {
-			clientLast.index[ni.z][ni.y][ni.x] = client.index[ni.z][ni.y][ni.x];
-			this.clients[client.index[ni.z][ni.y][ni.x]] = clientLast;
+		if (client.index[kn.w][kn.z][kn.y][kn.x] !== this.clients.length) {
+			clientLast.index[kn.w][kn.z][kn.y][kn.x] = client.index[kn.w][kn.z][kn.y][kn.x];
+			this.clients[client.index[kn.w][kn.z][kn.y][kn.x]] = clientLast;
 		}
-		client.index[ni.z][ni.y][ni.x] = null;
+		client.index[kn.w][kn.z][kn.y][kn.x] = null;
 
 
 		return client;

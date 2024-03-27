@@ -16,19 +16,23 @@ export class CellPartitionGeometry extends SpatialPartitionGeometry {
 		BASE_GEOMETRY: {
 			// positions: [new Vector3(0, 0, 0)],
 			// dimensions: [{ min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) }],
-			position: {
-				elementspace: null,
-				objectspace: new Vector3(0, 0, 0)
-			},
+			elements: [
+				{
+					position: {
+						elementspace: null,
+						objectspace: new Vector3(0, 0, 0)
+					},
 
-			dimension: {
-				elementspace: { min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) },
-				objectspace: null
-			},
-			resolution: {
-				elementspace: new Vector3(1, 1, 1),
-				objectspace: null
-			},
+					dimension: {
+						elementspace: { min: new Vector3(-4, -4, -4), max: new Vector3(+4, +4, +4) },
+						objectspace: null
+					},
+					resolution: {
+						elementspace: new Vector3(1, 1, 1),
+						objectspace: null
+					},
+				}
+			]
 		},
 	};
 
