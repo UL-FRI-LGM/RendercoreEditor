@@ -119,7 +119,7 @@ export class SpatialPartitionNodeGeometry extends BoxGeometry {
 		};
 	}
 
-	static convertBaseGeometry(baseGeometry) {
+	static #convertBaseGeometry(baseGeometry) {
 		baseGeometry = SpatialPartitionNodeGeometry.expandBaseGeometry(baseGeometry);
 
 
@@ -136,7 +136,7 @@ export class SpatialPartitionNodeGeometry extends BoxGeometry {
 				...args,
 
 				indexed: (args.indexed !== undefined) ? args.indexed : BoxGeometry.DEFAULT.INDEXED,
-				baseGeometry: (args.baseGeometry !== undefined) ? SpatialPartitionNodeGeometry.convertBaseGeometry(args.baseGeometry) : BoxGeometry.DEFAULT.BASE_GEOMETRY,
+				baseGeometry: (args.baseGeometry !== undefined) ? SpatialPartitionNodeGeometry.#convertBaseGeometry(args.baseGeometry) : BoxGeometry.DEFAULT.BASE_GEOMETRY,
 			}
 		);
 	}
@@ -176,7 +176,7 @@ export class SpatialPartitionNodeGeometry extends BoxGeometry {
 				...args,
 
 				indexed: (args.indexed !== undefined) ? args.indexed : BoxGeometry.DEFAULT.INDEXED,
-				baseGeometry: (args.baseGeometry !== undefined) ? SpatialPartitionNodeGeometry.convertBaseGeometry(args.baseGeometry) : BoxGeometry.DEFAULT.BASE_GEOMETRY,
+				baseGeometry: (args.baseGeometry !== undefined) ? SpatialPartitionNodeGeometry.#convertBaseGeometry(args.baseGeometry) : BoxGeometry.DEFAULT.BASE_GEOMETRY,
 			}
 		);
 	}
@@ -216,7 +216,7 @@ export class SpatialPartitionNodeGeometry extends BoxGeometry {
 				...args,
 
 				indexed: (args.indexed !== undefined) ? args.indexed : BoxGeometry.DEFAULT.INDEXED,
-				baseGeometry: (args.baseGeometry !== undefined) ? SpatialPartitionNodeGeometry.convertBaseGeometry(args.baseGeometry) : BoxGeometry.DEFAULT.BASE_GEOMETRY,
+				baseGeometry: (args.baseGeometry !== undefined) ? SpatialPartitionNodeGeometry.#convertBaseGeometry(args.baseGeometry) : BoxGeometry.DEFAULT.BASE_GEOMETRY,
 			}
 		);
 	}
@@ -256,7 +256,7 @@ export class SpatialPartitionNodeGeometry extends BoxGeometry {
 				...args,
 
 				indexed: (args.indexed !== undefined) ? args.indexed : BoxGeometry.DEFAULT.INDEXED,
-				baseGeometry: (args.baseGeometry !== undefined) ? SpatialPartitionNodeGeometry.convertBaseGeometry(args.baseGeometry) : BoxGeometry.DEFAULT.BASE_GEOMETRY,
+				baseGeometry: (args.baseGeometry !== undefined) ? SpatialPartitionNodeGeometry.#convertBaseGeometry(args.baseGeometry) : BoxGeometry.DEFAULT.BASE_GEOMETRY,
 			}
 		);
 	}
