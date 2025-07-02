@@ -216,7 +216,7 @@ export class TweakpaneSettings extends EventTarget {
             if (args[0] == "theme") {
                 const themePath = "css/tweakpane"+ args[1] +".css";
                 this._changeTheme(themePath);
-            } else if (args[0] = "lock") {
+            } else if (args[0] == "lock") {
                 this._eventDispatcher(e.value, e.value, "lockCamera")
 
             }
