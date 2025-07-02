@@ -17,20 +17,21 @@ export class TweakpaneEditor extends EventTarget {
         this.settingsPaneContainer = document.getElementById('EditorPane');
 
         this.treeViewValue = -1;
-
+        this.performance;
+        this.totalPerf = [];
         this.settings = {
-            fruit: "",
         }
         this._initEditorPane();
     }
 
     _updateListOfObjects(objects) {
-        const options = objects.map((item, index) => ({
+        const options = objects
+        .filter(item => !item.isConcealed) //remove secret objects from tree
+        .map((item, index) => ({
             text: item.name == "" ? item.type : item.name,
-            value: index,
-            children: Array.from(item.children)
+            value: item.uuid,
+            children: item.children,
         }));
-
         this.objectSelect.dispose();
         this.objectSelect = this.treeViewFolder.addBlade({
                 view: 'treeview',
@@ -71,43 +72,20 @@ export class TweakpaneEditor extends EventTarget {
     }
 
     _selectObject(object) {
-        //console.log(object)
         this.mainObjectFolder.hidden = false;
         this.selectedObject = object;
         this.isSelected = true;
         const name = object.name == "" ? object.type : object.name;
         this.mainObjectFolder.title = name;
-        //makes the treeview unresopnsive?????
-        //this.settings['objName'] = name;
-        //
-        const translation = vector3Convert(object.position);
-        const scale = vector3Convert(object.scaling)
-        //update UI to match object
-        this.settings["translation"] = translation;
-        this.settings["scale"] = scale;
+        this.settings["translation"] = object.translation;
+        this.settings["scale"] = object.scale;
+        this.settings["rotation"] = object.rotation;
         this.settings["visibility"] = object.visible;
-        if(object.geometry && object.geometry.baseGeometry && object.geometry.baseGeometry.dimensions) {
-            console.log("OBject has dimensions")
-            this.editors.minDimensions.hidden = false;
-            this.editors.maxDimensions.hidden = false;
-            this.separators.dimensions.hidden = false;
-        } else {
-            this.editors.maxDimensions.hidden = true;
-            this.editors.minDimensions.hidden = true;
-            this.separators.dimensions.hidden = true;
-        }
-        
-
         //Toggle camera specific visibility
         if(object.type == "PerspectiveCamera" || object.type == "OrthographicCamera") {
             this.editors.selectCamera.hidden = false;
             this.editors.cameraAspect.hidden = false;
             this.cameraFolder.hidden = false;
-
-     /*     this.editors.cameraBottom.hidden = false;
-            this.editors.cameraLeft.hidden = false;
-            this.editors.cameraRight.hidden = false;
-            this.editors.cameraTop.hidden = false; */
             this.editors.cameraFar.hidden = false;
             this.editors.cameraNear.hidden = false;
 
@@ -123,21 +101,17 @@ export class TweakpaneEditor extends EventTarget {
             this.editors.selectCamera.hidden = true; 
             this.editors.cameraAspect.hidden = true;
             this.cameraFolder.hidden = true;
-    /*         this.editors.cameraBottom.hidden = true;
-            this.editors.cameraLeft.hidden = true;
-            this.editors.cameraRight.hidden = true;
-            this.editors.cameraTop.hidden = true; */
             this.editors.cameraFar.hidden = true;
             this.editors.cameraNear.hidden = true;
         }
 
         //Colors
-        if(object.color) { 
-            const color4 = color4Convert(object.colorIntensity);
-            this.settings["color3"] = color4
-            this.editors.color3Editor.hidden = false;
+        if(object.color4) { 
+            //const color4 = color4Convert(object.colorIntensity);
+            this.settings["color4"] = object.color4
+            this.editors.color4Editor.hidden = false;
         } else {
-            this.editors.color3Editor.hidden = true;
+            this.editors.color4Editor.hidden = true;
         }
 
         this.editors.visibleToggle.value = object.visible;
@@ -146,28 +120,31 @@ export class TweakpaneEditor extends EventTarget {
 
         //Show object's material if it has one
         //TODO: separate completely, allow saving a material, apply it to any object.
-        if(!object.material) {
+        if(!object.diffuse && !object.emissive) {
             this.materialTab.disabled = true;
         } else {
             this.materialTab.disabled = false;
-            this._selectObjectMaterial(object.material);
+            this._selectObjectMaterial(object);
         }
 
-        this.editorPane.refresh();
+       /*  for (const key in this.editors) {
+            this.editors[key].refresh();
+        } */
+        this.editorPane.refresh()
 
     }
 
-    _selectObjectMaterial(material) {
+    _selectObjectMaterial(object) {
         //console.log(material);
-        if (material.diffuse) {
+        if (object.diffuse) {
             this.editors.diffuse.hidden = false;
-            this.settings["diffuse"] = color4Convert(material.diffuse);        
+            this.settings["diffuse"] = object.diffuse;        
         } else {
             this.editors.diffuse.hidden = true;
         }
-        if (material.emissive) {
+        if (object.emissive) {
             this.editors.emissive.hidden = false;
-            this.settings["emissive"] = color4Convert(material.emissive);        
+            this.settings["emissive"] = object.emissive;        
         } else {
             this.editors.emissive.hidden = true;
         }
@@ -210,26 +187,20 @@ export class TweakpaneEditor extends EventTarget {
         this.objectTab = this.mainObjectTabs.pages[0]
         this.materialTab = this.mainObjectTabs.pages[1];
         this._initObjectList()
-      
-        this.testButton = this.editorPane.addButton({
-            title: 'Test',
-            index: 0,
-        }).on('click', (e) => {
-            this.dispatchEvent(new CustomEvent('test', {
-                detail: 
-                {
-                    value : e.value,
-                } 
-            }));
-        });  
+
 
         this.editors = new Object;
         this.separators = new Object;
         this.settings['objName'] = "";
 
+       /*  this.editorPane.testButton = this.editorPane.addButton({
+            title:  'Test',
+        }).on('click', () => {
+            this.dispatchEvent(new CustomEvent("test", {}));
+        }) */
         this.editors.nameEditor = this.objectTab.addBinding(this.settings, 'objName', {
             view: 'text',
-            label : "Name",
+            label: "Name",
             parse: (v) => String(v),
             value: "name",
         }).on('change', (e) => {
@@ -256,7 +227,7 @@ export class TweakpaneEditor extends EventTarget {
         this.settings['rotation'] = {x: 0, y: 0, z: 0};
         this.editors.rotationEditor = this.objectTab.addBinding(this.settings, 'rotation', {
             label :  "Rotation",
-            step: 0.05
+            step: 0.005
         }).on('change', (e) => { 
             this._eventDispatcher('rotation',this.settings['rotation']);
         });
@@ -268,8 +239,10 @@ export class TweakpaneEditor extends EventTarget {
             this._eventDispatcher('scale',this.settings['scale']);
         });
 
+        
+
        
-        this.separators.dimensions = this.objectTab.addBlade({view: 'separator'})
+ /*        this.separators.dimensions = this.objectTab.addBlade({view: 'separator'})
 
         this.settings['minDimensions'] = {x: 0, y: 0, z: 0};
         this.editors.minDimensions = this.objectTab.addBinding(this.settings, 'minDimensions', {
@@ -285,21 +258,21 @@ export class TweakpaneEditor extends EventTarget {
             hidden : true,
         }).on('change', (e) => {
             this._eventDispatcher('dimensions',this.settings['maxDimensions'], "max");
-        });
+        }); */
         
-        this.settings['color3'] = {r: 1.0, g: 1.0, b: 1.0, a: 1.0};
-        this.editors.color3Editor = this.objectTab.addBinding(this.settings, 'color3', {
+        this.settings['color4'] = {r: 1.0, g: 1.0, b: 1.0, a: 1.0};
+        this.editors.color4Editor = this.objectTab.addBinding(this.settings, 'color4', {
             color: {type: 'float'},
             label: "Color Intensity",
             picker: 'inline',
 
         }).on('change', (e) => {
-            this._eventDispatcher('color', this.settings['color3'])
+            this._eventDispatcher('color', this.settings['color4'])
         })
 
         
 
-        
+       
       
        /*  this.settings["aspectToggle"] = "auto",
         this.editors.cameraAspectToggle = this.mainObjectFolder.addBinding(this.settings, 'aspectToggle', {
@@ -321,6 +294,13 @@ export class TweakpaneEditor extends EventTarget {
         this._initMaterialTab()
         this._initCameraParams()
 
+        this.editors.delete = this.objectTab.addButton({
+            title: "DELETE OBJECT"
+        }).on('click', (e) => {
+            this._eventDispatcher('delete');
+        });
+
+
     }
     _initCameraParams() {
         this.mainObjectFolder.addBlade({view: 'separator'})
@@ -337,7 +317,6 @@ export class TweakpaneEditor extends EventTarget {
         this.editors.cameraAspect = this.objectTab.addBinding(this.settings, 'aspectRatio', {
             label: "Aspect Ratio",
             min: 0,
-            step: 0.0001,
             hidden: true,
 
         }).on('change', (e) => {
@@ -350,7 +329,6 @@ export class TweakpaneEditor extends EventTarget {
         this.editors.cameraFar = this.objectTab.addBinding(this.settings, 'cameraFar', {
             label: "Far",
             min: 0,
-            step: 0.001,
             hidden: true,
 
         }).on('change', (e) => {
@@ -362,7 +340,6 @@ export class TweakpaneEditor extends EventTarget {
         this.editors.cameraNear = this.objectTab.addBinding(this.settings, 'cameraNear', {
             label: "Near",
             min: 0,
-            step: 0.001,
             hidden: true,
 
         }).on('change', (e) => {
@@ -374,17 +351,15 @@ export class TweakpaneEditor extends EventTarget {
         this.settings['cameraTop'] = 1;
         this.editors.cameraTop = this.cameraFolder.addBinding(this.settings, 'cameraTop', {
             label: "Top",
-            step: 0.001,
             //hidden: true,
 
         }).on('change', (e) => {
             this._eventDispatcher('camera', this.settings['cameraTop'], "top")
         })
 
-        this.settings['cameraRight'] = -1;
+        this.settings['cameraRight'] = 1;
         this.editors.cameraRight = this.cameraFolder.addBinding(this.settings, 'cameraRight', {
             label: "Right",
-            step: 0.001,
             //hidden: true,
 
         }).on('change', (e) => {
@@ -394,7 +369,6 @@ export class TweakpaneEditor extends EventTarget {
         this.settings['cameraBottom'] = -1;
         this.editors.cameraBottom = this.cameraFolder.addBinding(this.settings, 'cameraBottom', {
             label: "Bottom",
-            step: 0.001,
             //hidden: true,
 
         }).on('change', (e) => {
@@ -404,12 +378,13 @@ export class TweakpaneEditor extends EventTarget {
         this.settings['cameraLeft'] = -1;
         this.editors.cameraLeft = this.cameraFolder.addBinding(this.settings, 'cameraLeft', {
             label: "Left",
-            step: 0.001,
             //hidden: true,
 
         }).on('change', (e) => {
             this._eventDispatcher('camera', this.settings['cameraLeft'], "left")
         })
+
+
 
     }
 
@@ -435,18 +410,21 @@ export class TweakpaneEditor extends EventTarget {
 
     }
 
+
+       
     _eventDispatcher(type = 'N/A', param = null, subtype = "N/A") {
-        //console.log("Received type: ", type, " data is: ", param, "parameterName is: ", subtype);
+     /*    if (param == NaN || typeof param == "object" && param.x != null && isNaN(param.x)) {
+            return;
+        }
+        console.log(param) */
         this.dispatchEvent(new CustomEvent("updateObject", {
             detail: {
                 type  : type,
                 value : param,
+                uuid : this.selectedObject.uuid,
                 subtype : subtype,
             }
         }));
     }
-
-
-
 
 }

@@ -1,20 +1,19 @@
-import { Cube } from "../rendercore/objects/Cube.js";
-import { CubeBasicMaterial } from "../rendercore/materials/CubeBasicMaterial.js";
-import { CubeGeometry } from "../rendercore/objects/CubeGeometry.js";
-import { Color4 } from "../rendercore/math/Color4.js";
-import { PointLight, Sphere, SpotLight, AmbientLight, Vector3, Vector4, PerspectiveCamera, OrthographicCamera } from "../rendercore/RenderCore.js";
-import { SphereFrameGeometry } from "../rendercore/objects/SphereFrameGeometry.js";
-import { SphereFrameBasicMaterial } from "../rendercore/materials/SphereFrameBasicMaterial.js";
-import { SphereFrame } from "../rendercore/objects/SphereFrame.js";
-import { Box } from "../rendercore/objects/Box.js";
-import { Quad } from "../rendercore/objects/Quad.js";
-import { Extent3D } from "../rendercore/core/RC/textures/Extent3D.js";
-import { randomInt } from "./utils.js";
-import { BoxBasicMaterial } from "../rendercore/materials/BoxBasicMaterial.js";
-import { BoxGeometry } from "../rendercore/objects/BoxGeometry.js";
-import { LineGeometry } from "../rendercore/objects/LineGeometry.js";
-import { Line } from "../rendercore/objects/Line.js";
-import { LineBasicMaterial } from "../rendercore/materials/LineBasicMaterial.js";
+import { Cube } from "../rendercore/src/objects/cube/Cube.js";
+import { CubeBasicMaterial } from "../rendercore/src/materials/CubeBasicMaterial.js";
+import { Color4 } from "../rendercore/src/math/Color4.js";
+import { PointLight, Sphere, SpotLight, AmbientLight, Vector3, Vector4} from "../rendercore/src/RenderCore.js";
+import { Line } from "../rendercore/src/objects/line/Line.js";
+import { Extent3D } from "../rendercore/src/core/RC/textures/Extent3D.js";
+import { LineGeometry } from "../rendercore/src/objects/line/LineGeometry.js";
+import { LineBasicMaterial } from "../rendercore/src/materials/LineBasicMaterial.js";
+import { CubeGeometry } from "../rendercore/src/objects/cube/CubeGeometry.js";
+import { SphereFrameGeometry } from "../rendercore/src/objects/sphere_frame/SphereFrameGeometry.js";
+import { SphereFrameBasicMaterial } from "../rendercore/src/materials/SphereFrameBasicMaterial.js";
+import { Quad} from "../rendercore/src/objects/quad/Quad.js"
+import { QuadGeometry } from "../rendercore/src/objects/quad/QuadGeometry.js";
+import { QuadBasicMaterial } from "../rendercore/src/materials/QuadBasicMaterial.js";
+import { Euler } from "../rendercore/src/RenderCore.js";
+import { PerspectiveCamera } from "../rendercore/src/RenderCore.js";
 
 export function object(type) {
 	console.log("Making an object of type", type)
@@ -49,7 +48,6 @@ export function object(type) {
 
 function cube() {
 	const newFloat = Math.random()
-	console.log(newFloat)
 	const material = new CubeBasicMaterial(
 		{
 			emissive: new Color4(newFloat, 1, 1, 1/32),
@@ -58,13 +56,7 @@ function cube() {
 	)
     return new Cube(
 		{
-			geometry: new CubeGeometry(
-				{
-					baseGeometry: {
-						positions: [ new Vector3(0, 0, 0) ]
-					}
-				}
-			),
+			geometry: new CubeGeometry(),
 			material: material,
 
 		}
@@ -72,30 +64,20 @@ function cube() {
 }
 
 function sphere() {
-	return new SphereFrame(
+	return new Sphere(
 		{
-			geometry: new SphereFrameGeometry (
-				{
-					baseGeometry: {
-						positions: [ new Vector3(0,0,0)],
-						centers: [new Vector3(0, 0, 0)],
-						radiuses: [1],
-						nPoints: 64,
-					}
-				}
-			),
-
+			geometry: new SphereFrameGeometry (),
 			material: new SphereFrameBasicMaterial(
 				{
 					emissive: new Color4(1, 1, 1, 1/32),
 					diffuse: new Color4(1, 1, 1, 1),
 				}
-			)
+			) 
 		}
 	)
 }
 
-function box() {
+/* function box() {
 	const material = new BoxBasicMaterial(
 		{
 			emissive: new Color4(1, 1, 1, 1/32),
@@ -116,13 +98,26 @@ function box() {
 
 		}
 	);
-}
+} */
 
 
 function quad() {
-	return new Quad({
+	let obj = new Quad({
+		
+		geometry: new QuadGeometry(),
+		material: new QuadBasicMaterial(
+			{
+				emissive: new Color4(1, 0.7, 1, 1/32),
+				diffuse: new Color4(1, 0.95, 1, 1)
+			}
+		),
+	
+})	
+	obj.position = new Vector3(0,-1,0)
+	obj.scaling = new Vector3(5,5,1)
+	obj.rotation = new Euler (Math.PI/2, 0, 0)
 
-	})
+	return obj
 }
 
 function spot() {
@@ -151,22 +146,13 @@ function ambient() {
 function line() {
 	return new Line(
 		{		
-			geometry: new LineGeometry(
-				{
-					indexed: true,
-					baseGeometry: {
-						positions: [ new Vector3(-1, 0, 0),  new Vector3 (1,0,0)],
-					},
-				},
-			),
+			geometry: new LineGeometry(),
 			material: new LineBasicMaterial(
 				{
-					emissive: new Color4(0, 0, 0, 0),
-					diffuse: new Color4(Math.random(), Math.random(), Math.random(), Math.random()),
+					emissive: new Color4(1, 1, 1, 1),
+					diffuse: new Color4(Math.random(), Math.random(), Math.random(), 1),
 				}
 			),
-			pickable: true,
-			frustumCulled: false,
 		}
 	)
 }
@@ -200,7 +186,7 @@ function perspective() {
 		}
 	);
 	camera.position = new Vector3(0, 2, 8);
-	return camera
+	return camera 
 }
 
 function orthographic() {

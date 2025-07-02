@@ -1,4 +1,4 @@
-import {Vector3} from '../rendercore/math/Vector3.js';
+import {Vector3} from '../rendercore/src/math/Vector3.js';
 
 export function randomInt(min, max) { 
     return Math.floor(Math.random() * (max - min + 1) + min);

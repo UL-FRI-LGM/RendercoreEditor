@@ -28,7 +28,7 @@ export class TweakpaneSettings extends EventTarget {
     }
 
     _changeTheme(theme) {
-        // to add a theme, add a new .css file and update list.
+        // to add a theme, add a new .css file and add option to list.
         document.getElementById("tweakpaneThemeLink").href = theme;
     }
 
@@ -201,14 +201,12 @@ export class TweakpaneSettings extends EventTarget {
 					value: 'ignore',
                     children: ["theme_light", "theme_dark", "theme_iceberg"],
 				},
-				{
-                    text: "Grid",
-                    value: "toggle_grid",
-                },
-
+				{text: "Toggle Axes", value: "coordinateLines",},
+                {text: "Toggle Grid",   value: "grid",},
                 {text: "Light", value: "theme_light"},
                 {text: "Dark",  value: "theme_dark" },
                 {text: "Iceberg",  value: "theme_iceberg" },
+                {text: "Lock Camera",  value: "lock_camera" },
 			],
             value: '',
             top: "29px",
@@ -218,6 +216,13 @@ export class TweakpaneSettings extends EventTarget {
             if (args[0] == "theme") {
                 const themePath = "css/tweakpane"+ args[1] +".css";
                 this._changeTheme(themePath);
+            } else if (args[0] = "lock") {
+                this._eventDispatcher(e.value, e.value, "lockCamera")
+
+            }
+            else 
+            {
+                this._eventDispatcher(e.value, e.value, "toggle_secrets")
             }
         })
 /*         this.folderFile = this.horizontalPane.addFolder({title: "File", expanded: false}); 
@@ -250,7 +255,6 @@ export class TweakpaneSettings extends EventTarget {
     }
 
     _eventDispatcher(type = 'N/A', param = null, eventName = 'N/A') {
-        //console.log("Received type: ", eventType, " data is: ", data, "parameterName is: ", parameterName);
         this.dispatchEvent(new CustomEvent(eventName, {
             detail: {
                 type  : type,

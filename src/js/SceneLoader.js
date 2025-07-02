@@ -1,17 +1,12 @@
-import { Scene } from "../rendercore/objects/Scene.js";
-import { Cube } from "../rendercore/objects/Cube.js";
-import { Color4 } from "../rendercore/math/Color4.js";
-import { Frustum, PerspectiveCamera, Vector3, Vector4 } from "../rendercore/RenderCore.js";
-import { CubeGeometry } from "../rendercore/objects/CubeGeometry.js";
-import { CubeBasicMaterial } from "../rendercore/materials/CubeBasicMaterial.js";
-import { AmbientLight } from "../rendercore/lights/AmbientLight.js";
-import { Extent3D } from "../rendercore/core/RC/textures/Extent3D.js";
-import { PointLight } from "../rendercore/RenderCore.js";
-import { randomInt } from "./utils.js";
-import { object } from "./objectCreationTemplate.js";
-import { Line } from "../rendercore/objects/Line.js";
-import { LineGeometry } from "../rendercore/objects/LineGeometry.js";
-import { LineBasicMaterial } from "../rendercore/materials/LineBasicMaterial.js";
+import { Cube } from "../rendercore/src/objects/cube/Cube.js";
+import { Color4 } from "../rendercore/src/math/Color4.js";
+import { Frustum, PerspectiveCamera, Vector3, Vector4 } from "../rendercore/src/RenderCore.js";
+import { AmbientLight } from "../rendercore/src/lights/AmbientLight.js";
+import { Extent3D } from "../rendercore/src/core/RC/textures/Extent3D.js";
+import { PointLight } from "../rendercore/src/RenderCore.js";
+import { Line } from "../rendercore/src/objects/line/Line.js";
+import { LineGeometry } from "../rendercore/src/objects/line/LineGeometry.js";
+import { LineBasicMaterial } from "../rendercore/src/materials/LineBasicMaterial.js";
 
 export function loadScene(type, scene, data = null) {
 	switch(type) {
@@ -64,7 +59,7 @@ function testOnly(scene) {
 		}
 	)
 	scene.add(line)
-	const camera = new PerspectiveCamera(
+	/* const camera = new PerspectiveCamera(
 		{
 			fov: 90,
 			aspect: extent.width / extent.height,
@@ -75,7 +70,7 @@ function testOnly(scene) {
 	camera.position = new Vector3(0, 2, 8);
 	scene.cameraManager.activeCamera = camera;
 
-    scene.add(camera);
+    scene.add(camera); */
 
 	return scene
 }
@@ -98,7 +93,7 @@ function empty(scene) {
 	);
 	al.position = new Vector3(0, 0, 0);
 	scene.add(al);
-    const camera = new PerspectiveCamera(
+  /*   const camera = new PerspectiveCamera(
 		{
 			fov: 90,
 			aspect: extent.width / extent.height,
@@ -110,7 +105,7 @@ function empty(scene) {
     scene.add(camera);
 
 	camera.name = "Empty camera"
-    scene.cameraManager.activeCamera = camera;
+    scene.cameraManager.activeCamera = camera; */
 
     return scene;
 }
@@ -130,11 +125,11 @@ function cube(scene) {
 	);
 
     //add light
-    const al = new AmbientLight(
+     const al = new AmbientLight(
 		{
 			colorIntensity: new Color4(1, 1, 1, 1/8),
 		}
-	);
+	); 
 	al.position = new Vector3(0, 0, 0);
 	scene.add(al);
 
@@ -147,7 +142,7 @@ function cube(scene) {
 	);
 	pl.position = new Vector3(-2, -2, +2)
 
-	scene.add(pl);
+	//scene.add(pl);
 
 	const pl2 = new PointLight(
 		{
@@ -162,27 +157,13 @@ function cube(scene) {
 
     //add cube
     const cube = new Cube(
-		{
-			geometry: new CubeGeometry(
-				{
-					baseGeometry: {
-						positions: [ new Vector3(0, 0, 0) ]
-					}
-				}
-			),
-			material: new CubeBasicMaterial(
-				{
-					emissive: new Color4(1, 1, 1, 1/8),
-					diffuse: new Color4(1, 1, 1, 1)
-				}
-			)
-		}
+
 	);
 	cube.position = new Vector3(0,0,0);
 	cube.visible = true;
     scene.add(cube);
 
-    const camera = new PerspectiveCamera(
+     const camera = new PerspectiveCamera(
 		{
 			fov: 90,
 			aspect: extent.width / extent.height,
@@ -195,7 +176,7 @@ function cube(scene) {
 
 	camera.name = "Perspective Camera"
     scene.cameraManager.activeCamera = camera;
-
+ 
     return scene;
 
 }
